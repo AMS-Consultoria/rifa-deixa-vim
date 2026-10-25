@@ -20,9 +20,29 @@
 .draw-progress{height:100%;width:0;background:linear-gradient(90deg,#b72b42,#f2c86e);border-radius:20px}
 .draw-result{font-size:16px;font-weight:750;min-height:26px;color:#f8da9a}
 .draw-result strong{color:#fff}
+.draw-winner{margin:10px 0 14px;border:1px solid #9b753f;background:#302a25;border-radius:12px;padding:12px 8px;line-height:1.35;font-size:clamp(15px,4.5vw,20px);font-weight:800;color:#fff;overflow-wrap:anywhere}
+.draw-winner[hidden],.draw-finish-actions button[hidden],.draw-warning[hidden]{display:none}
+.draw-finish-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.draw-finish-actions button{min-width:0;min-height:48px;line-height:1.3}
+.draw-finish-actions button:only-child{grid-column:1/-1}
+.draw-warning{color:#decaa1;margin:10px 0 0}
 #drawClose{width:100%;min-height:48px}
+.draw-finish-actions #drawSave{background:#237543;border-color:#369d61;color:#fff}
+.draw-finish-actions #drawClose{background:#393941;border-color:#7a7a83}
+.draw-finish-actions #drawAgain{grid-column:1/-1}
+.draw-finish-actions button[disabled]{opacity:.55;cursor:wait}
+.draw-note{color:#b8e3c5;min-height:20px;font-size:13px;line-height:1.45;margin:8px 0}
+.history{margin-top:22px}
+.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.history-head h2{margin:0}
+.history-refresh{border:1px solid #62626a;background:#292931;color:#fff;border-radius:7px;padding:8px 10px;font-size:12px;cursor:pointer}
+.history-list{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px}
+.history-list li{border:1px solid #45454e;background:#24242b;border-radius:10px;padding:11px 12px;font-size:13px;line-height:1.55}
+.history-list li strong{font-size:15px;color:#fff}
+.history-list li span{color:#cacad1}
+[hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){.draw-wheel.spinning::before{animation-duration:2s}}
-</style></head><body><main><header class="hero"><h1>RIFA DEIXA VIM</h1><p>Prêmio: Agasalho esportivo</p><strong>R$ 5,00 por número</strong><p>Sorteio após todos os números serem preenchidos</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>20 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><button class="action primary" type="button" id="drawClose" hidden>Fechar resultado</button></dialog><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
+</style></head><body><main><header class="hero"><h1>RIFA DEIXA VIM</h1><p>Prêmio: Agasalho esportivo</p><strong>R$ 5,00 por número</strong><p>Sorteio após todos os números serem preenchidos</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const URL_DB = 'https://bxiugnskskzhigyguyqp.supabase.co';
 const PUBLIC_KEY = 'sb_publishable_2Fb6r4nFl8uCjhVDWdHf-Q_Y5ij1b-t';
@@ -34,6 +54,7 @@ const format = n => String(n).padStart(2, '0');
 const reais = n => Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const LOCAL_KEY = 'deixavim_rifa_v1';
 let numeros = {}, admin = false, atual = null, ocupado = false, carregado = false, sorteando = false;
+let resultadoPendente = null, resultadoSalvo = false, salvandoSorteio = false, historicoCarregado = false;
 
 function aviso(message) { $('notice').textContent = message; }
 function resetar() {
@@ -84,6 +105,8 @@ function render() {
   for (const id of ['buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export', 'drawButton']) $(id).hidden = !admin;
   $('loginButton').hidden = admin;
   $('importLocal').hidden = !admin || !registrosValidos(dadosLocais()).length;
+  $('historySection').hidden = !admin;
+  if (!admin) historicoCarregado = false;
   $('syncInfo').textContent = admin
     ? 'Área administrativa: alterações enviadas ao banco online. O backup contém dados pessoais: guarde-o com cuidado.'
     : 'Consulta pública: números sincronizados, sem exposição dos nomes e telefones dos compradores.';
@@ -144,6 +167,7 @@ async function atualizarTela() {
     carregado = true;
     render();
     aviso('Números sincronizados com o banco online.');
+    if (admin && !historicoCarregado) await carregarHistorico();
     return true;
   } catch (error) {
     if (!carregado) { admin = false; resetar(); render(); }
@@ -300,7 +324,7 @@ $('export').addEventListener('click', async () => {
   }
 });
 
-// Sorteio de 20 segundos. Roleta visual; vencedor escolhido com aleatoriedade
+// Sorteio de 15 segundos. Roleta visual; vencedor escolhido com aleatoriedade
 // criptograficamente segura, com chances iguais para cada numero elegivel.
 function indiceSeguro(tamanho) {
   if (!Number.isInteger(tamanho) || tamanho < 1) throw new Error('Sem participantes.');
@@ -312,6 +336,94 @@ function indiceSeguro(tamanho) {
   return valores[0] % tamanho;
 }
 function numeroAleatorio(lista) { return lista[indiceSeguro(lista.length)]; }
+function dataDoSorteio(iso) {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? 'Data indisponível' : date.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+}
+async function carregarHistorico() {
+  if (!admin) return;
+  const lista = $('historyList');
+  lista.replaceChildren();
+  const carregando = document.createElement('li');
+  carregando.textContent = 'Consultando sorteios salvos...';
+  lista.append(carregando);
+  const { data, error } = await supabase.from('rifa_sorteios')
+    .select('id,numero,modalidade,situacao,ganhador,participantes,realizado_em')
+    .order('realizado_em', { ascending: false }).limit(50);
+  lista.replaceChildren();
+  if (error) {
+    historicoCarregado = false;
+    const mensagem = document.createElement('li');
+    mensagem.textContent = 'Não foi possível consultar o histórico. Execute primeiro o SQL de criação da tabela rifa_sorteios. Detalhe: ' + error.message;
+    lista.append(mensagem);
+    return;
+  }
+  historicoCarregado = true;
+  if (!data?.length) {
+    const vazio = document.createElement('li');
+    vazio.textContent = 'Nenhum sorteio oficial salvo até agora.';
+    lista.append(vazio);
+    return;
+  }
+  for (const registro of data) {
+    const linha = document.createElement('li');
+    const titulo = document.createElement('strong');
+    titulo.textContent = `Nº ${format(registro.numero)} · ${registro.situacao === 'vendido' ? 'Vendido' : registro.situacao === 'reservado' ? 'Reservado' : 'Não vendido'}`;
+    const detalhe = document.createElement('span');
+    const modo = registro.modalidade === 'vendidos' ? 'Somente vendidos' : 'Todos os números';
+    const pessoa = registro.situacao === 'vendido' && registro.ganhador ? ` · Ganhador: ${registro.ganhador}` : ' · Sem ganhador confirmado';
+    detalhe.textContent = `${dataDoSorteio(registro.realizado_em)} · ${modo} (${registro.participantes})${pessoa}`;
+    linha.append(titulo, document.createElement('br'), detalhe);
+    lista.append(linha);
+  }
+}
+$('historyRefresh').addEventListener('click', () => void carregarHistorico());
+
+function sairDoResultado() {
+  if (sorteando || salvandoSorteio) return;
+  if (resultadoPendente && !resultadoSalvo &&
+      !confirm('Sair sem salvar? Este resultado não será registrado no histórico oficial.')) return;
+  $('drawDialog').close();
+  resultadoPendente = null;
+  resultadoSalvo = false;
+}
+
+async function salvarResultado() {
+  if (!admin || sorteando || salvandoSorteio || !resultadoPendente || resultadoSalvo) return;
+  salvandoSorteio = true;
+  $('drawSave').disabled = true;
+  $('drawClose').disabled = true;
+  $('drawAgain').disabled = true;
+  $('drawSaveStatus').textContent = 'Salvando o sorteio no banco online...';
+  try {
+    // ID fixo por sorteio: repetir o salvamento após uma falha de rede não gera outro registro.
+    const r = resultadoPendente;
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    if (!user) throw new Error('Faça login novamente como administrador.');
+    const { error } = await supabase.from('rifa_sorteios').insert({
+      id: r.id, numero: r.numero, modalidade: r.modalidade,
+      situacao: r.situacao, ganhador: r.ganhador,
+      participantes: r.participantes, criado_por: user.id
+    });
+    if (error && error.code !== '23505') throw error;
+    resultadoSalvo = true;
+    $('drawSave').hidden = true;
+    $('drawAgain').hidden = true;
+    $('drawSaveStatus').textContent = 'Sorteio salvo no histórico oficial.';
+    $('drawCountdown').textContent = 'Resultado registrado no Supabase.';
+    await carregarHistorico();
+  } catch(error) {
+    $('drawSaveStatus').textContent = 'Falha ao salvar: ' + error.message + '. Você pode tentar novamente.';
+  } finally {
+    salvandoSorteio = false;
+    $('drawSave').disabled = false;
+    $('drawClose').disabled = false;
+    $('drawAgain').disabled = false;
+  }
+}
+$('drawSave').addEventListener('click', () => void salvarResultado());
+
 $('drawButton').addEventListener('click', () => {
   if (!admin || !carregado || ocupado || sorteando) return;
   $('drawChoiceDialog').showModal();
@@ -319,8 +431,20 @@ $('drawButton').addEventListener('click', () => {
 $('drawCancel').addEventListener('click', () => $('drawChoiceDialog').close());
 $('drawSold').addEventListener('click', () => void iniciarSorteio('vendidos'));
 $('drawAll').addEventListener('click', () => void iniciarSorteio('todos'));
-$('drawClose').addEventListener('click', () => $('drawDialog').close());
-$('drawDialog').addEventListener('cancel', event => { if (sorteando) event.preventDefault(); });
+$('drawClose').addEventListener('click', sairDoResultado);
+$('drawAgain').addEventListener('click', () => {
+  if (!admin || sorteando || ocupado || salvandoSorteio) return;
+  if (resultadoPendente && !resultadoSalvo &&
+      !confirm('Descartar o resultado atual e iniciar outro sorteio?')) return;
+  $('drawDialog').close();
+  resultadoPendente = null;
+  resultadoSalvo = false;
+  $('drawChoiceDialog').showModal();
+});
+$('drawDialog').addEventListener('cancel', event => {
+  event.preventDefault();
+  if (!sorteando && !salvandoSorteio) sairDoResultado();
+});
 async function iniciarSorteio(modo) {
   if (!admin || ocupado || sorteando) return;
   $('drawChoiceDialog').close();
@@ -335,17 +459,25 @@ async function iniciarSorteio(modo) {
     return;
   }
   sorteando = true;
+  resultadoPendente = null;
+  resultadoSalvo = false;
+  $('drawSaveStatus').textContent = '';
+  $('drawSave').hidden = true;
   $('drawMode').textContent = modo === 'vendidos'
     ? `Somente vendidos · ${participantes.length} participante(s)`
     : 'Todos os números · 100 participantes';
   $('drawWheel').classList.add('spinning');
   $('drawNumber').textContent = '--';
   $('drawResult').textContent = 'Girando a roleta...';
-  $('drawCountdown').textContent = '20 segundos restantes';
+  $('drawWinner').hidden = true;
+  $('drawWinner').textContent = '';
+  $('drawAgain').hidden = true;
+  $('drawWarning').hidden = true;
+  $('drawCountdown').textContent = '15 segundos restantes';
   $('drawProgress').style.width = '0%';
   $('drawClose').hidden = true;
   $('drawDialog').showModal();
-  const duracao = 20000;
+  const duracao = 15000;
   const inicio = performance.now();
   let timeoutId;
   function quadro() {
@@ -371,9 +503,34 @@ async function iniciarSorteio(modo) {
     $('drawWheel').classList.remove('spinning');
     try {
       const vencedor = numeroAleatorio(participantes);
+      const registro = numeros[vencedor];
       $('drawNumber').textContent = format(vencedor);
-      $('drawResult').textContent = `🎉 Número sorteado: ${format(vencedor)}!`;
-      $('drawCountdown').textContent = 'Sorteio concluído. Nenhuma venda foi alterada.';
+      $('drawWinner').hidden = false;
+      if (registro.situacao === 'vendido' && registro.comprador?.trim()) {
+        $('drawResult').textContent = `🏆 Número ${format(vencedor)} — GANHADOR CONFIRMADO!`;
+        $('drawWinner').textContent = `Ganhador: ${registro.comprador.trim()}`;
+      } else if (registro.situacao === 'vendido') {
+        $('drawResult').textContent = `Número ${format(vencedor)} — VENDIDO`;
+        $('drawWinner').textContent = 'Comprador sem identificação cadastrada. Confira o registro antes de anunciar o ganhador.';
+      } else {
+        const reservado = registro.situacao === 'reservado';
+        $('drawResult').textContent = `Número ${format(vencedor)} — ${reservado ? 'RESERVADO' : 'NÃO VENDIDO'}`;
+        $('drawWinner').textContent = reservado
+          ? 'Número reservado, mas não vendido. Sem ganhador confirmado.'
+          : 'Número disponível. Sorteio encerrado sem ganhador.';
+        $('drawAgain').hidden = false;
+        $('drawWarning').hidden = false;
+      }
+      // Fotografia do cadastro feita no momento do sorteio. Não depende de alterações posteriores.
+      resultadoPendente = {
+        id: crypto.randomUUID(), numero: vencedor, modalidade: modo,
+        situacao: registro.situacao,
+        ganhador: registro.situacao === 'vendido' ? (registro.comprador?.trim() || null) : null,
+        participantes: participantes.length
+      };
+      $('drawSave').hidden = false;
+      $('drawSaveStatus').textContent = 'Resultado ainda não salvo. Salve para registrar no histórico oficial.';
+      $('drawCountdown').textContent = 'Nenhuma venda foi alterada.';
     } catch (erro) {
       $('drawResult').textContent = 'Não foi possível concluir: ' + erro.message;
     }
