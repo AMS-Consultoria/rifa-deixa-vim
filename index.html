@@ -4,8 +4,9 @@
 
 /* Sorteio: visual da roleta em harmonia com a cartela */
 .action.draw{background:linear-gradient(135deg,#7e1c2a,#b52b3d);border-color:#cf5764}
-.draw-options{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
+.draw-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
 .draw-options button{width:100%;min-height:52px}
+.draw-options #drawCancel{grid-column:1/-1}
 .draw-help{color:#d2d2d9;font-size:13px;line-height:1.5}
 #drawDialog{text-align:center;max-width:440px}
 #drawDialog h2{margin-top:2px;font-size:22px}
@@ -55,6 +56,7 @@ const reais = n => Number(n).toLocaleString('pt-BR', { style: 'currency', curren
 const LOCAL_KEY = 'deixavim_rifa_v1';
 let numeros = {}, admin = false, atual = null, ocupado = false, carregado = false, sorteando = false;
 let resultadoPendente = null, resultadoSalvo = false, salvandoSorteio = false, historicoCarregado = false;
+let logoutPendente = false, historicoToken = 0;
 
 function aviso(message) { $('notice').textContent = message; }
 function resetar() {
@@ -106,7 +108,10 @@ function render() {
   $('loginButton').hidden = admin;
   $('importLocal').hidden = !admin || !registrosValidos(dadosLocais()).length;
   $('historySection').hidden = !admin;
-  if (!admin) historicoCarregado = false;
+  if (!admin) {
+    historicoCarregado = false;
+    $('historyList').replaceChildren();
+  }
   $('syncInfo').textContent = admin
     ? 'Área administrativa: alterações enviadas ao banco online. O backup contém dados pessoais: guarde-o com cuidado.'
     : 'Consulta pública: números sincronizados, sem exposição dos nomes e telefones dos compradores.';
@@ -141,7 +146,7 @@ async function verificarAdministrador() {
   return !!data;
 }
 async function atualizarTela() {
-  if (ocupado || sorteando) return false;
+  if (ocupado || sorteando || logoutPendente) return false;
   ocupado = true;
   aviso('Sincronizando números...');
   try {
@@ -153,6 +158,7 @@ async function atualizarTela() {
     } else {
       consulta = await supabase.rpc('rifa_status_publico');
     }
+    if (logoutPendente) return false;
     if (consulta.error) throw consulta.error;
     if (!Array.isArray(consulta.data) || consulta.data.length !== 100) {
       throw new Error('A consulta não retornou os 100 números esperados.');
@@ -170,8 +176,14 @@ async function atualizarTela() {
     if (admin && !historicoCarregado) await carregarHistorico();
     return true;
   } catch (error) {
-    if (!carregado) { admin = false; resetar(); render(); }
-    aviso('Falha na sincronização. Os dados exibidos podem estar desatualizados. ' + (error.message || 'Tente novamente.'));
+    // Uma sessão vencida ou uma falha de rede não deve deixar dados privados na tela.
+    admin = false;
+    carregado = false;
+    historicoToken++;
+    resetar();
+    if ($('editor').open) $('editor').close();
+    render();
+    aviso('Falha na sincronização. Atualize para consultar os números. ' + (error.message || 'Tente novamente.'));
     return false;
   } finally { ocupado = false; }
 }
@@ -245,8 +257,22 @@ $('authForm').addEventListener('submit', async event => {
   await atualizarTela();
 });
 $('logoutButton').addEventListener('click', async () => {
-  await supabase.auth.signOut();
+  logoutPendente = true;
+  historicoToken++;
   admin = false;
+  carregado = false;
+  resetar();
+  render();
+  let error;
+  try { ({ error } = await supabase.auth.signOut()); }
+  catch (failure) { error = failure; }
+  if (error) {
+    $('logoutButton').hidden = false;
+    $('loginButton').hidden = true;
+    aviso('Não foi possível encerrar a sessão. Use Sair novamente: ' + error.message);
+    return;
+  }
+  logoutPendente = false;
   await atualizarTela();
 });
 function baixar(nome, conteudo) {
@@ -341,7 +367,8 @@ function dataDoSorteio(iso) {
   return Number.isNaN(date.getTime()) ? 'Data indisponível' : date.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 }
 async function carregarHistorico() {
-  if (!admin) return;
+  if (!admin || logoutPendente) return;
+  const token = ++historicoToken;
   const lista = $('historyList');
   lista.replaceChildren();
   const carregando = document.createElement('li');
@@ -350,11 +377,12 @@ async function carregarHistorico() {
   const { data, error } = await supabase.from('rifa_sorteios')
     .select('id,numero,modalidade,situacao,ganhador,participantes,realizado_em')
     .order('realizado_em', { ascending: false }).limit(50);
+  if (!admin || logoutPendente || token !== historicoToken) return;
   lista.replaceChildren();
   if (error) {
     historicoCarregado = false;
     const mensagem = document.createElement('li');
-    mensagem.textContent = 'Não foi possível consultar o histórico. Execute primeiro o SQL de criação da tabela rifa_sorteios. Detalhe: ' + error.message;
+    mensagem.textContent = 'Não foi possível consultar o histórico. Verifique a conexão e as permissões de acesso. Detalhe: ' + error.message;
     lista.append(mensagem);
     return;
   }
@@ -401,6 +429,7 @@ async function salvarResultado() {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError) throw userError;
     if (!user) throw new Error('Faça login novamente como administrador.');
+    if (!await verificarAdministrador()) throw new Error('A sessão não tem permissão administrativa.');
     const { error } = await supabase.from('rifa_sorteios').insert({
       id: r.id, numero: r.numero, modalidade: r.modalidade,
       situacao: r.situacao, ganhador: r.ganhador,
