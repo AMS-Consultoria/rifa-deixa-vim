@@ -1,7 +1,28 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rifa Deixa Vim</title><style>
 :root{font-family:system-ui,-apple-system,Arial,sans-serif;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101014;color:#fff}main{max-width:780px;margin:auto;padding:18px 12px 38px}.hero{text-align:center;background:linear-gradient(130deg,#19191d,#430d13 65%,#141414);border:1px solid #87313a;border-radius:16px;padding:20px 10px}.hero h1{font-size:clamp(26px,7vw,42px);margin:0;font-weight:900;letter-spacing:.06em}.hero p{margin:6px 0;color:#f5d7a1}.hero strong{font-size:25px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat{background:#232329;padding:12px 3px;border-radius:12px;text-align:center}.stat b{display:block;font-size:27px}.stat small{color:#d1d1d8}.total{display:flex;justify-content:space-between;background:#232329;border-radius:12px;padding:13px;margin-bottom:14px}.total b{color:#7be0a0}.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;margin-bottom:12px}.dot{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px}.grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}.num{border:1px solid #5c5c65;border-radius:5px;aspect-ratio:1/1;min-width:0;background:#eee;color:#181818;font-size:clamp(10px,2.7vw,16px);font-weight:800;cursor:pointer;padding:0}.num.reservado{background:#f7c04a}.num.vendido{background:#17834a;color:white}.num:focus-visible{outline:3px solid #e54b55;outline-offset:1px}.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.actions > button.action{width:100%;min-width:0;min-height:60px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.25;white-space:normal;padding:10px 8px;font-size:clamp(12px,3.2vw,15px)}.actions > button.action[hidden]{display:none}button.action{background:#33333d;border:1px solid #666674;color:white;border-radius:9px;padding:11px 13px;font-size:14px;font-weight:650;cursor:pointer}.action.primary{background:#ba2736;border-color:#ba2736}.muted{color:#a9a9b2;font-size:12px;line-height:1.55}dialog{width:min(95vw,440px);background:#222229;color:#fff;border:1px solid #6e6e77;border-radius:16px;padding:20px}dialog::backdrop{background:#000b}label{display:block;margin:14px 0 6px;font-size:14px}input,select{width:100%;background:#121216;border:1px solid #777782;color:white;border-radius:8px;padding:12px;font:inherit}dialog menu{padding:0;display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 0}dialog menu button{flex:1}.notice{min-height:18px;font-size:13px;color:#91e5b2;margin-top:8px}h2{font-size:18px;margin:20px 0 10px}.entries{padding:0;list-style:none}.entries li{background:#24242b;border-radius:8px;padding:10px;margin-bottom:5px;font-size:14px;display:flex;justify-content:space-between;gap:8px}.entries button{border:0;background:transparent;color:#f0c7cc;text-decoration:underline;cursor:pointer}#restore{display:none}@media(max-width:370px){main{padding-left:7px;padding-right:7px}.grid{gap:2px}.num{font-size:10px}}
-</style></head><body><main><header class="hero"><h1>RIFA DEIXA VIM</h1><p>Prêmio: Agasalho esportivo</p><strong>R$ 5,00 por número</strong><p>Sorteio após todos os números serem preenchidos</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></main><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
+
+/* Sorteio: visual da roleta em harmonia com a cartela */
+.action.draw{background:linear-gradient(135deg,#7e1c2a,#b52b3d);border-color:#cf5764}
+.draw-options{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
+.draw-options button{width:100%;min-height:52px}
+.draw-help{color:#d2d2d9;font-size:13px;line-height:1.5}
+#drawDialog{text-align:center;max-width:440px}
+#drawDialog h2{margin-top:2px;font-size:22px}
+.draw-mode{font-size:13px;color:#e6c88e;margin:2px 0 14px}
+.draw-wheel{position:relative;width:min(64vw,255px);height:min(64vw,255px);max-width:255px;max-height:255px;margin:10px auto 16px;border-radius:50%;display:grid;place-items:center;isolation:isolate;filter:drop-shadow(0 12px 20px #0008)}
+.draw-wheel::before{content:'';position:absolute;inset:0;border-radius:50%;border:7px solid #d7b46c;background:repeating-conic-gradient(from 0deg,#ae2637 0deg 18deg,#23232d 18deg 36deg);box-shadow:inset 0 0 0 4px #17171b,0 0 0 2px #603c28}
+.draw-wheel::after{content:'';position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:27px solid #f5ce65;filter:drop-shadow(0 2px 2px #0009)}
+.draw-wheel.spinning::before{animation:wheelTurn 0.5s linear infinite}
+@keyframes wheelTurn{to{transform:rotate(360deg)}}
+.draw-number{z-index:1;display:grid;place-items:center;width:54%;aspect-ratio:1;background:#15151c;border:4px solid #e1b868;border-radius:50%;font-weight:900;font-size:clamp(46px,13vw,76px);font-variant-numeric:tabular-nums;box-shadow:inset 0 3px 12px #000a}
+.draw-track{height:9px;background:#45454f;border-radius:20px;overflow:hidden;margin:16px 4px 8px}
+.draw-progress{height:100%;width:0;background:linear-gradient(90deg,#b72b42,#f2c86e);border-radius:20px}
+.draw-result{font-size:16px;font-weight:750;min-height:26px;color:#f8da9a}
+.draw-result strong{color:#fff}
+#drawClose{width:100%;min-height:48px}
+@media(prefers-reduced-motion:reduce){.draw-wheel.spinning::before{animation-duration:2s}}
+</style></head><body><main><header class="hero"><h1>RIFA DEIXA VIM</h1><p>Prêmio: Agasalho esportivo</p><strong>R$ 5,00 por número</strong><p>Sorteio após todos os números serem preenchidos</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>20 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><button class="action primary" type="button" id="drawClose" hidden>Fechar resultado</button></dialog><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const URL_DB = 'https://bxiugnskskzhigyguyqp.supabase.co';
 const PUBLIC_KEY = 'sb_publishable_2Fb6r4nFl8uCjhVDWdHf-Q_Y5ij1b-t';
@@ -12,7 +33,7 @@ const $ = id => document.getElementById(id);
 const format = n => String(n).padStart(2, '0');
 const reais = n => Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const LOCAL_KEY = 'deixavim_rifa_v1';
-let numeros = {}, admin = false, atual = null, ocupado = false, carregado = false;
+let numeros = {}, admin = false, atual = null, ocupado = false, carregado = false, sorteando = false;
 
 function aviso(message) { $('notice').textContent = message; }
 function resetar() {
@@ -60,7 +81,7 @@ function render() {
   $('reservados').textContent = carregado ? reservados : '…';
   $('vendidos').textContent = carregado ? vendidos : '…';
   $('total').textContent = carregado ? reais(vendidos * 5) : '…';
-  for (const id of ['buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export']) $(id).hidden = !admin;
+  for (const id of ['buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export', 'drawButton']) $(id).hidden = !admin;
   $('loginButton').hidden = admin;
   $('importLocal').hidden = !admin || !registrosValidos(dadosLocais()).length;
   $('syncInfo').textContent = admin
@@ -97,7 +118,7 @@ async function verificarAdministrador() {
   return !!data;
 }
 async function atualizarTela() {
-  if (ocupado) return;
+  if (ocupado || sorteando) return false;
   ocupado = true;
   aviso('Sincronizando números...');
   try {
@@ -123,12 +144,15 @@ async function atualizarTela() {
     carregado = true;
     render();
     aviso('Números sincronizados com o banco online.');
+    return true;
   } catch (error) {
     if (!carregado) { admin = false; resetar(); render(); }
     aviso('Falha na sincronização. Os dados exibidos podem estar desatualizados. ' + (error.message || 'Tente novamente.'));
+    return false;
   } finally { ocupado = false; }
 }
 function abrirNumero(numero) {
+  if (sorteando) return;
   if (!admin) { aviso('Somente o administrador pode registrar ou alterar números.'); return; }
   if (ocupado) return;
   atual = numero;
@@ -275,11 +299,95 @@ $('export').addEventListener('click', async () => {
     aviso(conseguiu ? 'Lista copiada.' : 'Não foi possível copiar no navegador.');
   }
 });
+
+// Sorteio de 20 segundos. Roleta visual; vencedor escolhido com aleatoriedade
+// criptograficamente segura, com chances iguais para cada numero elegivel.
+function indiceSeguro(tamanho) {
+  if (!Number.isInteger(tamanho) || tamanho < 1) throw new Error('Sem participantes.');
+  if (!globalThis.crypto?.getRandomValues) throw new Error('Sorteio seguro indisponivel neste navegador.');
+  const max = 4294967296;
+  const limite = max - (max % tamanho);
+  const valores = new Uint32Array(1);
+  do { crypto.getRandomValues(valores); } while (valores[0] >= limite);
+  return valores[0] % tamanho;
+}
+function numeroAleatorio(lista) { return lista[indiceSeguro(lista.length)]; }
+$('drawButton').addEventListener('click', () => {
+  if (!admin || !carregado || ocupado || sorteando) return;
+  $('drawChoiceDialog').showModal();
+});
+$('drawCancel').addEventListener('click', () => $('drawChoiceDialog').close());
+$('drawSold').addEventListener('click', () => void iniciarSorteio('vendidos'));
+$('drawAll').addEventListener('click', () => void iniciarSorteio('todos'));
+$('drawClose').addEventListener('click', () => $('drawDialog').close());
+$('drawDialog').addEventListener('cancel', event => { if (sorteando) event.preventDefault(); });
+async function iniciarSorteio(modo) {
+  if (!admin || ocupado || sorteando) return;
+  $('drawChoiceDialog').close();
+  // Sincroniza novamente antes de congelar os participantes, evitando dados velhos.
+  const ok = await atualizarTela();
+  if (!ok || !admin) { alert('Não foi possível conferir os participantes no banco online. Tente novamente.'); return; }
+  const participantes = Object.values(numeros)
+    .filter(r => modo === 'todos' || r.situacao === 'vendido')
+    .map(r => r.numero).sort((a,b) => a-b);
+  if (!participantes.length) {
+    alert('Não há números vendidos para sortear. Registre pelo menos uma venda ou escolha todos os números.');
+    return;
+  }
+  sorteando = true;
+  $('drawMode').textContent = modo === 'vendidos'
+    ? `Somente vendidos · ${participantes.length} participante(s)`
+    : 'Todos os números · 100 participantes';
+  $('drawWheel').classList.add('spinning');
+  $('drawNumber').textContent = '--';
+  $('drawResult').textContent = 'Girando a roleta...';
+  $('drawCountdown').textContent = '20 segundos restantes';
+  $('drawProgress').style.width = '0%';
+  $('drawClose').hidden = true;
+  $('drawDialog').showModal();
+  const duracao = 20000;
+  const inicio = performance.now();
+  let timeoutId;
+  function quadro() {
+    const decorrido = Math.min(duracao, performance.now() - inicio);
+    const restante = duracao - decorrido;
+    $('drawProgress').style.width = `${decorrido / duracao * 100}%`;
+    if (restante > 0) {
+      // Apenas animacao: o resultado e sorteado de verdade ao terminar.
+      try { $('drawNumber').textContent = format(numeroAleatorio(participantes)); }
+      catch (erro) {
+        $('drawWheel').classList.remove('spinning');
+        $('drawResult').textContent = 'Sorteio indisponível: ' + erro.message;
+        $('drawClose').hidden = false;
+        sorteando = false;
+        return;
+      }
+      $('drawCountdown').textContent = `${Math.ceil(restante / 1000)} segundos restantes`;
+      const atraso = 65 + Math.round(Math.pow(decorrido / duracao, 3) * 300);
+      timeoutId = setTimeout(quadro, Math.min(atraso, restante));
+      return;
+    }
+    clearTimeout(timeoutId);
+    $('drawWheel').classList.remove('spinning');
+    try {
+      const vencedor = numeroAleatorio(participantes);
+      $('drawNumber').textContent = format(vencedor);
+      $('drawResult').textContent = `🎉 Número sorteado: ${format(vencedor)}!`;
+      $('drawCountdown').textContent = 'Sorteio concluído. Nenhuma venda foi alterada.';
+    } catch (erro) {
+      $('drawResult').textContent = 'Não foi possível concluir: ' + erro.message;
+    }
+    $('drawClose').hidden = false;
+    sorteando = false;
+  }
+  quadro();
+}
+
 $('reloadButton').addEventListener('click', () => void atualizarTela());
 resetar(); render();
 await atualizarTela();
 setInterval(() => {
-  if (document.visibilityState === 'visible' && !$('editor').open && !$('authDialog').open)
+  if (document.visibilityState === 'visible' && !sorteando && !$('editor').open && !$('authDialog').open && !$('drawChoiceDialog').open && !$('drawDialog').open)
     void atualizarTela();
 }, 30000);
 </script></body></html>
