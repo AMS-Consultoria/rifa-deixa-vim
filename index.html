@@ -59,8 +59,8 @@
 .settings-hub-note{grid-column:1/-1}
 @media(max-width:370px){.campaign-toolbar{grid-template-columns:1fr}.settings-hub{grid-template-columns:1fr}}
 @media(max-width:560px){.settings-fields{grid-template-columns:1fr}}
-.access-page{max-width:520px;margin:24px auto;background:#222229;border:1px solid #666674;border-radius:16px;padding:24px}.access-page h1{margin-top:0;color:#f5d7a1}.access-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.access-actions button{min-height:48px}.access-actions .wide{grid-column:1/-1}.account-status{font-size:13px;color:#f5d7a1}.own-participations{background:#222229;border-radius:12px;padding:16px;margin-top:16px}.own-participations ul{padding-left:20px}.own-participations li{margin:10px 0}
-</style></head><body><main><section id="accessPage" class="access-page" aria-labelledby="accessTitle"><h1 id="accessTitle">Rifa Deixa Vim</h1><p>Entre na sua conta ou consulte as campanhas como visitante.</p><p id="accessStatus" class="muted" role="status">Conferindo sessão...</p><div class="access-actions"><button class="action primary" id="accessLogin" type="button">Entrar</button><button class="action" id="accessSignup" type="button">Criar usuário</button><button class="action wide" id="accessGuest" type="button">Continuar como visitante</button><button class="action wide" id="accessLogout" type="button" hidden>Tentar sair novamente</button></div></section><div id="rafflePage" hidden><p id="accountStatus" class="account-status" role="status"></p><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><section id="ownParticipations" class="own-participations" hidden aria-labelledby="ownTitle"><h2 id="ownTitle">Minhas participações nesta campanha</h2><p id="ownMessage" class="muted" role="status"></p><ul id="ownList"></ul></section><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
+.participant-matches{padding:0;list-style:none;display:grid;gap:8px;margin:10px 0}.participant-matches button{width:100%;text-align:left;background:#302c25;border:1px solid #9b753f;color:#fff;border-radius:8px;padding:10px}.participant-match-panel{border:1px solid #9b753f;border-radius:10px;padding:10px;margin-top:12px}.participant-matches .muted{display:block}#editor{max-height:90vh;overflow-y:auto}.access-page{max-width:520px;margin:24px auto;background:#222229;border:1px solid #666674;border-radius:16px;padding:24px}.access-page h1{margin-top:0;color:#f5d7a1}.access-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.access-actions button{min-height:48px}.access-actions .wide{grid-column:1/-1}.account-status{font-size:13px;color:#f5d7a1}.own-participations{background:#222229;border-radius:12px;padding:16px;margin-top:16px}.own-participations ul{padding-left:20px}.own-participations li{margin:10px 0}
+</style></head><body><main><section id="accessPage" class="access-page" aria-labelledby="accessTitle"><h1 id="accessTitle">Rifa Deixa Vim</h1><p>Entre na sua conta ou consulte as campanhas como visitante.</p><p id="accessStatus" class="muted" role="status">Conferindo sessão...</p><div class="access-actions"><button class="action primary" id="accessLogin" type="button">Entrar</button><button class="action" id="accessSignup" type="button">Criar usuário</button><button class="action wide" id="accessGuest" type="button">Continuar como visitante</button><button class="action wide" id="accessLogout" type="button" hidden>Tentar sair novamente</button></div></section><div id="rafflePage" hidden><p id="accountStatus" class="account-status" role="status"></p><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><section id="ownParticipations" class="own-participations" hidden aria-labelledby="ownTitle"><h2 id="ownTitle">Minhas participações nesta campanha</h2><p id="ownMessage" class="muted" role="status"></p><ul id="ownList"></ul></section><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Participantes registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
 <section class="settings-page" id="settingsPage" hidden aria-labelledby="settingsTitle">
 <h2 id="settingsTitle">Configurações</h2><div id="settingsHub" class="settings-hub"><button class="action" type="button" id="settingsCloseButton">Voltar para a rifa</button><button class="action" type="button" id="editCampaignButton">Editar campanha selecionada</button><button class="action primary" type="button" id="settingsNewCampaignButton">+ Nova Campanha</button><p id="campaignNotice" class="muted settings-hub-note" role="status"></p></div>
 <p class="settings-note">Vendas e reservas existentes mantêm seus valores. A quantidade só pode ser reduzida sem ocultar bilhetes ocupados.</p>
@@ -75,7 +75,7 @@
 <div class="full"><label for="settingsStatus">Situação da campanha</label><select id="settingsStatus"><option value="em_andamento">Em andamento</option><option value="encerrada">Encerrada</option><option value="sorteada">Sorteada</option></select></div>
 </div><p class="notice" id="settingsMessage" role="status"></p>
 <div class="settings-actions"><button class="action" type="button" id="settingsBack">Voltar</button><button class="action primary" type="submit" id="settingsSave">Salvar configurações</button></div></form>
-</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Entrar</h2><p class="muted">O acesso é definido pela sua conta.</p><label for="email">Usuário</label><input id="email" type="text" maxlength="254" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">Administrador: seu acesso atual continua válido.</p><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="accountAccessButton" hidden>Acesso do usuário</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><dialog id="signupDialog" aria-labelledby="signupTitle"><form id="signupForm"><h2 id="signupTitle">Criar usuário</h2><label for="signupEmail">Nome de usuário</label><input id="signupEmail" type="text" minlength="3" maxlength="30" pattern="[a-zA-Z][a-zA-Z0-9_]{2,29}" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">De 3 a 30 caracteres. Comece com uma letra e use letras, números ou _.</p><label for="signupPassword">Senha</label><input id="signupPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p class="muted">Use pelo menos 12 caracteres, com letras e números.</p><label for="signupConfirm">Confirmar senha</label><input id="signupConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p id="signupMessage" class="muted" role="status"></p><menu><button id="signupCancel" class="action" type="button">Voltar</button><button id="signupSubmit" class="action primary" type="submit">Criar usuário</button></menu></form></dialog>
+</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Entrar</h2><p class="muted">O acesso é definido pela sua conta.</p><label for="email">Usuário</label><input id="email" type="text" maxlength="254" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">Administrador: seu acesso atual continua válido.</p><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome completo do participante</label><input id="nome" maxlength="100" autocomplete="name" placeholder="Nome completo" required><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="tel" placeholder="DDD + número"><section id="participantMatchPanel" class="participant-match-panel" hidden aria-live="polite"><strong id="participantMatchTitle">Participante já cadastrado</strong><p id="participantMatchMessage" class="muted"></p><ul id="participantMatches" class="participant-matches"></ul><button class="action" type="button" id="participantHomonym">Cadastrar outra pessoa com esse nome</button></section><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="accountAccessButton" hidden>Acesso do usuário</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><dialog id="signupDialog" aria-labelledby="signupTitle"><form id="signupForm"><h2 id="signupTitle">Criar usuário</h2><label for="signupEmail">Nome de usuário</label><input id="signupEmail" type="text" minlength="3" maxlength="30" pattern="[a-zA-Z][a-zA-Z0-9_]{2,29}" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">De 3 a 30 caracteres. Comece com uma letra e use letras, números ou _.</p><label for="signupPassword">Senha</label><input id="signupPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p class="muted">Use pelo menos 12 caracteres, com letras e números.</p><label for="signupConfirm">Confirmar senha</label><input id="signupConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p id="signupMessage" class="muted" role="status"></p><menu><button id="signupCancel" class="action" type="button">Voltar</button><button id="signupSubmit" class="action primary" type="submit">Criar usuário</button></menu></form></dialog>
 <dialog id="accountDialog" aria-labelledby="accountTitle"><form id="accountForm"><h2 id="accountTitle">Acesso ao número</h2><p class="muted">Vincule uma conta cadastrada para consultar este número. Confira se a conta pertence ao participante. O vínculo não altera o pagamento.</p><label for="accountEmail">Usuário da conta</label><input id="accountEmail" type="text" minlength="3" maxlength="30" autocapitalize="none" spellcheck="false" autocomplete="off" required><p id="accountMessage" class="muted" role="status"></p><div class="settings-actions"><button id="accountCancel" class="action" type="button">Voltar</button><button id="accountSave" class="action primary" type="submit">Vincular conta</button><button id="accountUnlink" class="action" type="button">Desvincular conta</button></div></form></dialog><script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const URL_DB = 'https://bxiugnskskzhigyguyqp.supabase.co';
@@ -96,6 +96,7 @@ let resultadoPendente = null, resultadoSalvo = false, salvandoSorteio = false, h
 let logoutPendente = false, historicoToken = 0;
 let usuarioAtual = null, visitanteEscolhido = false, acessoVerificado = false, acessoVersao = 0;
 let minhasParticipacoes = [], mensagemParticipacoes = '', authTimer = null;
+let participanteSelecionadoId = null;
 function mostrarAcesso() {
   const entrou = acessoVerificado && (!!usuarioAtual || visitanteEscolhido);
   $('accessPage').hidden = entrou;
@@ -285,28 +286,13 @@ function render() {
   }
   $('syncInfo').textContent = admin
     ? 'Área administrativa: alterações enviadas ao banco online. O backup contém dados pessoais: guarde-o com cuidado.'
-    : 'Consulta pública: números sincronizados, sem exposição dos nomes e telefones dos compradores.';
+    : 'Consulta pública: números sincronizados, sem exposição dos nomes e telefones dos participantes.';
   mostrarAcesso();
-  const lista = $('entries');
-  lista.replaceChildren();
-  if (!admin) return;
-  for (let n = 1; n <= configuracao.quantidade_bilhetes; n++) {
-    const r = numeros[n];
-    if (r.situacao === 'disponivel') continue;
-    const linha = document.createElement('li');
-    const descricao = document.createElement('span');
-    descricao.textContent = `${format(n)} · ${r.comprador || '(sem nome)'} · ${r.situacao}`;
-    const editar = document.createElement('button');
-    editar.textContent = 'Editar';
-    editar.addEventListener('click', () => abrirNumero(n));
-    linha.append(descricao, editar);
-    lista.append(linha);
-  }
-  if (!lista.children.length) {
-    const li = document.createElement('li');
-    li.textContent = 'Nenhum comprador registrado.';
-    lista.append(li);
-  }
+  const lista = $('entries'); lista.replaceChildren(); if (!admin) return;
+  const participantesVisiveis = new Map();
+  for(let n=1;n<=configuracao.quantidade_bilhetes;n++){const r=numeros[n];if(r.situacao==='disponivel')continue;const chave=r.participante_id||'legacy-'+n;let item=participantesVisiveis.get(chave);if(!item){item={nome:r.comprador||'(sem nome)',numeros:[],situacoes:new Set(),pagos:new Set(),numeroBase:n};participantesVisiveis.set(chave,item)}item.numeros.push(format(n));item.situacoes.add(r.situacao);item.pagos.add(r.pago?'pago':'pendente')}
+  for(const item of participantesVisiveis.values()){const linha=document.createElement('li'),descricao=document.createElement('span'),editar=document.createElement('button');descricao.textContent=item.nome+' · Nº '+item.numeros.join(', ')+' · '+[...item.situacoes].join('/')+' · '+[...item.pagos].join('/');editar.textContent='Editar';editar.addEventListener('click',()=>abrirNumero(item.numeroBase));linha.append(descricao,editar);lista.append(linha)}
+  if(!lista.children.length){const li=document.createElement('li');li.textContent='Nenhum participante registrado.';lista.append(li)}
 }
 async function verificarAdministrador() {
   const versao = acessoVersao;
@@ -328,7 +314,7 @@ async function consultarBilhetes(ehAdmin) {
     const fim = Math.min(inicio + 499, configuracao.quantidade_bilhetes - 1);
     let consulta;
     if (ehAdmin) {
-      let query = supabase.from('rifa_numeros').select('numero,situacao,comprador,telefone,pago,valor');
+      let query = supabase.from('rifa_numeros').select('numero,situacao,comprador,telefone,pago,valor,participante_id');
       if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
       consulta = await query.order('numero').range(inicio, fim);
     } else {
@@ -397,6 +383,8 @@ function abrirNumero(numero) {
   if (!admin) { aviso('Somente o administrador pode registrar ou alterar números.'); return; }
   if (ocupado) return;
   atual = numero;
+  participanteSelecionadoId = numeros[numero].participante_id || null;
+  $('participantMatchPanel').hidden = true; $('participantMatches').replaceChildren(); $('participantMatchMessage').textContent = '';
   const r = numeros[numero];
   $('dialogTitle').textContent = 'Número ' + format(numero);
   $('nome').value = r.comprador || '';
@@ -407,37 +395,31 @@ function abrirNumero(numero) {
   $('editor').showModal();
   $('nome').focus();
 }
-async function salvarNumero(situacao, comprador, telefone) {
-  if (ocupado || !admin || atual === null) return;
-  ocupado = true;
-  try {
-    const alteracao = {
-      situacao, comprador: comprador || null, telefone: telefone || null,
-      pago: situacao === 'vendido', atualizado_em: new Date().toISOString()
-    };
-    if (numeros[atual].situacao === 'disponivel' && situacao !== 'disponivel')
-      alteracao.valor = configuracao.valor_bilhete;
-    let query = supabase.from('rifa_numeros').update(alteracao)
-      .eq('numero', atual).eq('situacao', numeros[atual].situacao);
-    if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
-    const { data, error } = await query.select('numero');
-    if (error) throw error;
-    if (data?.length !== 1) throw new Error('O banco não autorizou a alteração.');
-    $('editor').close();
-    aviso('Número ' + format(atual) + ' salvo online.');
-  } catch (error) {
-    alert('Não foi possível salvar: ' + error.message);
-  } finally { ocupado = false; }
-  await atualizarTela();
+function mostrarCandidatosParticipante(candidatos) {
+  const lista=$('participantMatches'); lista.replaceChildren(); $('participantMatchPanel').hidden=false;
+  $('participantMatchTitle').textContent='Participante já cadastrado';
+  $('participantMatchMessage').textContent='Escolha o cadastro correto ou confirme que se trata de outra pessoa com o mesmo nome.';
+  for(const pessoa of candidatos||[]){const li=document.createElement('li'),botao=document.createElement('button');botao.type='button';botao.textContent=pessoa.nome_completo+(pessoa.telefone?' · '+pessoa.telefone:' · sem telefone')+' · cadastrado em '+new Date(pessoa.criado_em).toLocaleDateString('pt-BR');botao.addEventListener('click',()=>{participanteSelecionadoId=pessoa.id;$('nome').value=pessoa.nome_completo;$('telefone').value=pessoa.telefone||'';$('participantMatches').replaceChildren();$('participantMatchTitle').textContent='Participante selecionado';$('participantMatchMessage').textContent='Este número será associado a '+pessoa.nome_completo+'. Toque em Salvar para continuar.';$('participantHomonym').hidden=true;});li.append(botao);lista.append(li);}
+  $('participantHomonym').hidden=!(candidatos||[]).length;
 }
-$('form').addEventListener('submit', event => {
-  event.preventDefault();
-  const comprador = $('nome').value.trim();
-  if (!comprador) { alert('Informe o nome do comprador.'); return; }
-  void salvarNumero($('status').value, comprador, $('telefone').value.trim());
-});
-$('release').addEventListener('click', () => {
-  if (confirm('Liberar o número ' + format(atual) + ' e retirar o comprador?')) {
+async function salvarNumero(situacao, comprador, telefone, participanteId=participanteSelecionadoId, confirmarHomonimo=false) {
+  if (ocupado || !admin || atual === null) return;
+  ocupado = true; let duplicado=false;
+  try {
+    const {data,error}=await supabase.rpc('rifa_salvar_participacao',{p_campanha_id:campanhaAtualId,p_numero:atual,p_situacao_anterior:numeros[atual].situacao,p_situacao:situacao,p_nome:comprador||'',p_telefone:telefone||'',p_participante_id:participanteId||null,p_confirmar_homonimo:confirmarHomonimo});
+    if(error)throw error;
+    if(data?.status==='duplicado'){duplicado=true;participanteSelecionadoId=null;mostrarCandidatosParticipante(data.candidatos);return;}
+    if(data?.status!=='salvo')throw new Error('Resposta inválida ao salvar participante.');
+    $('participantHomonym').hidden=true;$('participantMatchPanel').hidden=true;$('editor').close();aviso('Participante e número '+format(atual)+' salvos online.');
+  } catch(error) { alert('Não foi possível salvar: '+error.message); }
+  finally { ocupado=false; }
+  if(!duplicado)await atualizarTela();
+}
+$('nome').addEventListener('input',()=>{participanteSelecionadoId=null;$('participantHomonym').hidden=true;});
+$('telefone').addEventListener('input',()=>{participanteSelecionadoId=null;$('participantHomonym').hidden=true;});
+$('participantHomonym').addEventListener('click',()=>{if(!confirm('Confirma que é uma pessoa diferente, apesar do nome igual? O cadastro será criado como homônimo.'))return;$('participantHomonym').hidden=true;void salvarNumero($('status').value,$('nome').value.trim(),$('telefone').value.trim(),null,true);});
+$('form').addEventListener('submit',event=>{event.preventDefault();const nome=$('nome').value.trim();if(!nome){alert('Informe o nome completo do participante.');return;}void salvarNumero($('status').value,nome,$('telefone').value.trim());});$('release').addEventListener('click', () => {
+  if (confirm('Liberar o número ' + format(atual) + ' e retirar o participante?')) {
     void salvarNumero('disponivel', null, null);
   }
 });
@@ -743,7 +725,7 @@ $('export').addEventListener('click', async () => {
   const texto = Object.values(numeros).filter(r => r.situacao !== 'disponivel')
     .sort((a,b) => a.numero-b.numero)
     .map(r => `${format(r.numero)} - ${r.comprador} - ${r.situacao}`)
-    .join('\n') || 'Nenhum comprador registrado';
+    .join('\n') || 'Nenhum participante registrado';
   try { await navigator.clipboard.writeText(texto); aviso('Lista copiada.'); }
   catch {
     const campo = document.createElement('textarea'); campo.value = texto;
