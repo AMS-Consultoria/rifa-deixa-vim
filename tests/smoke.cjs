@@ -37,6 +37,7 @@ function query(table){
  };return q;
 }const supabase={
  auth:{
+  onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),
   getSession:async()=>({data:{session:session?{user:{id:'admin'}}:null},error:null}),
   getUser:async()=>({data:{user:session?{id:'admin'}:null},error:null}),
   signInWithPassword:async()=>{signIns++;session=true;return {error:null}},
