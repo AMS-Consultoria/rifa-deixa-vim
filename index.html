@@ -43,7 +43,31 @@
 .history-list li span{color:#cacad1}
 [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){.draw-wheel.spinning::before{animation-duration:2s}}
-</style></head><body><main><header class="hero"><h1>RIFA DEIXA VIM</h1><p>Prêmio: Agasalho esportivo</p><strong>R$ 5,00 por número</strong><p>Sorteio após todos os números serem preenchidos</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
+.settings-page{background:#222229;border:1px solid #6e6e77;border-radius:16px;padding:20px;margin-top:8px}
+.settings-page h2{margin-top:0;font-size:24px}
+.settings-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.settings-fields .full{grid-column:1/-1}
+.settings-fields textarea{width:100%;min-height:90px;background:#121216;border:1px solid #777782;color:#fff;border-radius:8px;padding:12px;font:inherit;resize:vertical}
+.settings-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+.settings-actions button{min-height:48px}
+.settings-note{font-size:13px;color:#d2d2d9;line-height:1.5}
+@media(max-width:560px){.settings-fields{grid-template-columns:1fr}}
+</style></head><body><main><div id="rafflePage"><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
+<section class="settings-page" id="settingsPage" hidden aria-labelledby="settingsTitle">
+<h2 id="settingsTitle">Configurações</h2>
+<p class="settings-note">Vendas e reservas existentes mantêm seus valores. A quantidade só pode ser reduzida sem ocultar bilhetes ocupados.</p>
+<form id="settingsForm"><div class="settings-fields">
+<div><label for="settingsEntity">Nome da associação ou entidade</label><input id="settingsEntity" maxlength="120" required></div>
+<div><label for="settingsCampaign">Nome da campanha</label><input id="settingsCampaign" maxlength="120" required></div>
+<div><label for="settingsRaffle">Nome da rifa</label><input id="settingsRaffle" maxlength="120" required></div>
+<div><label for="settingsPrize">Descrição do prêmio</label><input id="settingsPrize" maxlength="240" required></div>
+<div><label for="settingsQuantity">Quantidade de bilhetes</label><input id="settingsQuantity" type="number" min="1" max="10000" step="1" required></div>
+<div><label for="settingsPrice">Valor individual do bilhete (R$)</label><input id="settingsPrice" type="number" min="0.01" max="999999.99" step="0.01" required></div>
+<div class="full"><label for="settingsCriterion">Critério de sorteio</label><textarea id="settingsCriterion" maxlength="500" required></textarea></div>
+<div class="full"><label for="settingsStatus">Situação da campanha</label><select id="settingsStatus"><option value="em_andamento">Em andamento</option><option value="encerrada">Encerrada</option><option value="sorteada">Sorteada</option></select></div>
+</div><p class="notice" id="settingsMessage" role="status"></p>
+<div class="settings-actions"><button class="action" type="button" id="settingsBack">Voltar</button><button class="action primary" type="submit" id="settingsSave">Salvar configurações</button></div></form>
+</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const URL_DB = 'https://bxiugnskskzhigyguyqp.supabase.co';
 const PUBLIC_KEY = 'sb_publishable_2Fb6r4nFl8uCjhVDWdHf-Q_Y5ij1b-t';
@@ -57,11 +81,54 @@ const LOCAL_KEY = 'deixavim_rifa_v1';
 let numeros = {}, admin = false, atual = null, ocupado = false, carregado = false, sorteando = false;
 let resultadoPendente = null, resultadoSalvo = false, salvandoSorteio = false, historicoCarregado = false;
 let logoutPendente = false, historicoToken = 0;
+const CONFIG_PADRAO = Object.freeze({
+  id: 1, nome_entidade: 'Deixa Vim', nome_campanha: 'Campanha 01',
+  nome_rifa: 'Rifa Deixa Vim', descricao_premio: 'Agasalho esportivo',
+  quantidade_bilhetes: 100, valor_bilhete: 5,
+  criterio_sorteio: 'Sorteio após todos os números serem preenchidos',
+  situacao: 'em_andamento', atualizado_em: null
+});
+let configuracao = { ...CONFIG_PADRAO }, configDisponivel = false, totalPublico = 0;
+const situacoesCampanha = { em_andamento: 'Em andamento', encerrada: 'Encerrada', sorteada: 'Sorteada' };
+
+async function carregarConfiguracao() {
+  const { data, error } = await supabase.from('rifa_configuracoes')
+    .select('id,nome_entidade,nome_campanha,nome_rifa,descricao_premio,quantidade_bilhetes,valor_bilhete,criterio_sorteio,situacao,atualizado_em')
+    .eq('id', 1).maybeSingle();
+  if (error) {
+    if (['42P01', 'PGRST205'].includes(error.code)) {
+      configuracao = { ...CONFIG_PADRAO };
+      configDisponivel = false;
+      return;
+    }
+    throw error;
+  }
+  if (!data) throw new Error('Configurações não encontradas no banco.');
+  const quantidade = Number(data.quantidade_bilhetes);
+  const valor = Number(data.valor_bilhete);
+  if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 10000 ||
+      !Number.isFinite(valor) || valor <= 0 || !situacoesCampanha[data.situacao]) {
+    throw new Error('Configurações inválidas no banco.');
+  }
+  configuracao = { ...data, quantidade_bilhetes: quantidade, valor_bilhete: valor };
+  configDisponivel = true;
+}
+function mostrarConfiguracao() {
+  $('heroEntity').textContent = configuracao.nome_entidade;
+  $('heroCampaign').textContent = configuracao.nome_campanha;
+  $('heroRaffle').textContent = configuracao.nome_rifa;
+  $('heroPrize').textContent = 'Prêmio: ' + configuracao.descricao_premio;
+  $('heroPrice').textContent = reais(configuracao.valor_bilhete) + ' por número';
+  $('heroCriterion').textContent = configuracao.criterio_sorteio;
+  $('heroStatus').textContent = situacoesCampanha[configuracao.situacao];
+  $('drawAll').textContent = 'Todos os números (01 a ' + configuracao.quantidade_bilhetes + ')';
+  document.title = configuracao.nome_rifa + ' · ' + configuracao.nome_entidade;
+}
 
 function aviso(message) { $('notice').textContent = message; }
 function resetar() {
   numeros = {};
-  for (let i = 1; i <= 100; i++) numeros[i] = { numero: i, situacao: 'disponivel', comprador: '', telefone: '', pago: false, valor: 5 };
+  for (let i = 1; i <= configuracao.quantidade_bilhetes; i++) numeros[i] = { numero: i, situacao: 'disponivel', comprador: '', telefone: '', pago: false, valor: configuracao.valor_bilhete };
 }
 function dadosLocais() {
   try {
@@ -72,24 +139,31 @@ function dadosLocais() {
 }
 function registrosValidos(registros) {
   const output = [];
-  for (let n = 1; n <= 100; n++) {
+  for (let n = 1; n <= configuracao.quantidade_bilhetes; n++) {
     const r = registros[n];
     if (!r || typeof r !== 'object') continue;
     const nome = String(r.nome ?? r.comprador ?? '').trim().slice(0, 100);
     const situacao = r.status ?? r.situacao;
     if (!nome || !['reservado', 'vendido'].includes(situacao)) continue;
     output.push({ numero: n, comprador: nome, telefone: String(r.telefone ?? '').trim().slice(0,30) || null,
-      situacao, pago: situacao === 'vendido' });
+      situacao, pago: situacao === 'vendido',
+      valor: Number.isFinite(Number(r.valor)) && Number(r.valor) > 0 ? Number(r.valor) : 5 });
   }
   return output;
 }
 function render() {
-  let vendidos = 0, reservados = 0;
+  mostrarConfiguracao();
+  $('settingsSave').disabled = !configDisponivel;
+  if (!admin && !$('settingsPage').hidden) {
+    $('settingsPage').hidden = true;
+    $('rafflePage').hidden = false;
+  }
+  let vendidos = 0, reservados = 0, totalAdmin = 0;
   const grid = $('grid');
   grid.replaceChildren();
-  for (let n = 1; n <= 100; n++) {
+  for (let n = 1; n <= configuracao.quantidade_bilhetes; n++) {
     const r = numeros[n];
-    if (r.situacao === 'vendido') vendidos++;
+    if (r.situacao === 'vendido') { vendidos++; if (admin) totalAdmin += Number(r.valor ?? 5); }
     if (r.situacao === 'reservado') reservados++;
     const botao = document.createElement('button');
     botao.type = 'button';
@@ -100,11 +174,11 @@ function render() {
     botao.addEventListener('click', () => abrirNumero(n));
     grid.append(botao);
   }
-  $('livres').textContent = carregado ? 100 - vendidos - reservados : '…';
+  $('livres').textContent = carregado ? configuracao.quantidade_bilhetes - vendidos - reservados : '…';
   $('reservados').textContent = carregado ? reservados : '…';
   $('vendidos').textContent = carregado ? vendidos : '…';
-  $('total').textContent = carregado ? reais(vendidos * 5) : '…';
-  for (const id of ['buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export', 'drawButton']) $(id).hidden = !admin;
+  $('total').textContent = carregado ? reais(admin ? totalAdmin : totalPublico) : '…';
+  for (const id of ['buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export', 'drawButton', 'settingsButton']) $(id).hidden = !admin;
   $('loginButton').hidden = admin;
   $('importLocal').hidden = !admin || !registrosValidos(dadosLocais()).length;
   $('historySection').hidden = !admin;
@@ -118,7 +192,7 @@ function render() {
   const lista = $('entries');
   lista.replaceChildren();
   if (!admin) return;
-  for (let n = 1; n <= 100; n++) {
+  for (let n = 1; n <= configuracao.quantidade_bilhetes; n++) {
     const r = numeros[n];
     if (r.situacao === 'disponivel') continue;
     const linha = document.createElement('li');
@@ -145,29 +219,44 @@ async function verificarAdministrador() {
   if (error) throw error;
   return !!data;
 }
+async function consultarBilhetes(ehAdmin) {
+  const linhas = [];
+  for (let inicio = 0; inicio < configuracao.quantidade_bilhetes; inicio += 500) {
+    const fim = Math.min(inicio + 499, configuracao.quantidade_bilhetes - 1);
+    const consulta = ehAdmin
+      ? await supabase.from('rifa_numeros')
+          .select('numero,situacao,comprador,telefone,pago,valor').order('numero').range(inicio, fim)
+      : await supabase.rpc(configDisponivel ? 'rifa_estado_publico' : 'rifa_status_publico')
+          .order('numero').range(inicio, fim);
+    if (consulta.error) throw consulta.error;
+    if (!Array.isArray(consulta.data)) throw new Error('Resposta inválida ao consultar os bilhetes.');
+    linhas.push(...consulta.data);
+  }
+  return linhas.filter(linha => Number(linha.numero) >= 1 &&
+    Number(linha.numero) <= configuracao.quantidade_bilhetes);
+}
 async function atualizarTela() {
   if (ocupado || sorteando || logoutPendente) return false;
   ocupado = true;
   aviso('Sincronizando números...');
   try {
+    await carregarConfiguracao();
     const ehAdmin = await verificarAdministrador();
-    let consulta;
-    if (ehAdmin) {
-      consulta = await supabase.from('rifa_numeros')
-        .select('numero,situacao,comprador,telefone,pago,valor').order('numero');
-    } else {
-      consulta = await supabase.rpc('rifa_status_publico');
-    }
+    const linhas = await consultarBilhetes(ehAdmin);
     if (logoutPendente) return false;
-    if (consulta.error) throw consulta.error;
-    if (!Array.isArray(consulta.data) || consulta.data.length !== 100) {
-      throw new Error('A consulta não retornou os 100 números esperados.');
+    const vistos = new Set(linhas.map(linha => Number(linha.numero)));
+    if (linhas.length !== configuracao.quantidade_bilhetes ||
+        vistos.size !== configuracao.quantidade_bilhetes) {
+      throw new Error('A consulta não retornou todos os bilhetes da campanha.');
     }
     admin = ehAdmin;
+    totalPublico = ehAdmin ? 0 : configDisponivel
+      ? Number(linhas[0].total_recebido ?? 0)
+      : linhas.filter(linha => linha.situacao === 'vendido').length * 5;
+    if (!Number.isFinite(totalPublico)) throw new Error('Resumo financeiro inválido.');
     resetar();
-    for (const linha of consulta.data) {
+    for (const linha of linhas) {
       const n = Number(linha.numero);
-      if (!Number.isInteger(n) || n < 1 || n > 100) continue;
       numeros[n] = { ...numeros[n], ...linha };
     }
     carregado = true;
@@ -205,10 +294,14 @@ async function salvarNumero(situacao, comprador, telefone) {
   if (ocupado || !admin || atual === null) return;
   ocupado = true;
   try {
-    const { data, error } = await supabase.from('rifa_numeros').update({
+    const alteracao = {
       situacao, comprador: comprador || null, telefone: telefone || null,
       pago: situacao === 'vendido', atualizado_em: new Date().toISOString()
-    }).eq('numero', atual).select('numero');
+    };
+    if (numeros[atual].situacao === 'disponivel' && situacao !== 'disponivel')
+      alteracao.valor = configuracao.valor_bilhete;
+    const { data, error } = await supabase.from('rifa_numeros').update(alteracao)
+      .eq('numero', atual).select('numero');
     if (error) throw error;
     if (data?.length !== 1) throw new Error('O banco não autorizou a alteração.');
     $('editor').close();
@@ -230,6 +323,73 @@ $('release').addEventListener('click', () => {
   }
 });
 $('cancel').addEventListener('click', () => $('editor').close());
+function preencherConfiguracoes() {
+  const campos = {
+    settingsEntity: 'nome_entidade', settingsCampaign: 'nome_campanha',
+    settingsRaffle: 'nome_rifa', settingsPrize: 'descricao_premio',
+    settingsQuantity: 'quantidade_bilhetes', settingsPrice: 'valor_bilhete',
+    settingsCriterion: 'criterio_sorteio', settingsStatus: 'situacao'
+  };
+  for (const [id, coluna] of Object.entries(campos)) $(id).value = configuracao[coluna];
+}
+$('settingsButton').addEventListener('click', () => {
+  if (!admin || !carregado) return;
+  preencherConfiguracoes();
+  $('settingsMessage').textContent = configDisponivel ? '' :
+    'A página está pronta. Para salvar, é preciso aplicar a atualização do banco após sua aprovação.';
+  $('rafflePage').hidden = true;
+  $('settingsPage').hidden = false;
+});
+$('settingsBack').addEventListener('click', () => {
+  $('settingsPage').hidden = true;
+  $('rafflePage').hidden = false;
+});
+$('settingsForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!admin || !configDisponivel || ocupado || sorteando) return;
+  const quantidade = Number($('settingsQuantity').value);
+  const valor = Number($('settingsPrice').value);
+  const textos = [
+    ['settingsEntity', 120], ['settingsCampaign', 120], ['settingsRaffle', 120],
+    ['settingsPrize', 240], ['settingsCriterion', 500]
+  ];
+  const campos = Object.fromEntries(textos.map(([id]) => [id, $(id).value.trim()]));
+  if (textos.some(([id, max]) => !campos[id] || campos[id].length > max) ||
+      !Number.isInteger(quantidade) || quantidade < 1 || quantidade > 10000 ||
+      !Number.isFinite(valor) || valor < 0.01 || valor > 999999.99 ||
+      Math.abs(Math.round(valor * 100) - valor * 100) > 0.000001 ||
+      !situacoesCampanha[$('settingsStatus').value]) {
+    $('settingsMessage').textContent = 'Confira os campos, a quantidade e o valor informado.';
+    return;
+  }
+  const ocupadoMaior = Object.values(numeros).some(r =>
+    r.numero > quantidade && r.situacao !== 'disponivel');
+  if (ocupadoMaior) {
+    $('settingsMessage').textContent = 'A quantidade não pode ocultar bilhetes vendidos ou reservados.';
+    return;
+  }
+  ocupado = true;
+  $('settingsSave').disabled = true;
+  $('settingsMessage').textContent = 'Salvando configurações...';
+  try {
+    const { error } = await supabase.rpc('rifa_salvar_configuracoes', {
+      p_nome_entidade: campos.settingsEntity, p_nome_campanha: campos.settingsCampaign,
+      p_nome_rifa: campos.settingsRaffle, p_descricao_premio: campos.settingsPrize,
+      p_quantidade_bilhetes: quantidade, p_valor_bilhete: valor,
+      p_criterio_sorteio: campos.settingsCriterion, p_situacao: $('settingsStatus').value
+    });
+    if (error) throw error;
+    ocupado = false;
+    if (!await atualizarTela()) throw new Error('Salvo, mas não foi possível atualizar a tela. Atualize a página.');
+    preencherConfiguracoes();
+    $('settingsMessage').textContent = 'Configurações salvas no banco.';
+  } catch (error) {
+    $('settingsMessage').textContent = 'Não foi possível salvar: ' + error.message;
+  } finally {
+    ocupado = false;
+    $('settingsSave').disabled = !configDisponivel;
+  }
+});
 $('loginButton').addEventListener('click', () => { $('authMessage').textContent = ''; $('authDialog').showModal(); });
 $('authCancel').addEventListener('click', () => $('authDialog').close());
 $('authForm').addEventListener('submit', async event => {
@@ -285,14 +445,14 @@ function baixar(nome, conteudo) {
 $('backup').addEventListener('click', () => {
   if (!admin || !carregado) return;
   const registros = {};
-  for (let n = 1; n <= 100; n++) {
+  for (let n = 1; n <= configuracao.quantidade_bilhetes; n++) {
     const r = numeros[n];
     if (r.situacao !== 'disponivel') registros[n] = {
-      nome: r.comprador, status: r.situacao, telefone: r.telefone, pago: r.pago
+      nome: r.comprador, status: r.situacao, telefone: r.telefone, pago: r.pago, valor: r.valor
     };
   }
   baixar('backup_rifa_deixa_vim_' + new Date().toISOString().slice(0,10) + '.json',
-    JSON.stringify({ aplicativo: 'Rifa Deixa Vim', versao: 2,
+    JSON.stringify({ aplicativo: 'Rifa Deixa Vim', versao: 3,
       exportadoEm: new Date().toISOString(), registros }, null, 2));
   aviso('Backup baixado. Armazene em local privado.');
 });
@@ -312,7 +472,7 @@ async function importar(registros) {
     // A condição sobre situacao evita sobreposição se outra pessoa vender o número.
     const { data, error } = await supabase.from('rifa_numeros')
       .update({ comprador: r.comprador, telefone: r.telefone, situacao: r.situacao,
-        pago: r.pago, atualizado_em: new Date().toISOString() })
+        pago: r.pago, valor: r.valor, atualizado_em: new Date().toISOString() })
       .eq('numero', r.numero).eq('situacao', 'disponivel').select('numero');
     if (!error && data?.length === 1) enviados++; else falhas++;
   }
@@ -494,7 +654,7 @@ async function iniciarSorteio(modo) {
   $('drawSave').hidden = true;
   $('drawMode').textContent = modo === 'vendidos'
     ? `Somente vendidos · ${participantes.length} participante(s)`
-    : 'Todos os números · 100 participantes';
+    : `Todos os números · ${participantes.length} participantes`;
   $('drawWheel').classList.add('spinning');
   $('drawNumber').textContent = '--';
   $('drawResult').textContent = 'Girando a roleta...';
@@ -573,7 +733,7 @@ $('reloadButton').addEventListener('click', () => void atualizarTela());
 resetar(); render();
 await atualizarTela();
 setInterval(() => {
-  if (document.visibilityState === 'visible' && !sorteando && !$('editor').open && !$('authDialog').open && !$('drawChoiceDialog').open && !$('drawDialog').open)
+  if (document.visibilityState === 'visible' && !sorteando && !$('editor').open && !$('authDialog').open && !$('drawChoiceDialog').open && !$('drawDialog').open && $('settingsPage').hidden)
     void atualizarTela();
 }, 30000);
 </script></body></html>
