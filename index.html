@@ -51,12 +51,19 @@
 .settings-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
 .settings-actions button{min-height:48px}
 .settings-note{font-size:13px;color:#d2d2d9;line-height:1.5}
+.campaign-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:12px 0}
+.campaign-toolbar select{min-width:0}
+.campaign-toolbar button{min-height:46px}
+.settings-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+.settings-hub button{min-height:58px}
+.settings-hub-note{grid-column:1/-1}
+@media(max-width:370px){.campaign-toolbar{grid-template-columns:1fr}.settings-hub{grid-template-columns:1fr}}
 @media(max-width:560px){.settings-fields{grid-template-columns:1fr}}
-</style></head><body><main><div id="rafflePage"><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
+</style></head><body><main><div id="rafflePage"><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
 <section class="settings-page" id="settingsPage" hidden aria-labelledby="settingsTitle">
-<h2 id="settingsTitle">Configurações</h2>
+<h2 id="settingsTitle">Configurações</h2><div id="settingsHub" class="settings-hub"><button class="action" type="button" id="settingsCloseButton">Voltar para a rifa</button><button class="action" type="button" id="editCampaignButton">Editar campanha selecionada</button><button class="action primary" type="button" id="settingsNewCampaignButton">+ Nova Campanha</button><p id="campaignNotice" class="muted settings-hub-note" role="status"></p></div>
 <p class="settings-note">Vendas e reservas existentes mantêm seus valores. A quantidade só pode ser reduzida sem ocultar bilhetes ocupados.</p>
-<form id="settingsForm"><div class="settings-fields">
+<form id="settingsForm" hidden><div class="settings-fields">
 <div><label for="settingsEntity">Nome da associação ou entidade</label><input id="settingsEntity" maxlength="120" required></div>
 <div><label for="settingsCampaign">Nome da campanha</label><input id="settingsCampaign" maxlength="120" required></div>
 <div><label for="settingsRaffle">Nome da rifa</label><input id="settingsRaffle" maxlength="120" required></div>
@@ -89,12 +96,49 @@ const CONFIG_PADRAO = Object.freeze({
   situacao: 'em_andamento', atualizado_em: null
 });
 let configuracao = { ...CONFIG_PADRAO }, configDisponivel = false, totalPublico = 0;
+let campanhas = [], campanhaAtualId = null, esquemaCampanhas = false, modoConfiguracoes = 'hub';
+const CAMPANHA_KEY = 'rifa_deixa_vim_campanha_atual';
 const situacoesCampanha = { em_andamento: 'Em andamento', encerrada: 'Encerrada', sorteada: 'Sorteada' };
 
+function desenharSeletorCampanhas() {
+  const select = $('campaignSelect');
+  select.replaceChildren();
+  for (const campanha of campanhas) {
+    const option = document.createElement('option');
+    option.value = campanha.id;
+    option.textContent = `Campanha ${String(campanha.codigo).padStart(2,'0')} · ${campanha.nome_campanha}`;
+    select.append(option);
+  }
+  select.value = campanhaAtualId ?? '';
+  select.disabled = !esquemaCampanhas || campanhas.length < 2;
+  $('newCampaignButton').hidden = !admin;
+}
+async function carregarCampanhas() {
+  const { data, error } = await supabase.rpc('rifa_listar_campanhas_publicas');
+  if (error) {
+    if (['42883','PGRST202','PGRST203'].includes(error.code)) {
+      esquemaCampanhas = false;
+      campanhaAtualId = null;
+      campanhas = [{ id: 'legado', codigo: 1, nome_campanha: 'Campanha 01' }];
+      desenharSeletorCampanhas();
+      return;
+    }
+    throw error;
+  }
+  if (!Array.isArray(data) || !data.length) throw new Error('Nenhuma campanha foi disponibilizada pelo banco.');
+  esquemaCampanhas = true;
+  campanhas = data.map(c => ({ ...c, codigo: Number(c.codigo) }));
+  const salvo = (() => { try { return localStorage.getItem(CAMPANHA_KEY); } catch { return null; } })();
+  if (!campanhas.some(c => c.id === campanhaAtualId))
+    campanhaAtualId = campanhas.some(c => c.id === salvo) ? salvo :
+      (campanhas.find(c => c.codigo === 1)?.id ?? campanhas[0].id);
+  desenharSeletorCampanhas();
+}
 async function carregarConfiguracao() {
-  const { data, error } = await supabase.from('rifa_configuracoes')
-    .select('id,nome_entidade,nome_campanha,nome_rifa,descricao_premio,quantidade_bilhetes,valor_bilhete,criterio_sorteio,situacao,atualizado_em')
-    .eq('id', 1).maybeSingle();
+  let consulta = supabase.from('rifa_configuracoes')
+    .select('id,nome_entidade,nome_campanha,nome_rifa,descricao_premio,quantidade_bilhetes,valor_bilhete,criterio_sorteio,situacao,atualizado_em');
+  consulta = esquemaCampanhas ? consulta.eq('campanha_id', campanhaAtualId) : consulta.eq('id', 1);
+  const { data, error } = await consulta.maybeSingle();
   if (error) {
     if (['42P01', 'PGRST205'].includes(error.code)) {
       configuracao = { ...CONFIG_PADRAO };
@@ -112,8 +156,7 @@ async function carregarConfiguracao() {
   }
   configuracao = { ...data, quantidade_bilhetes: quantidade, valor_bilhete: valor };
   configDisponivel = true;
-}
-function mostrarConfiguracao() {
+}function mostrarConfiguracao() {
   $('heroEntity').textContent = configuracao.nome_entidade;
   $('heroCampaign').textContent = configuracao.nome_campanha;
   $('heroRaffle').textContent = configuracao.nome_rifa;
@@ -153,6 +196,7 @@ function registrosValidos(registros) {
 }
 function render() {
   mostrarConfiguracao();
+  desenharSeletorCampanhas();
   $('settingsSave').disabled = !configDisponivel;
   if (!admin && !$('settingsPage').hidden) {
     $('settingsPage').hidden = true;
@@ -223,11 +267,16 @@ async function consultarBilhetes(ehAdmin) {
   const linhas = [];
   for (let inicio = 0; inicio < configuracao.quantidade_bilhetes; inicio += 500) {
     const fim = Math.min(inicio + 499, configuracao.quantidade_bilhetes - 1);
-    const consulta = ehAdmin
-      ? await supabase.from('rifa_numeros')
-          .select('numero,situacao,comprador,telefone,pago,valor').order('numero').range(inicio, fim)
-      : await supabase.rpc(configDisponivel ? 'rifa_estado_publico' : 'rifa_status_publico')
-          .order('numero').range(inicio, fim);
+    let consulta;
+    if (ehAdmin) {
+      let query = supabase.from('rifa_numeros').select('numero,situacao,comprador,telefone,pago,valor');
+      if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
+      consulta = await query.order('numero').range(inicio, fim);
+    } else {
+      const resposta = supabase.rpc(configDisponivel ? 'rifa_estado_publico' : 'rifa_status_publico',
+        esquemaCampanhas ? { p_campanha_id: campanhaAtualId } : undefined);
+      consulta = await resposta.order('numero').range(inicio, fim);
+    }
     if (consulta.error) throw consulta.error;
     if (!Array.isArray(consulta.data)) throw new Error('Resposta inválida ao consultar os bilhetes.');
     linhas.push(...consulta.data);
@@ -240,6 +289,7 @@ async function atualizarTela() {
   ocupado = true;
   aviso('Sincronizando números...');
   try {
+    await carregarCampanhas();
     await carregarConfiguracao();
     const ehAdmin = await verificarAdministrador();
     const linhas = await consultarBilhetes(ehAdmin);
@@ -300,8 +350,10 @@ async function salvarNumero(situacao, comprador, telefone) {
     };
     if (numeros[atual].situacao === 'disponivel' && situacao !== 'disponivel')
       alteracao.valor = configuracao.valor_bilhete;
-    const { data, error } = await supabase.from('rifa_numeros').update(alteracao)
-      .eq('numero', atual).select('numero');
+    let query = supabase.from('rifa_numeros').update(alteracao)
+      .eq('numero', atual).eq('situacao', numeros[atual].situacao);
+    if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
+    const { data, error } = await query.select('numero');
     if (error) throw error;
     if (data?.length !== 1) throw new Error('O banco não autorizou a alteração.');
     $('editor').close();
@@ -332,21 +384,68 @@ function preencherConfiguracoes() {
   };
   for (const [id, coluna] of Object.entries(campos)) $(id).value = configuracao[coluna];
 }
-$('settingsButton').addEventListener('click', () => {
+function abrirConfiguracoes() {
   if (!admin || !carregado) return;
-  preencherConfiguracoes();
-  $('settingsMessage').textContent = configDisponivel ? '' :
-    'A página está pronta. Para salvar, é preciso aplicar a atualização do banco após sua aprovação.';
+  $('campaignNotice').textContent = esquemaCampanhas ?
+    'Gerencie a campanha selecionada ou crie uma nova campanha independente.' :
+    'O seletor está pronto. Para habilitar várias campanhas, é necessária uma migração do Supabase ainda não aprovada.';
+  $('settingsHub').hidden = false;
+  $('settingsForm').hidden = true;
+  $('settingsTitle').textContent = 'Configurações';
   $('rafflePage').hidden = true;
   $('settingsPage').hidden = false;
+}
+function abrirFormularioCampanha(modo) {
+  if (!admin || !carregado) return;
+  if (modo === 'nova' && !esquemaCampanhas) {
+    abrirConfiguracoes();
+    $('campaignNotice').textContent = 'A criação de campanhas será liberada após aprovação e aplicação da migração do Supabase.';
+    return;
+  }
+  modoConfiguracoes = modo;
+  $('settingsHub').hidden = true;
+  $('settingsForm').hidden = false;
+  $('settingsTitle').textContent = modo === 'nova' ? 'Nova campanha' : 'Editar campanha selecionada';
+  $('settingsSave').textContent = modo === 'nova' ? 'Criar campanha' : 'Salvar configurações';
+  if (modo === 'editar') {
+    preencherConfiguracoes();
+    $('settingsMessage').textContent = '';
+  } else {
+    $('settingsEntity').value = configuracao.nome_entidade;
+    $('settingsCampaign').value = `Campanha ${String(campanhas.length + 1).padStart(2,'0')}`;
+    $('settingsRaffle').value = 'Nova rifa';
+    $('settingsPrize').value = '';
+    $('settingsQuantity').value = 100;
+    $('settingsPrice').value = configuracao.valor_bilhete;
+    $('settingsCriterion').value = configuracao.criterio_sorteio;
+    $('settingsStatus').value = 'em_andamento';
+    $('settingsMessage').textContent = 'A nova campanha começa sem bilhetes ocupados.';
+  }
+  $('settingsSave').disabled = modo === 'editar' ? !configDisponivel : !esquemaCampanhas;
+}
+$('settingsButton').addEventListener('click', abrirConfiguracoes);
+$('settingsCloseButton').addEventListener('click', () => { $('settingsPage').hidden = true; $('rafflePage').hidden = false; });
+$('newCampaignButton').addEventListener('click', () => { abrirConfiguracoes(); abrirFormularioCampanha('nova'); });
+$('settingsNewCampaignButton').addEventListener('click', () => abrirFormularioCampanha('nova'));
+$('editCampaignButton').addEventListener('click', () => abrirFormularioCampanha('editar'));
+$('campaignSelect').addEventListener('change', async () => {
+  if (!esquemaCampanhas || ocupado || !campanhas.some(c => c.id === $('campaignSelect').value)) return;
+  campanhaAtualId = $('campaignSelect').value;
+  try { localStorage.setItem(CAMPANHA_KEY, campanhaAtualId); } catch {}
+  historicoCarregado = false;
+  historicoToken++;
+  await atualizarTela();
 });
 $('settingsBack').addEventListener('click', () => {
-  $('settingsPage').hidden = true;
-  $('rafflePage').hidden = false;
+  $('settingsHub').hidden = false;
+  $('settingsForm').hidden = true;
+  $('settingsTitle').textContent = 'Configurações';
+  $('campaignNotice').textContent = esquemaCampanhas ? '' :
+    'Para criar novas campanhas e separá-las no banco, a migração preparada ainda precisa de aprovação.';
 });
 $('settingsForm').addEventListener('submit', async event => {
   event.preventDefault();
-  if (!admin || !configDisponivel || ocupado || sorteando) return;
+  if (!admin || ocupado || sorteando || (modoConfiguracoes === 'nova' && !esquemaCampanhas)) return;
   const quantidade = Number($('settingsQuantity').value);
   const valor = Number($('settingsPrice').value);
   const textos = [
@@ -362,32 +461,51 @@ $('settingsForm').addEventListener('submit', async event => {
     $('settingsMessage').textContent = 'Confira os campos, a quantidade e o valor informado.';
     return;
   }
-  const ocupadoMaior = Object.values(numeros).some(r =>
-    r.numero > quantidade && r.situacao !== 'disponivel');
-  if (ocupadoMaior) {
-    $('settingsMessage').textContent = 'A quantidade não pode ocultar bilhetes vendidos ou reservados.';
-    return;
+  if (modoConfiguracoes === 'editar') {
+    const ocupadoMaior = Object.values(numeros).some(r => r.numero > quantidade && r.situacao !== 'disponivel');
+    if (ocupadoMaior) {
+      $('settingsMessage').textContent = 'A quantidade não pode ocultar bilhetes vendidos ou reservados.';
+      return;
+    }
   }
   ocupado = true;
   $('settingsSave').disabled = true;
-  $('settingsMessage').textContent = 'Salvando configurações...';
+  $('settingsMessage').textContent = modoConfiguracoes === 'nova' ? 'Criando campanha...' : 'Salvando configurações...';
+  const args = {
+    p_nome_entidade: campos.settingsEntity, p_nome_campanha: campos.settingsCampaign,
+    p_nome_rifa: campos.settingsRaffle, p_descricao_premio: campos.settingsPrize,
+    p_quantidade_bilhetes: quantidade, p_valor_bilhete: valor,
+    p_criterio_sorteio: campos.settingsCriterion, p_situacao: $('settingsStatus').value
+  };
   try {
-    const { error } = await supabase.rpc('rifa_salvar_configuracoes', {
-      p_nome_entidade: campos.settingsEntity, p_nome_campanha: campos.settingsCampaign,
-      p_nome_rifa: campos.settingsRaffle, p_descricao_premio: campos.settingsPrize,
-      p_quantidade_bilhetes: quantidade, p_valor_bilhete: valor,
-      p_criterio_sorteio: campos.settingsCriterion, p_situacao: $('settingsStatus').value
-    });
-    if (error) throw error;
+    if (modoConfiguracoes === 'nova') {
+      const { data, error } = await supabase.rpc('rifa_criar_campanha', args);
+      if (error) throw error;
+      if (typeof data !== 'string' || !data) throw new Error('O banco não retornou a campanha criada.');
+      campanhaAtualId = data;
+      try { localStorage.setItem(CAMPANHA_KEY, campanhaAtualId); } catch {}
+    } else if (esquemaCampanhas) {
+      const { error } = await supabase.rpc('rifa_salvar_configuracoes_campanha', {
+        p_campanha_id: campanhaAtualId, ...args
+      });
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.rpc('rifa_salvar_configuracoes', args);
+      if (error) throw error;
+    }
     ocupado = false;
+    historicoCarregado = false;
     if (!await atualizarTela()) throw new Error('Salvo, mas não foi possível atualizar a tela. Atualize a página.');
-    preencherConfiguracoes();
-    $('settingsMessage').textContent = 'Configurações salvas no banco.';
+    $('settingsHub').hidden = false;
+    $('settingsForm').hidden = true;
+    $('settingsTitle').textContent = 'Configurações';
+    $('campaignNotice').textContent = modoConfiguracoes === 'nova' ? 'Campanha criada e selecionada.' : 'Configurações da campanha atualizadas.';
+    modoConfiguracoes = 'hub';
   } catch (error) {
     $('settingsMessage').textContent = 'Não foi possível salvar: ' + error.message;
   } finally {
     ocupado = false;
-    $('settingsSave').disabled = !configDisponivel;
+    $('settingsSave').disabled = modoConfiguracoes === 'editar' ? !configDisponivel : !esquemaCampanhas;
   }
 });
 $('loginButton').addEventListener('click', () => { $('authMessage').textContent = ''; $('authDialog').showModal(); });
@@ -470,10 +588,12 @@ async function importar(registros) {
   let enviados = 0, falhas = 0;
   for (const r of novos) {
     // A condição sobre situacao evita sobreposição se outra pessoa vender o número.
-    const { data, error } = await supabase.from('rifa_numeros')
+    let query = supabase.from('rifa_numeros')
       .update({ comprador: r.comprador, telefone: r.telefone, situacao: r.situacao,
         pago: r.pago, valor: r.valor, atualizado_em: new Date().toISOString() })
-      .eq('numero', r.numero).eq('situacao', 'disponivel').select('numero');
+      .eq('numero', r.numero).eq('situacao', 'disponivel');
+    if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
+    const { data, error } = await query.select('numero');
     if (!error && data?.length === 1) enviados++; else falhas++;
   }
   ocupado = false;
@@ -534,9 +654,9 @@ async function carregarHistorico() {
   const carregando = document.createElement('li');
   carregando.textContent = 'Consultando sorteios salvos...';
   lista.append(carregando);
-  const { data, error } = await supabase.from('rifa_sorteios')
-    .select('id,numero,modalidade,situacao,ganhador,participantes,realizado_em')
-    .order('realizado_em', { ascending: false }).limit(50);
+  let query = supabase.from('rifa_sorteios').select('id,numero,modalidade,situacao,ganhador,participantes,realizado_em');
+  if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
+  const { data, error } = await query.order('realizado_em', { ascending: false }).limit(50);
   if (!admin || logoutPendente || token !== historicoToken) return;
   lista.replaceChildren();
   if (error) {
@@ -591,7 +711,7 @@ async function salvarResultado() {
     if (!user) throw new Error('Faça login novamente como administrador.');
     if (!await verificarAdministrador()) throw new Error('A sessão não tem permissão administrativa.');
     const { error } = await supabase.from('rifa_sorteios').insert({
-      id: r.id, numero: r.numero, modalidade: r.modalidade,
+      id: r.id, ...(esquemaCampanhas ? { campanha_id: campanhaAtualId } : {}), numero: r.numero, modalidade: r.modalidade,
       situacao: r.situacao, ganhador: r.ganhador,
       participantes: r.participantes, criado_por: user.id
     });
