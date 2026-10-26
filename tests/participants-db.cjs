@@ -1,0 +1,27 @@
+const fs=require('fs'),assert=require('assert/strict');const {PGlite}=require(process.env.PGLITE_MODULE);
+(async()=>{const db=new PGlite();try{
+await db.exec("create role anon nologin;create role authenticated nologin;create schema auth;grant usage on schema auth,public to anon,authenticated;create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;create table auth.users(id uuid primary key);create table public.rifa_administradores(user_id uuid primary key references auth.users);alter table public.rifa_administradores enable row level security;grant select on public.rifa_administradores to authenticated;create policy admin_self on public.rifa_administradores for select to authenticated using(user_id=auth.uid());create table public.rifa_configuracoes(campanha_id uuid primary key,valor_bilhete numeric);create table public.rifa_numeros(campanha_id uuid,numero integer,situacao text,pago boolean,valor numeric,comprador text,telefone text,atualizado_em timestamptz,primary key(campanha_id,numero));");
+const admin='00000000-0000-4000-8000-000000000001',camp='00000000-0000-4000-8000-000000000101';
+await db.query('insert into auth.users values($1)',[admin]);await db.query('insert into public.rifa_administradores values($1)',[admin]);await db.query('insert into public.rifa_configuracoes values($1,5)',[camp]);await db.exec('grant select,update on public.rifa_numeros to authenticated');
+await db.query("insert into public.rifa_numeros values($1,1,'vendido',true,5,'João   Silva','(11) 12345-6789',now()),($1,2,'reservado',false,5,'Ana','',now()),($1,3,'disponivel',false,5,null,null,now()),($1,4,'disponivel',false,5,null,null,now()),($1,5,'disponivel',false,5,null,null,now()),($1,6,'disponivel',false,5,null,null,now())",[camp]);
+const before=(await db.query('select numero,situacao,pago,valor,comprador,telefone from public.rifa_numeros order by numero')).rows;
+await db.exec(fs.readFileSync('supabase/migrations/20261026_etapa4_participantes.sql','utf8'));
+assert.deepEqual((await db.query('select numero,situacao,pago,valor,comprador,telefone from public.rifa_numeros order by numero')).rows,before);
+assert.equal((await db.query("select count(*)::int n from public.rifa_numeros where participante_id is not null")).rows[0].n,2);
+assert.equal((await db.query("select public.rifa_normalizar_nome('  JOÃO   Silva ')")).rows[0].rifa_normalizar_nome,'joao silva');
+await db.query("select set_config('request.jwt.claim.sub',$1,false)",[admin]);await db.exec('set role authenticated');
+const args=[camp,3,'disponivel','reservado','Joao Silva','11999999999',null,false];
+const dup=await db.query('select public.rifa_salvar_participacao($1,$2,$3,$4,$5,$6,$7,$8) data',args);
+assert.equal(dup.rows[0].data.status,'duplicado');assert.equal(dup.rows[0].data.candidatos.length,1);
+const id=dup.rows[0].data.candidatos[0].id;
+const use=await db.query('select public.rifa_salvar_participacao($1,$2,$3,$4,$5,$6,$7,$8) data',[camp,3,'disponivel','reservado','Joao Silva','11999999999',id,false]);
+assert.equal(use.rows[0].data.status,'salvo');
+const state=(await db.query('select participante_id,comprador,telefone,situacao,pago from public.rifa_numeros where numero=3 and campanha_id=$1',[camp])).rows[0];assert.equal(state.participante_id,id);assert.equal(state.comprador,'João   Silva');assert.equal(state.situacao,'reservado');
+const hom=await db.query('select public.rifa_salvar_participacao($1,$2,$3,$4,$5,$6,$7,$8) data',[camp,2,'reservado','reservado','Joao Silva','555',null,true]);
+assert.equal(hom.rows[0].data.status,'salvo');assert.notEqual(hom.rows[0].data.participante_id,id);
+await db.query("update public.rifa_numeros set situacao='vendido',pago=true,comprador='Maria Souza',telefone='(11) 98888-7777' where campanha_id=$1 and numero=4",[camp]);const legacyLink=(await db.query('select participante_id from public.rifa_numeros where campanha_id=$1 and numero=4',[camp])).rows[0].participante_id;assert.ok(legacyLink);
+await db.query("update public.rifa_numeros set situacao='vendido',pago=true,comprador='MARIA SOUZA',telefone='11988887777' where campanha_id=$1 and numero=5",[camp]);assert.equal((await db.query('select participante_id from public.rifa_numeros where campanha_id=$1 and numero=5',[camp])).rows[0].participante_id,legacyLink);
+await assert.rejects(()=>db.query("update public.rifa_numeros set situacao='vendido',comprador='Maria Souza',telefone='1111111111' where campanha_id=$1 and numero=6",[camp]),e=>e.code==='22023');assert.equal((await db.query('select situacao from public.rifa_numeros where campanha_id=$1 and numero=6',[camp])).rows[0].situacao,'disponivel');
+await db.exec('reset role');await db.exec('set role anon');await assert.rejects(()=>db.query('select * from public.rifa_participantes'));
+console.log('PASS migration PGlite: preserves existing ticket values; backfills participant links; normalizes accents/case/spaces; blocks duplicates transactionally; reuses existing; explicitly permits confirmed homonym; trigger preserves importer integrity; RLS blocks anon');
+}finally{await db.close()}})().catch(e=>{console.error(e.stack);process.exitCode=1});

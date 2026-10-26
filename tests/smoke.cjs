@@ -25,6 +25,7 @@ let now=0,timers=[],nextTimer=1,rand=0,session=true,authorized=true,failSync=fal
 let numbers=Array.from({length:100},(_,i)=>({numero:i+1,situacao:i===0?'vendido':'disponivel',comprador:i===0?'Alice':null,telefone:null,pago:i===0,valor:5}));
 let history=[],inserts=0,signIns=0,configSaves=0,configMissing=false;
 let config={id:1,nome_entidade:'Deixa Vim',nome_campanha:'Campanha 01',nome_rifa:'Rifa Deixa Vim',descricao_premio:'Agasalho esportivo',quantidade_bilhetes:100,valor_bilhete:5,criterio_sorteio:'Sorteio após todos os números serem preenchidos',situacao:'em_andamento'};
+let participantRows=[],participantCalls=[],participantSeq=0;const norm=x=>String(x||'').normalize('NFD').replaceAll(String.fromCharCode(769),'').replaceAll(String.fromCharCode(771),'').toLowerCase().trim().split(' ').filter(Boolean).join(' ');
 let multiCampaigns=false,campaignList=[{id:'campaign-1',codigo:1,nome_campanha:'Campanha 01'}],campaignTwoConfig=null,campaignTwoNumbers=[];
 function query(table){
  const filters={};
@@ -45,6 +46,7 @@ function query(table){
  },
  from:query,
  rpc(name,args){
+   if(name==='rifa_salvar_participacao'){participantCalls.push({...args});const key=norm(args.p_nome);let row=args.p_participante_id?participantRows.find(x=>x.id===args.p_participante_id):null;if(!row){const found=participantRows.filter(x=>norm(x.nome_completo)===key);if(found.length&&!args.p_confirmar_homonimo)return Promise.resolve({data:{status:'duplicado',candidatos:found},error:null});row={id:'participant-'+(++participantSeq),nome_completo:args.p_nome,telefone:args.p_telefone,criado_em:new Date().toISOString()};participantRows.push(row)}numbers[args.p_numero-1]={...numbers[args.p_numero-1],situacao:args.p_situacao,comprador:row.nome_completo,telefone:row.telefone,pago:args.p_situacao==='vendido',participante_id:row.id};return Promise.resolve({data:{status:'salvo',participante_id:row.id},error:null})}
    if(name==='rifa_listar_campanhas_publicas')return multiCampaigns?{data:[{id:'campaign-1',codigo:1,nome_campanha:config.nome_campanha},...campaignList.filter(c=>c.id==='campaign-2')],error:null}:{data:null,error:{code:'PGRST202'}};
    if(name==='rifa_criar_campanha'){
     const id='campaign-2';
@@ -149,5 +151,14 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  const migration=fs.readFileSync('supabase/migrations/20261026_etapa2_multiplas_campanhas.sql','utf8');
  assert.match(migration,/rifa_criar_campanha/);assert.match(migration,/primary key \(campanha_id, numero\)/i);
  assert.match(migration,/rifa_estado_publico\(p_campanha_id uuid\)/);assert.match(migration,/rifa_numeros set campanha_id/);
- console.log('PASS: fluxo legado, painel de configurações, criação de campanha vazia, seleção isolada, preservação da Campanha 01, roleta, histórico, login e escopo SQL preparado');
+ $('campaignSelect').value='campaign-1';await $('campaignSelect').change();await flush();
+ $('grid').children[1].click();$('nome').value='João da Silva';$('telefone').value='(11) 90000-0000';$('status').value='reservado';await $('form').submit();await flush();
+ assert.equal(participantRows.length,1);const participanteOriginal=participantRows[0].id;assert.equal(numbers[1].participante_id,participanteOriginal);
+ $('grid').children[2].click();$('nome').value='  JOAO   DA SILVA ';$('telefone').value='11900000000';$('status').value='vendido';await $('form').submit();await flush();
+ assert.match($('participantMatchTitle').textContent,/já cadastrado/);assert.equal(participantRows.length,1);assert.equal($('participantMatches').children.length,1);
+ $('participantMatches').children[0].children[0].click();await $('form').submit();await flush();assert.equal(numbers[2].participante_id,participanteOriginal);
+ assert.equal($('entries').children.length,2);assert.match($('entries').children[1].children[0].textContent,/Nº 02, 03/);
+ $('grid').children[3].click();$('nome').value='Joao da Silva';$('telefone').value='11911112222';await $('form').submit();await flush();assert.equal(participantRows.length,1);confirmResult=false;await $('participantHomonym').click();await flush();assert.equal(participantRows.length,1);assert.equal(numbers[3].situacao,'disponivel');confirmResult=true;await $('participantHomonym').click();await flush();assert.equal(participantRows.length,2);assert.notEqual(numbers[3].participante_id,participanteOriginal);
+ assert.equal(participantCalls.filter(x=>x.p_confirmar_homonimo).length,1);assert.match(html,/Participantes registrados/);
+ console.log('PASS: cadastro único de participantes, busca sem acentos/maiúsculas/espaços, seleção existente e confirmação de homônimo; fluxo legado, painel de configurações, criação de campanha vazia, seleção isolada, preservação da Campanha 01, roleta, histórico, login e escopo SQL preparado');
 })().catch(e=>{console.error(e);process.exitCode=1});
