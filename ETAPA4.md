@@ -1,6 +1,6 @@
 # Etapa 4 — Cadastro único de participantes
 
-**Estado:** implementação concluída, migração aplicada e validada no Supabase; publicação no GitHub autorizada e em andamento.
+**Estado:** concluída e publicada. Migração aplicada e validada no Supabase; arquivos publicados na branch `main`.
 
 ## 1. Etapa
 
@@ -52,10 +52,11 @@ Os testes de banco foram feitos em PostgreSQL temporário, com dados fictícios.
 ## 8. Problemas e limitações
 
 - Cadastros legados com nomes iguais permanecem separados até alguém confirmar se são a mesma pessoa ou homônimos.
-- A publicação dos arquivos no GitHub ainda está em andamento.
-- A publicação no GitHub foi autorizada e está em andamento.
+- Publicação confirmada em `main`; commit do aplicativo: `5c4deb14f1af582e4280a004a3dd9881679bc335`. A página do GitHub Pages foi aberta como visitante e sincronizou os números sem mostrar dados privados.
+- A publicação foi autorizada e concluída.
 
 ## 9. Próxima etapa prevista
 
-Após aprovar e concluir esta migração e publicação, a próxima etapa do plano é a **Etapa 5 — vários números por participante**, incluindo seleção em lote e pagamentos individuais/conjuntos.
+A próxima etapa do plano é a **Etapa 5 — vários números por participante**, incluindo seleção em lote e pagamentos individuais/conjuntos.
+
 
