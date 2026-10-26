@@ -59,7 +59,8 @@
 .settings-hub-note{grid-column:1/-1}
 @media(max-width:370px){.campaign-toolbar{grid-template-columns:1fr}.settings-hub{grid-template-columns:1fr}}
 @media(max-width:560px){.settings-fields{grid-template-columns:1fr}}
-</style></head><body><main><div id="rafflePage"><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar como administrador</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
+.access-page{max-width:520px;margin:24px auto;background:#222229;border:1px solid #666674;border-radius:16px;padding:24px}.access-page h1{margin-top:0;color:#f5d7a1}.access-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.access-actions button{min-height:48px}.access-actions .wide{grid-column:1/-1}.account-status{font-size:13px;color:#f5d7a1}.own-participations{background:#222229;border-radius:12px;padding:16px;margin-top:16px}.own-participations ul{padding-left:20px}.own-participations li{margin:10px 0}
+</style></head><body><main><section id="accessPage" class="access-page" aria-labelledby="accessTitle"><h1 id="accessTitle">Rifa Deixa Vim</h1><p>Entre na sua conta ou consulte as campanhas como visitante.</p><p id="accessStatus" class="muted" role="status">Conferindo sessão...</p><div class="access-actions"><button class="action primary" id="accessLogin" type="button">Entrar</button><button class="action" id="accessSignup" type="button">Criar usuário</button><button class="action wide" id="accessGuest" type="button">Continuar como visitante</button><button class="action wide" id="accessLogout" type="button" hidden>Tentar sair novamente</button></div></section><div id="rafflePage" hidden><p id="accountStatus" class="account-status" role="status"></p><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button></div><section id="ownParticipations" class="own-participations" hidden aria-labelledby="ownTitle"><h2 id="ownTitle">Minhas participações nesta campanha</h2><p id="ownMessage" class="muted" role="status"></p><ul id="ownList"></ul></section><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Compradores registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
 <section class="settings-page" id="settingsPage" hidden aria-labelledby="settingsTitle">
 <h2 id="settingsTitle">Configurações</h2><div id="settingsHub" class="settings-hub"><button class="action" type="button" id="settingsCloseButton">Voltar para a rifa</button><button class="action" type="button" id="editCampaignButton">Editar campanha selecionada</button><button class="action primary" type="button" id="settingsNewCampaignButton">+ Nova Campanha</button><p id="campaignNotice" class="muted settings-hub-note" role="status"></p></div>
 <p class="settings-note">Vendas e reservas existentes mantêm seus valores. A quantidade só pode ser reduzida sem ocultar bilhetes ocupados.</p>
@@ -74,20 +75,72 @@
 <div class="full"><label for="settingsStatus">Situação da campanha</label><select id="settingsStatus"><option value="em_andamento">Em andamento</option><option value="encerrada">Encerrada</option><option value="sorteada">Sorteada</option></select></div>
 </div><p class="notice" id="settingsMessage" role="status"></p>
 <div class="settings-actions"><button class="action" type="button" id="settingsBack">Voltar</button><button class="action primary" type="submit" id="settingsSave">Salvar configurações</button></div></form>
-</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Área administrativa</h2><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><script type="module">
+</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Entrar</h2><p class="muted">O acesso é definido pela sua conta.</p><label for="email">Usuário</label><input id="email" type="text" maxlength="254" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">Administrador: seu acesso atual continua válido.</p><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome do comprador</label><input id="nome" maxlength="100" autocomplete="off" placeholder="Nome ou apelido"><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="off" placeholder="DDD + número"><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="accountAccessButton" hidden>Acesso do usuário</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit">Salvar</button></menu></form></dialog><dialog id="signupDialog" aria-labelledby="signupTitle"><form id="signupForm"><h2 id="signupTitle">Criar usuário</h2><label for="signupEmail">Nome de usuário</label><input id="signupEmail" type="text" minlength="3" maxlength="30" pattern="[a-zA-Z][a-zA-Z0-9_]{2,29}" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">De 3 a 30 caracteres. Comece com uma letra e use letras, números ou _.</p><label for="signupPassword">Senha</label><input id="signupPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p class="muted">Use pelo menos 12 caracteres, com letras e números.</p><label for="signupConfirm">Confirmar senha</label><input id="signupConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p id="signupMessage" class="muted" role="status"></p><menu><button id="signupCancel" class="action" type="button">Voltar</button><button id="signupSubmit" class="action primary" type="submit">Criar usuário</button></menu></form></dialog>
+<dialog id="accountDialog" aria-labelledby="accountTitle"><form id="accountForm"><h2 id="accountTitle">Acesso ao número</h2><p class="muted">Vincule uma conta cadastrada para consultar este número. Confira se a conta pertence ao participante. O vínculo não altera o pagamento.</p><label for="accountEmail">Usuário da conta</label><input id="accountEmail" type="text" minlength="3" maxlength="30" autocapitalize="none" spellcheck="false" autocomplete="off" required><p id="accountMessage" class="muted" role="status"></p><div class="settings-actions"><button id="accountCancel" class="action" type="button">Voltar</button><button id="accountSave" class="action primary" type="submit">Vincular conta</button><button id="accountUnlink" class="action" type="button">Desvincular conta</button></div></form></dialog><script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const URL_DB = 'https://bxiugnskskzhigyguyqp.supabase.co';
 const PUBLIC_KEY = 'sb_publishable_2Fb6r4nFl8uCjhVDWdHf-Q_Y5ij1b-t';
 const supabase = createClient(URL_DB, PUBLIC_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
 const $ = id => document.getElementById(id);
 const format = n => String(n).padStart(2, '0');
 const reais = n => Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const LOCAL_KEY = 'deixavim_rifa_v1';
+const DOMINIO_LOGIN = 'rifa-deixa-vim.invalid';
+const normalizarLogin = value => value.trim().toLowerCase();
+const loginValido = value => /^[a-z][a-z0-9_]{2,29}$/.test(value);
+const emailDoLogin = value => value + '@' + DOMINIO_LOGIN;
 let numeros = {}, admin = false, atual = null, ocupado = false, carregado = false, sorteando = false;
 let resultadoPendente = null, resultadoSalvo = false, salvandoSorteio = false, historicoCarregado = false;
 let logoutPendente = false, historicoToken = 0;
+let usuarioAtual = null, visitanteEscolhido = false, acessoVerificado = false, acessoVersao = 0;
+let minhasParticipacoes = [], mensagemParticipacoes = '', authTimer = null;
+function mostrarAcesso() {
+  const entrou = acessoVerificado && (!!usuarioAtual || visitanteEscolhido);
+  $('accessPage').hidden = entrou;
+  if (!entrou) { $('rafflePage').hidden = true; $('settingsPage').hidden = true; }
+  else if ($('settingsPage').hidden) $('rafflePage').hidden = false;
+  $('accessStatus').textContent = logoutPendente ? 'A saída não foi concluída. Tente sair novamente.' : acessoVerificado ? 'Escolha como deseja acessar.' : 'Conferindo sessão...';
+  $('accessLogout').hidden = !logoutPendente;
+  for (const id of ['accessLogin','accessSignup','accessGuest']) $(id).disabled = logoutPendente;
+  $('accountStatus').textContent = admin ? 'Administrador' : usuarioAtual ? 'Usuário' : 'Visitante';
+  $('logoutButton').hidden = !usuarioAtual;
+  $('loginButton').hidden = !!usuarioAtual;
+  $('ownParticipations').hidden = !usuarioAtual || admin;
+  $('ownMessage').textContent = mensagemParticipacoes;
+  $('ownList').replaceChildren();
+  for (const r of minhasParticipacoes) {
+    const li = document.createElement('li');
+    li.textContent = 'Número ' + format(r.numero) + ' · ' + r.situacao + ' · ' + reais(r.valor) + (r.pago ? ' · Pago' : ' · Pagamento pendente');
+    $('ownList').append(li);
+  }
+}
+function limparAcesso() {
+  acessoVersao++; admin = false; usuarioAtual = null; carregado = false;
+  minhasParticipacoes = []; mensagemParticipacoes = ''; historicoToken++;
+  $('accountEmail').value = ''; $('password').value = ''; $('signupPassword').value = ''; $('signupConfirm').value = '';
+  for (const id of ['editor','accountDialog','drawDialog','drawChoiceDialog','authDialog','signupDialog']) if ($(id).open) $(id).close();
+  resetar(); render();
+}
+async function consultarMinhasParticipacoes() {
+  minhasParticipacoes = []; mensagemParticipacoes = '';
+  if (!usuarioAtual || admin) return;
+  if (!esquemaCampanhas) { mensagemParticipacoes = 'A consulta das suas participações aguarda a atualização do banco.'; return; }
+  const rows = [];
+  for (let inicio = 0; inicio < configuracao.quantidade_bilhetes; inicio += 500) {
+    const {data,error} = await supabase.rpc('rifa_minhas_participacoes', {p_campanha_id:campanhaAtualId})
+      .order('numero').range(inicio, Math.min(inicio + 499, configuracao.quantidade_bilhetes - 1));
+    if (error) {
+      if (['PGRST202','42883'].includes(error.code)) { mensagemParticipacoes = 'A consulta das suas participações aguarda a atualização do banco.'; return; }
+      throw error;
+    }
+    if (!Array.isArray(data)) throw new Error('Não foi possível consultar suas participações.');
+    rows.push(...data); if (data.length < 500) break;
+  }
+  minhasParticipacoes = rows;
+  mensagemParticipacoes = rows.length ? 'Somente números vinculados à sua conta pelo administrador.' : 'Nenhum número vinculado à sua conta nesta campanha. Solicite o vínculo ao administrador.';
+}
 const CONFIG_PADRAO = Object.freeze({
   id: 1, nome_entidade: 'Deixa Vim', nome_campanha: 'Campanha 01',
   nome_rifa: 'Rifa Deixa Vim', descricao_premio: 'Agasalho esportivo',
@@ -233,6 +286,7 @@ function render() {
   $('syncInfo').textContent = admin
     ? 'Área administrativa: alterações enviadas ao banco online. O backup contém dados pessoais: guarde-o com cuidado.'
     : 'Consulta pública: números sincronizados, sem exposição dos nomes e telefones dos compradores.';
+  mostrarAcesso();
   const lista = $('entries');
   lista.replaceChildren();
   if (!admin) return;
@@ -255,12 +309,17 @@ function render() {
   }
 }
 async function verificarAdministrador() {
+  const versao = acessoVersao;
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
   if (sessionError) throw sessionError;
-  if (!session?.user) return false;
+  if (!session?.user) { usuarioAtual = null; return false; }
+  const {data: userData, error: userError} = await supabase.auth.getUser();
+  if (userError || !userData?.user || userData.user.id !== session.user.id) throw userError || new Error('Sessão inválida. Entre novamente.');
   const { data, error } = await supabase.from('rifa_administradores')
     .select('user_id').eq('user_id', session.user.id).maybeSingle();
   if (error) throw error;
+  if (versao !== acessoVersao) throw new Error('A sessão mudou durante a consulta.');
+  usuarioAtual = userData.user;
   return !!data;
 }
 async function consultarBilhetes(ehAdmin) {
@@ -287,13 +346,14 @@ async function consultarBilhetes(ehAdmin) {
 async function atualizarTela() {
   if (ocupado || sorteando || logoutPendente) return false;
   ocupado = true;
+  const versao = acessoVersao;
   aviso('Sincronizando números...');
   try {
     await carregarCampanhas();
     await carregarConfiguracao();
     const ehAdmin = await verificarAdministrador();
     const linhas = await consultarBilhetes(ehAdmin);
-    if (logoutPendente) return false;
+    if (logoutPendente || versao !== acessoVersao) return false;
     const vistos = new Set(linhas.map(linha => Number(linha.numero)));
     if (linhas.length !== configuracao.quantidade_bilhetes ||
         vistos.size !== configuracao.quantidade_bilhetes) {
@@ -309,14 +369,20 @@ async function atualizarTela() {
       const n = Number(linha.numero);
       numeros[n] = { ...numeros[n], ...linha };
     }
+    await consultarMinhasParticipacoes();
+    if (logoutPendente || versao !== acessoVersao) { minhasParticipacoes = []; return false; }
+    acessoVerificado = true;
     carregado = true;
     render();
     aviso('Números sincronizados com o banco online.');
     if (admin && !historicoCarregado) await carregarHistorico();
     return true;
   } catch (error) {
+    if (versao !== acessoVersao) return false;
     // Uma sessão vencida ou uma falha de rede não deve deixar dados privados na tela.
     admin = false;
+    usuarioAtual = null; minhasParticipacoes = []; mensagemParticipacoes = '';
+    acessoVerificado = true;
     carregado = false;
     historicoToken++;
     resetar();
@@ -337,6 +403,7 @@ function abrirNumero(numero) {
   $('telefone').value = r.telefone || '';
   $('status').value = r.situacao === 'vendido' ? 'vendido' : 'reservado';
   $('release').hidden = r.situacao === 'disponivel';
+  $('accountAccessButton').hidden = r.situacao === 'disponivel' || !esquemaCampanhas;
   $('editor').showModal();
   $('nome').focus();
 }
@@ -508,22 +575,78 @@ $('settingsForm').addEventListener('submit', async event => {
     $('settingsSave').disabled = modoConfiguracoes === 'editar' ? !configDisponivel : !esquemaCampanhas;
   }
 });
-$('loginButton').addEventListener('click', () => { $('authMessage').textContent = ''; $('authDialog').showModal(); });
+
+function abrirLogin() { if (logoutPendente) return; $('authMessage').textContent = ''; $('authDialog').showModal(); }
+$('accessLogin').addEventListener('click', abrirLogin);
+$('accessSignup').addEventListener('click', () => { if (logoutPendente) return; $('signupMessage').textContent = ''; $('signupDialog').showModal(); });
+$('accessGuest').addEventListener('click', () => { if (logoutPendente) return; visitanteEscolhido = true; mostrarAcesso(); });
+$('signupCancel').addEventListener('click', () => { $('signupDialog').close(); $('signupPassword').value = ''; $('signupConfirm').value = ''; });
+$('signupForm').addEventListener('submit', async event => {
+  event.preventDefault(); if (ocupado || usuarioAtual || logoutPendente) return;
+  const login = normalizarLogin($('signupEmail').value), password = $('signupPassword').value;
+  if (!loginValido(login) || ['admin','administrador','padrao'].includes(login) || password.length < 12 || password.length > 128 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password) || password !== $('signupConfirm').value) {
+    $('signupMessage').textContent = 'Confira o usuário e a confirmação da senha. Use pelo menos 12 caracteres, com letras e números.'; return;
+  }
+  ocupado = true; $('signupSubmit').disabled = true; $('signupMessage').textContent = 'Criando acesso...';
+  let entrou = false;
+  try {
+    const {data,error} = await supabase.auth.signUp({email:emailDoLogin(login),password});
+    if (error) throw error;
+    $('signupPassword').value = ''; $('signupConfirm').value = '';
+    if (data?.session) { entrou = true; visitanteEscolhido = false; $('signupDialog').close(); }
+    else $('signupMessage').textContent = 'Cadastro recebido, mas não foi possível iniciar a sessão. Tente entrar com seu usuário e senha.';
+  } catch { $('signupMessage').textContent = 'Não foi possível concluir o cadastro. Confira os dados ou tente novamente mais tarde.'; }
+  finally { ocupado = false; $('signupSubmit').disabled = false; }
+  if (entrou) await atualizarTela();
+});
+$('accountAccessButton').addEventListener('click', async () => {
+  if (!admin || ocupado || atual === null || numeros[atual].situacao === 'disponivel') return;
+  const versao = acessoVersao;
+  ocupado = true; $('accountEmail').value = ''; $('accountMessage').textContent = 'Consultando vínculo...';
+  $('accountSave').disabled = true; $('accountUnlink').disabled = true; $('accountDialog').showModal();
+  try {
+    const {data,error} = await supabase.rpc('rifa_conta_numero',{p_campanha_id:campanhaAtualId,p_numero:atual});
+    if (error) throw error;
+    if (versao !== acessoVersao || !admin) return;
+    $('accountEmail').value = data || ''; $('accountMessage').textContent = data ? 'Conta atualmente vinculada.' : 'Nenhuma conta vinculada.';
+    $('accountSave').disabled = false; $('accountUnlink').disabled = !data;
+  } catch { if (versao === acessoVersao) $('accountMessage').textContent = 'Não foi possível consultar o vínculo. Confira se a atualização do banco foi aplicada.'; }
+  finally { ocupado = false; }
+});
+$('accountCancel').addEventListener('click', () => { if (!ocupado) { $('accountDialog').close(); $('accountEmail').value = ''; } });
+async function vincularConta(remover) {
+  if (!admin || ocupado || atual === null) return;
+  const login = normalizarLogin($('accountEmail').value);
+  if (!remover && !loginValido(login)) { $('accountMessage').textContent = 'Informe um usuário válido.'; return; }
+  if (!confirm(remover ? 'Retirar o acesso da conta a este número?' : 'Conceder à conta informada a consulta deste número? Um vínculo anterior será substituído.')) return;
+  const versao = acessoVersao;
+  ocupado = true; $('accountSave').disabled = true; $('accountUnlink').disabled = true;
+  try {
+    const {error} = await supabase.rpc('rifa_vincular_acesso_numero',{p_campanha_id:campanhaAtualId,p_numero:atual,p_login:remover ? null : login});
+    if (error) throw error;
+    if (versao !== acessoVersao || !admin) return;
+    $('accountMessage').textContent = remover ? 'Vínculo removido.' : 'Conta vinculada para consulta.';
+    if (remover) $('accountEmail').value = '';
+  } catch { if (versao === acessoVersao) $('accountMessage').textContent = 'Não foi possível alterar o vínculo. Confira a conta cadastrada e o número.'; }
+  finally { ocupado = false; if (versao === acessoVersao) { $('accountSave').disabled = false; $('accountUnlink').disabled = !$('accountEmail').value; } }
+}
+$('accountForm').addEventListener('submit', event => { event.preventDefault(); return vincularConta(false); });
+$('accountUnlink').addEventListener('click', () => vincularConta(true));
+
+$('loginButton').addEventListener('click', abrirLogin);
 $('authCancel').addEventListener('click', () => $('authDialog').close());
 $('authForm').addEventListener('submit', async event => {
   event.preventDefault();
-  if (ocupado) return;
+  if (ocupado || logoutPendente) return;
   ocupado = true;
   $('authMessage').textContent = 'Verificando acesso...';
-  const email = $('email').value.trim(), password = $('password').value;
+  const login = normalizarLogin($('email').value), password = $('password').value;
+  const email = login.includes('@') ? login : emailDoLogin(login);
   try {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    const authorized = await verificarAdministrador();
-    if (!authorized) {
-      await supabase.auth.signOut();
-      throw new Error('Este usuário não tem autorização para administrar a rifa.');
-    }
+    await verificarAdministrador();
+    visitanteEscolhido = false;
     $('authDialog').close();
     $('password').value = '';
   } catch (error) {
@@ -534,13 +657,11 @@ $('authForm').addEventListener('submit', async event => {
   ocupado = false;
   await atualizarTela();
 });
-$('logoutButton').addEventListener('click', async () => {
+async function encerrarSessao() {
   logoutPendente = true;
   historicoToken++;
-  admin = false;
-  carregado = false;
-  resetar();
-  render();
+  visitanteEscolhido = false;
+  limparAcesso();
   let error;
   try { ({ error } = await supabase.auth.signOut()); }
   catch (failure) { error = failure; }
@@ -552,7 +673,9 @@ $('logoutButton').addEventListener('click', async () => {
   }
   logoutPendente = false;
   await atualizarTela();
-});
+}
+$('logoutButton').addEventListener('click', encerrarSessao);
+$('accessLogout').addEventListener('click', encerrarSessao);
 function baixar(nome, conteudo) {
   const url = URL.createObjectURL(new Blob([conteudo], { type: 'application/json' }));
   const link = document.createElement('a');
@@ -850,6 +973,21 @@ async function iniciarSorteio(modo) {
 }
 
 $('reloadButton').addEventListener('click', () => void atualizarTela());
+// O callback não chama APIs assíncronas de Auth enquanto o SDK mantém seu bloqueio.
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT' || (event === 'SIGNED_IN' && usuarioAtual?.id !== session?.user?.id)) {
+    visitanteEscolhido = false; limparAcesso();
+  }
+  if (['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','USER_UPDATED'].includes(event)) {
+    clearTimeout(authTimer);
+    const atualizar = () => {
+      if (logoutPendente) return;
+      if (ocupado || sorteando) { authTimer = setTimeout(atualizar, 200); return; }
+      void atualizarTela();
+    };
+    authTimer = setTimeout(atualizar, 0);
+  }
+});
 resetar(); render();
 await atualizarTela();
 setInterval(() => {
