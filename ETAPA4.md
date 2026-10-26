@@ -9,7 +9,7 @@ Cadastro único de participantes, conforme o escopo da Etapa 4.
 ## 2. Arquivos
 
 - `index.html`: formulário de participante, seleção de cadastro existente, tratamento de homônimos, listagem agrupada e salvamento transacional.
-- `supabase/migrations/20261026_etapa4_participantes.sql`: migração preparada, ainda não aplicada.
+- `supabase/migrations/20261026_etapa4_participantes.sql`: migração aplicada no Supabase e versionada no GitHub.
 - `tests/smoke.cjs`: cobertura isolada de cadastro, nomes com acentos/caixa/espaços, seleção existente e homônimo.
 - `tests/participants-db.cjs`: teste PostgreSQL isolado da migração, RLS, compatibilidade de importação e integridade.
 
@@ -58,5 +58,6 @@ Os testes de banco foram feitos em PostgreSQL temporário, com dados fictícios.
 ## 9. Próxima etapa prevista
 
 A próxima etapa do plano é a **Etapa 5 — vários números por participante**, incluindo seleção em lote e pagamentos individuais/conjuntos.
+
 
 
