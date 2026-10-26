@@ -159,7 +159,7 @@ function desenharSeletorCampanhas() {
   for (const campanha of campanhas) {
     const option = document.createElement('option');
     option.value = campanha.id;
-    option.textContent = `Campanha ${String(campanha.codigo).padStart(2,'0')} · ${campanha.nome_campanha}`;
+    option.textContent = campanha.nome_campanha;
     select.append(option);
   }
   select.value = campanhaAtualId ?? '';
