@@ -52,7 +52,7 @@ supabase.rpc=(name,args)=>{
  // Restauração da sessão existente e vínculo administrativo explícito.
  supabase.auth.signInWithPassword=authenticate;session=true;authorized=true;
  await $('reloadButton').click();await flush();assert.equal($('accountStatus').textContent,'Administrador');assert.equal($('drawButton').hidden,false);
- $('grid').children[0].click();await $('accountAccessButton').click();assert.equal($('accountDialog').open,true);
+ $('grid').children[0].click();assert.equal($('editor').open,true);assert.equal($('saveNumberButton').hidden,true);assert.equal($('nome').disabled,true);assert.equal($('accountAccessButton').hidden,false);await $('accountAccessButton').click();assert.equal($('accountDialog').open,true);
  $('accountEmail').value='joao_silva';confirmResult=false;await $('accountForm').submit();assert.equal(bindings,0);
  confirmResult=true;await $('accountForm').submit();assert.equal(bindings,1);assert.equal(linkedEmail,'joao_silva');
  await $('accountUnlink').click();assert.equal(bindings,2);assert.equal(linkedEmail,null);

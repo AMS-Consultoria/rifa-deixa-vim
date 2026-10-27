@@ -34,7 +34,7 @@ function query(table){
   maybeSingle(){const row=filters.campanha_id==='campaign-2'?campaignTwoConfig:config;return Promise.resolve(table==='rifa_configuracoes' && configMissing ? {data:null,error:{code:'PGRST205'}} : {data:table==='rifa_configuracoes'?{...row}:authorized?{user_id:'admin'}:null,error:null})},
   insert(row){inserts++;history.push({...row,realizado_em:new Date().toISOString()});return Promise.resolve({error:null})},
   update(){return q},
-  range(start,end){const source=filters.campanha_id==='campaign-2'?campaignTwoNumbers:numbers;return Promise.resolve({data:failSync?null:source.slice(start,end+1).map(x=>({...x})),error:failSync?new Error('offline'):null})}
+  range(start,end){const source=table==='rifa_sorteios'?history.map(x=>({numero:x.numero})):filters.campanha_id==='campaign-2'?campaignTwoNumbers:numbers;return Promise.resolve({data:failSync?null:source.slice(start,end+1).map(x=>({...x})),error:failSync?new Error('offline'):null})}
  };return q;
 }const supabase={
  auth:{
@@ -46,6 +46,21 @@ function query(table){
  },
  from:query,
  rpc(name,args){
+   if(name==='rifa_reservar_numeros_lote'){
+    const selected=args.p_numeros.map(n=>numbers[n-1]);
+    if(selected.some(x=>!x||x.situacao!=='disponivel'||history.some(h=>h.numero===x.numero)))return {data:null,error:new Error('Número ocupado ou sorteado')};
+    let row=args.p_participante_id?participantRows.find(x=>x.id===args.p_participante_id):null;
+    if(args.p_participante_id&&!row)return {data:null,error:new Error('Participante inexistente')};
+    if(!row){const found=participantRows.filter(x=>norm(x.nome_completo)===norm(args.p_nome));if(found.length&&!args.p_confirmar_homonimo)return {data:{status:'duplicado',candidatos:found},error:null};row={id:'participant-'+(++participantSeq),nome_completo:args.p_nome,telefone:args.p_telefone||null,criado_em:new Date().toISOString()};participantRows.push(row)}
+    for(const x of selected)numbers[x.numero-1]={...x,situacao:args.p_situacao,comprador:row.nome_completo,telefone:row.telefone,pago:args.p_situacao==='vendido',valor:config.valor_bilhete,participante_id:row.id};
+    return {data:{status:'salvo',participante_id:row.id,quantidade:selected.length},error:null};
+   }
+   if(name==='rifa_confirmar_pagamento_lote'||name==='rifa_liberar_reservas_lote'){
+    const selected=args.p_numeros.map(n=>numbers[n-1]);const ids=new Set(selected.map(x=>x.participante_id));
+    if(selected.some(x=>x.situacao!=='reservado'||x.pago)||ids.size!==1||selected.some(x=>history.some(h=>h.numero===x.numero)))return {data:null,error:new Error('Reserva inválida')};
+    for(const x of selected)numbers[x.numero-1]=name==='rifa_confirmar_pagamento_lote'?{...x,situacao:'vendido',pago:true}:{...x,situacao:'disponivel',pago:false,comprador:null,telefone:null,participante_id:null};
+    return {data:{status:'salvo',quantidade:selected.length},error:null};
+   }
    if(name==='rifa_salvar_participacao'){participantCalls.push({...args});const key=norm(args.p_nome);let row=args.p_participante_id?participantRows.find(x=>x.id===args.p_participante_id):null;if(!row){const found=participantRows.filter(x=>norm(x.nome_completo)===key);if(found.length&&!args.p_confirmar_homonimo)return Promise.resolve({data:{status:'duplicado',candidatos:found},error:null});row={id:'participant-'+(++participantSeq),nome_completo:args.p_nome,telefone:args.p_telefone,criado_em:new Date().toISOString()};participantRows.push(row)}numbers[args.p_numero-1]={...numbers[args.p_numero-1],situacao:args.p_situacao,comprador:row.nome_completo,telefone:row.telefone,pago:args.p_situacao==='vendido',participante_id:row.id};return Promise.resolve({data:{status:'salvo',participante_id:row.id},error:null})}
    if(name==='rifa_listar_campanhas_publicas')return multiCampaigns?{data:[{id:'campaign-1',codigo:1,nome_campanha:config.nome_campanha},...campaignList.filter(c=>c.id==='campaign-2')],error:null}:{data:null,error:{code:'PGRST202'}};
    if(name==='rifa_criar_campanha'){
@@ -160,5 +175,23 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('entries').children.length,2);assert.match($('entries').children[1].children[0].textContent,/Nº 02, 03/);
  $('grid').children[3].click();$('nome').value='Joao da Silva';$('telefone').value='11911112222';await $('form').submit();await flush();assert.equal(participantRows.length,1);confirmResult=false;await $('participantHomonym').click();await flush();assert.equal(participantRows.length,1);assert.equal(numbers[3].situacao,'disponivel');confirmResult=true;await $('participantHomonym').click();await flush();assert.equal(participantRows.length,2);assert.notEqual(numbers[3].participante_id,participanteOriginal);
  assert.equal(participantCalls.filter(x=>x.p_confirmar_homonimo).length,1);assert.match(html,/Participantes registrados/);
- console.log('PASS: cadastro único de participantes, busca sem acentos/maiúsculas/espaços, seleção existente e confirmação de homônimo; fluxo legado, painel de configurações, criação de campanha vazia, seleção isolada, preservação da Campanha 01, roleta, histórico, login e escopo SQL preparado');
+ // Lote: dois números para um participante; pagamentos individuais e conjuntos; liberação segura.
+ $('grid').children[0].click();assert.equal($('editor').open,false);assert.match($('notice').textContent,/registrado em sorteio/);
+ $('bulkAddButton').click();await flush();assert.equal($('bulkFinishButton').hidden,false);assert.equal($('grid').children[0].disabled,true);
+ $('grid').children[4].click();$('grid').children[5].click();assert.equal($('bulkFinishButton').disabled,false);await $('bulkFinishButton').click();
+ assert.equal($('bulkDialog').open,true);$('bulkNome').value='Carlos Souza';$('bulkTelefone').value='11988887777';await $('bulkForm').submit();await flush();
+ const carlos=participantRows.find(x=>x.nome_completo==='Carlos Souza');assert.ok(carlos);assert.equal(numbers[4].participante_id,carlos.id);assert.equal(numbers[5].participante_id,carlos.id);assert.equal(numbers[4].situacao,'reservado');
+ let linhaCarlos=$('entries').children.find(x=>x.children[0].textContent.includes('Carlos Souza'));assert.ok(linhaCarlos);linhaCarlos.children[1].click();await flush();assert.equal($('participantDetailDialog').open,true);
+ let fichaChecks=$('participantDetailNumbers').children.filter(li=>li.check);assert.equal(fichaChecks.length,2);fichaChecks.find(li=>li.numero===5).check.checked=true;await $('detailPaySelected').click();await flush();
+ assert.equal(numbers[4].situacao,'vendido');assert.equal(numbers[4].pago,true);assert.equal(numbers[5].situacao,'reservado');
+ await $('detailAddNumbers').click();await flush();assert.equal($('participantDetailDialog').open,false);$('grid').children[6].click();$('grid').children[7].click();await $('bulkFinishButton').click();await flush();
+ assert.equal(numbers[6].participante_id,carlos.id);assert.equal(numbers[7].participante_id,carlos.id);assert.equal(numbers[6].situacao,'reservado');
+ fichaChecks=$('participantDetailNumbers').children.filter(li=>li.check);fichaChecks.find(li=>li.numero===6).check.checked=true;fichaChecks.find(li=>li.numero===7).check.checked=true;await $('detailPaySelected').click();await flush();
+ assert.equal(numbers[5].situacao,'vendido');assert.equal(numbers[6].situacao,'vendido');assert.equal(numbers[7].situacao,'reservado');
+ fichaChecks=$('participantDetailNumbers').children.filter(li=>li.check);fichaChecks.find(li=>li.numero===8).check.checked=true;await $('detailReleaseSelected').click();await flush();assert.equal(numbers[7].situacao,'disponivel');
+ // A tentativa de usar nome duplicado mostra os cadastros e associa sem criar duplicata.
+ $('bulkAddButton').click();await flush();$('grid').children[8].click();$('grid').children[9].click();await $('bulkFinishButton').click();
+ $('bulkNome').value='Carlos Souza';await $('bulkForm').submit();await flush();assert.equal($('bulkMatchPanel').hidden,false);assert.equal(participantRows.filter(x=>x.id===carlos.id).length,1);
+ $('bulkMatches').children[0].children[0].click();await flush();assert.equal(numbers[8].participante_id,carlos.id);assert.equal(numbers[9].participante_id,carlos.id);assert.equal(participantRows.length,3);
+ console.log('PASS: Etapas 1–5 — campanhas e configurações, sorteio/histórico/login, cadastro único, seleção de números em lote, participante existente, homônimo, pagamentos individual/conjunto, liberação e proteção de sorteados');
 })().catch(e=>{console.error(e);process.exitCode=1});
