@@ -1,6 +1,6 @@
 # Etapa 7 — últimos participantes e lista independente
 
-**Estado:** implementação e testes concluídos; publicação no GitHub em andamento.
+**Estado:** concluída, testada e publicada na branch main.
 
 ## Arquivos
 
@@ -31,7 +31,7 @@ Nenhuma alteração ou migração foi necessária. A etapa usa o vínculo de par
 - node tests/access-db.cjs com PGlite: aprovado.
 - git diff --check: aprovado.
 
-A tela pública será conferida após a publicação. A lista administrativa foi validada pelos testes automatizados.
+A tela pública foi conferida no GitHub Pages após o deploy #32 (commit 35458d0). A lista administrativa foi validada pelos testes automatizados.
 
 ## Backup
 
