@@ -10,6 +10,7 @@ class El{
  submit(){return this.listeners.submit?.({preventDefault(){}})}
  cancel(){return this.listeners.cancel?.({preventDefault(){}})}
  change(){return this.listeners.change?.({target:this})}
+ input(){return this.listeners.input?.({target:this})}
  showModal(){this.open=true}
  close(){this.open=false}
  append(...x){this.children.push(...x)}
@@ -62,6 +63,16 @@ function query(table){
     return {data:{status:'salvo',quantidade:selected.length},error:null};
    }
    if(name==='rifa_salvar_participacao'){participantCalls.push({...args});const key=norm(args.p_nome);let row=args.p_participante_id?participantRows.find(x=>x.id===args.p_participante_id):null;if(!row){const found=participantRows.filter(x=>norm(x.nome_completo)===key);if(found.length&&!args.p_confirmar_homonimo)return Promise.resolve({data:{status:'duplicado',candidatos:found},error:null});row={id:'participant-'+(++participantSeq),nome_completo:args.p_nome,telefone:args.p_telefone,criado_em:new Date().toISOString()};participantRows.push(row)}numbers[args.p_numero-1]={...numbers[args.p_numero-1],situacao:args.p_situacao,comprador:row.nome_completo,telefone:row.telefone,pago:args.p_situacao==='vendido',participante_id:row.id};return Promise.resolve({data:{status:'salvo',participante_id:row.id},error:null})}
+   if(name==='rifa_editar_participante'){
+    const row=participantRows.find(x=>x.id===args.p_participante_id);if(!row)return {data:null,error:new Error('Participante inexistente')};
+    const vinculados=[...numbers,...campaignTwoNumbers].filter(x=>x.participante_id===row.id);
+    if(vinculados.some(x=>x.pago||x.situacao==='vendido'||history.some(h=>h.numero===x.numero)))return {data:{status:'protegido'},error:null};
+    const candidatos=participantRows.filter(x=>x.id!==row.id&&norm(x.nome_completo)===norm(args.p_nome));
+    if(norm(row.nome_completo)!==norm(args.p_nome)&&candidatos.length&&!args.p_confirmar_homonimo)return {data:{status:'duplicado',candidatos},error:null};
+    row.nome_completo=args.p_nome;row.telefone=args.p_telefone||null;
+    for(const x of [...numbers,...campaignTwoNumbers])if(x.participante_id===row.id){x.comprador=row.nome_completo;x.telefone=row.telefone}
+    return {data:{status:'salvo',participante_id:row.id},error:null};
+   }
    if(name==='rifa_resumo_financeiro_publico'){
     const rows=args.p_campanha_id==='campaign-2'?campaignTwoNumbers:numbers;
     const recebido=rows.filter(x=>x.pago).reduce((total,x)=>total+Number(x.valor||0),0);
@@ -215,6 +226,19 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  const linhasHomonimos=$('allParticipantsList').children.filter(li=>/Jo[ãa]o da Silva/.test(li.children[0].textContent));assert.equal(linhasHomonimos.length,2);
  assert.match($('allParticipantsList').children[0].children[0].textContent,/Participante Extra 6/);
  const resumoParticipante=$('allParticipantsList').children[0].children[0].textContent;assert.ok(resumoParticipante.includes('Nº 26')&&resumoParticipante.includes('Participação:')&&resumoParticipante.includes('Financeiro:')&&resumoParticipante.includes('Última movimentação:'));
+ // Busca por nome, telefone e número; filtro de situação reduz os números mostrados.
+ const dora=participantRows.find(x=>x.nome_completo==='Dora Teste');assert.ok(dora);dora.telefone='11912345678';numbers[10].telefone=dora.telefone;await $('reloadButton').click();await flush();
+ $('participantsSearch').value='carlos';$('participantsSearch').input();assert.equal($('allParticipantsList').children.length,1);assert.match($('allParticipantsList').children[0].children[0].textContent,/Carlos Souza/);
+ $('participantsSituation').value='vendido';$('participantsSituation').change();assert.equal($('allParticipantsList').children.length,1);assert.match($('allParticipantsList').children[0].children[0].textContent,/3 vendido\(s\), 0 reservado/);
+ $('participantsSituation').value='reservado';$('participantsSituation').change();assert.equal($('allParticipantsList').children.length,1);assert.match($('allParticipantsList').children[0].children[0].textContent,/0 vendido\(s\), 2 reservado/);
+ $('participantsSearch').value='119123';$('participantsSearch').input();assert.equal($('allParticipantsList').children.length,1);assert.match($('allParticipantsList').children[0].children[0].textContent,/Dora Teste/);
+ $('participantsSearch').value='11';$('participantsSituation').value='todas';$('participantsSearch').input();$('participantsSituation').change();assert.equal($('allParticipantsList').children.length,1);assert.match($('allParticipantsList').children[0].children[0].textContent,/Nº 11/);
+ $('clearParticipantFilters').click();assert.equal($('participantsSearch').value,'');assert.equal($('participantsSituation').value,'todas');
+ const linhaDora=$('allParticipantsList').children.find(li=>li.children[0].textContent.includes('Dora Teste'));assert.ok(linhaDora);linhaDora.children[1].children[0].click();await flush();assert.equal($('participantDetailDialog').open,true);
+ $('detailEditParticipant').click();assert.equal($('participantEditDialog').open,true);$('participantEditName').value='Carlos Souza';$('participantEditPhone').value='11922223333';await $('participantEditForm').submit();await flush();assert.equal($('participantEditMatchPanel').hidden,false);
+ $('participantEditConfirmHomonym').click();await flush();assert.equal(dora.nome_completo,'Carlos Souza');assert.equal(dora.telefone,'11922223333');assert.equal(numbers[10].comprador,'Carlos Souza');assert.equal(numbers[10].telefone,'11922223333');assert.equal($('participantDetailDialog').open,true);
+ // A identidade ligada a números vendidos permanece protegida também na interface.
+ $('detailClose').click();$('participantsSearch').value='05';$('participantsSearch').input();const linhaPago=$('allParticipantsList').children.find(li=>li.children[0].textContent.includes('Nº 05'));assert.ok(linhaPago);linhaPago.children[1].children[0].click();await flush();$('detailEditParticipant').click();$('participantEditName').value='Nome alterado';await $('participantEditForm').submit();await flush();assert.match($('participantEditMessage').textContent,/vendido, pago ou sorteado/);assert.equal(carlos.nome_completo,'Carlos Souza');$('participantEditCancel').click();await flush();
  $('participantsBack').click();assert.equal($('participantsPage').hidden,true);assert.equal($('rafflePage').hidden,false);
  $('showAllParticipants').click();assert.equal($('participantsPage').hidden,false);
  anteriores.forEach((r,i)=>numbers[20+i]=r);await $('reloadButton').click();await flush();
@@ -223,5 +247,5 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('drawButton').hidden,true);assert.equal($('confirmPaymentButton').hidden,true);
  assert.equal($('total').textContent,'R$\u00a032,50');assert.equal($('pendingTotal').textContent,'R$\u00a032,50');assert.equal($('grandTotal').textContent,'R$\u00a065,00');
  assert.match(html,/class="actions main-actions"/);assert.match(html,/class="finance-summary"/);assert.match(html,/id="settingsHub"[\s\S]*id="backup"/);
- console.log('PASS: Etapas 1–7 — campanhas e configurações, sorteio/histórico/login, cadastro único, seleção de números em lote, participante existente, homônimo, pagamentos individual/conjunto, liberação e proteção de sorteados');
+ console.log('PASS: Etapas 1–8 — campanhas/configurações, sorteio/histórico/login, cadastro e lote, pagamentos/liberação, busca por nome/telefone/número, filtros e edição segura de participante');
 })().catch(e=>{console.error(e);process.exitCode=1});
