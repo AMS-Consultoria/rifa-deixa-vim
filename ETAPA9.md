@@ -10,8 +10,8 @@ A Etapa 9 inclui melhorias de código e uma migração para o Supabase. Em 27/10
 - Compatibilidade de leitura com os arquivos v3 já exportados pelo aplicativo.
 - Prévia e validação antes da restauração. A aplicação baixa um backup preventivo e restaura apenas a campanha selecionada.
 - A restauração acrescenta registros em números livres e preserva números já reservados, vendidos ou registrados em sorteio. O histórico é combinado sem duplicar IDs.
-- Arte PNG 1080 × 1680 (proporção 9:14) com nome da entidade e campanha, rifa, prêmio, critério/situação, contadores, WhatsApp de contato e todos os números coloridos por estado.
-- O desenho da cartela calcula linhas, colunas e tamanho das células com base na quantidade da campanha. O botão de compartilhamento abre o menu nativo; no WhatsApp, a pessoa escolhe uma conversa ou o Status e confirma o envio.
+- Artes PNG 1080 × 1680 (proporção 9:14), com até 100 números por imagem. A navegação mostra as páginas seguintes; o envio pelo WhatsApp compartilha todas juntas. Cada página exibe os dados da campanha, contadores, números coloridos por estado e o WhatsApp em destaque.
+- Cada página organiza até 100 números em dez colunas, com células horizontais compactas. O menu de compartilhamento envia todas as páginas juntas; a pessoa escolhe um contato ou o Status e confirma no WhatsApp.
 
 ## Migração
 

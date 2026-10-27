@@ -5,7 +5,7 @@ new vm.Script('(async()=>{'+source+'})()');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 class El{
  constructor(){this.children=[];this.listeners={};this.hidden=false;this.disabled=false;this.open=false;this.value='';this.style={};this.files=[];this.classList={add(){},remove(){}};}
- getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];return {fillStyle:'',font:'',textAlign:'',textBaseline:'',fillRect(){canvas.rectCount++},fillText(x){canvas.drawnText.push(String(x))},measureText(x){return {width:String(x).length*9}}}}
+ getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];return {fillStyle:'',font:'',textAlign:'',textBaseline:'',fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font})},measureText(x){return {width:String(x).length*9}}}}
  toBlob(fn,type){fn({type,width:this.width,height:this.height})}
  addEventListener(k,fn){this.listeners[k]=fn}
  click(){return this.listeners.click?.({preventDefault(){}})}
@@ -28,7 +28,7 @@ let now=0,timers=[],nextTimer=1,rand=0,session=true,authorized=true,failSync=fal
 let numbers=Array.from({length:100},(_,i)=>({numero:i+1,situacao:i===0?'vendido':'disponivel',comprador:i===0?'Alice':null,telefone:null,pago:i===0,valor:5}));
 let history=[],inserts=0,signIns=0,configSaves=0,configMissing=false;
 let config={id:1,nome_entidade:'Deixa Vim',nome_campanha:'Campanha 01',nome_rifa:'Rifa Deixa Vim',descricao_premio:'Agasalho esportivo',quantidade_bilhetes:100,valor_bilhete:5,criterio_sorteio:'Sorteio após todos os números serem preenchidos',situacao:'em_andamento'};
-let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0;
+let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0,shareFileCounts=[];
 let paymentDetails={tipo_chave_pix:'cpf_cnpj',chave_pix:'12345678901',whatsapp:'11987654321'};const norm=x=>String(x||'').normalize('NFD').replaceAll(String.fromCharCode(769),'').replaceAll(String.fromCharCode(771),'').toLowerCase().trim().split(' ').filter(Boolean).join(' ');
 let multiCampaigns=false,campaignList=[{id:'campaign-1',codigo:1,nome_campanha:'Campanha 01'}],campaignTwoConfig=null,campaignTwoNumbers=[];
 function query(table){
@@ -103,7 +103,7 @@ const clock={
  clearTimeout(id){timers=timers.filter(t=>t.id!==id)},
  runUntil(target){while(true){timers.sort((a,b)=>a.at-b.at);if(!timers.length||timers[0].at>target)break;const t=timers.shift();now=t.at;t.fn()}now=target}
 };
-const alerts=[],context={document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async()=>{shareCalls++},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
+const alerts=[],context={document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async args=>{shareCalls++;shareFileCounts.push(args.files?.length||0)},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
  crypto:{getRandomValues:a=>{a[0]=rand;return a},randomUUID:()=>crypto.randomUUID()},Uint32Array,
  performance:{now:clock.now},setTimeout:clock.setTimeout,clearTimeout:clock.clearTimeout,setInterval:()=>0,
  alert:x=>alerts.push(x),confirm:()=>confirmResult,URL:{createObjectURL:blob=>{downloads.push(blob);return 'blob:test-'+downloads.length},revokeObjectURL:()=>{}},Blob:class{constructor(parts,options){this.parts=parts;this.type=options?.type}},Date,console};
@@ -125,8 +125,34 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('heroPrice').textContent,'R$ 7,50 por número');
  assert.equal($('total').textContent,'R$ 5,00');
  $('settingsBack').click();assert.equal($('settingsHub').hidden,false);$('settingsCloseButton').click();assert.equal($('settingsPage').hidden,true);
- $('settingsButton').click();for(const quantity of [100,120,150]){config.quantidade_bilhetes=quantity;if(numbers.length<quantity)numbers.push(...Array.from({length:quantity-numbers.length},(_,i)=>({numero:numbers.length+i+1,situacao:'disponivel',comprador:null,telefone:null,pago:false,valor:5})));await $('reloadButton').click();await flush();context.__setTestPaymentDetails(paymentDetails);await $('campaignPosterButton').click();const poster=createdCanvases.at(-1);assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,quantity+7);assert.match($('posterMessage').textContent,/9:14/);if(quantity===100){await $('posterShare').click();assert.equal(shareCalls,1)}$('posterClose').click()}config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
- assert.ok(createdCanvases.some(canvas=>canvas.drawnText?.includes('WhatsApp para contato: (11) 98765-4321')));
+ $('settingsButton').click();
+ for(const quantity of [100,120,150]){
+  config.quantidade_bilhetes=quantity;
+  if(numbers.length<quantity)numbers.push(...Array.from({length:quantity-numbers.length},(_,i)=>({numero:numbers.length+i+1,situacao:'disponivel',comprador:null,telefone:null,pago:false,valor:5})));
+  await $('reloadButton').click();await flush();context.__setTestPaymentDetails(paymentDetails);
+  const beforePages=createdCanvases.length;await $('campaignPosterButton').click();
+  const pages=createdCanvases.slice(beforePages),pageCount=Math.ceil(quantity/100);assert.equal(pages.length,pageCount);
+  assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');
+  for(let page=0;page<pages.length;page++){
+   const poster=pages[page],pageQuantity=Math.min(100,quantity-page*100);
+   assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+7);
+   const infoLabels=['ENTIDADE · Deixa Vim','CAMPANHA · Campanha 01','RIFA · Rifa Deixa Vim','PRÊMIO · Agasalho esportivo','VALOR · R$ 5,00 por número','SITUAÇÃO · EM ANDAMENTO'];
+   for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text.startsWith(label.split(' · ')[0]+' ·'));assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/20px/);}
+   for(const [left,right] of [[infoLabels[0],infoLabels[1]],[infoLabels[2],infoLabels[3]],[infoLabels[4],infoLabels[5]]]){const a=poster.drawnPositions.find(position=>position.text.startsWith(left.split(' · ')[0]+' ·')),b=poster.drawnPositions.find(position=>position.text.startsWith(right.split(' · ')[0]+' ·'));assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
+   const sorteio=poster.drawnPositions.find(position=>position.text==='Sorteio após todos os números serem preenchidos');assert.ok(sorteio);assert.match(sorteio.font,/32px/);assert.equal(sorteio.x,54);   const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
+   if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
+   const first=String(page*100+1).padStart(3,'0'),last=String(page*100+pageQuantity).padStart(3,'0');
+   assert.ok(poster.drawnText.includes('NÚMEROS '+first+'–'+last+' · PÁGINA '+(page+1)+'/'+pageCount));
+   assert.ok(poster.drawnText.includes(first));assert.ok(poster.drawnText.includes('(11) 98765-4321'));
+   const phoneIndex=poster.drawnText.indexOf('(11) 98765-4321');assert.match(poster.drawnFonts[phoneIndex],/900 52px/);
+  }
+  assert.match($('posterMessage').textContent,/imagem|imagens/i);
+  if(pageCount>1){const firstUrl=$('campaignPosterPreview').src;$('posterNext').click();assert.equal($('posterPageIndicator').textContent,'Imagem 2 de '+pageCount+' · números 101–'+String(quantity).padStart(3,'0'));assert.notEqual($('campaignPosterPreview').src,firstUrl);$('posterPrev').click();assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');}
+  await $('posterShare').click();assert.equal(shareCalls,shareFileCounts.length);assert.equal(shareFileCounts.at(-1),pageCount);
+  $('posterClose').click();
+ }
+ config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
+ assert.match(html,/id="posterPrev"/);assert.match(html,/id="posterNext"/);
  assert.equal($('historySection').hidden,false);
  assert.equal($('vendidos').textContent,1);
  $('drawButton').click();assert.equal($('drawChoiceDialog').open,true);
