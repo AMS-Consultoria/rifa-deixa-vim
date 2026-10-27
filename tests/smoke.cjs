@@ -1,10 +1,12 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),crypto=require('crypto');
 const html=fs.readFileSync('index.html','utf8');
-const source=html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/import[^\n]*\n/,'');
+const source=html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/import[^\n]*\n/,'')+"\nglobalThis.__setTestPaymentDetails=value=>{dadosPagamentoCampanha={...value};};";
 new vm.Script('(async()=>{'+source+'})()');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 class El{
- constructor(){this.children=[];this.listeners={};this.hidden=false;this.disabled=false;this.open=false;this.value='';this.style={};this.classList={add(){},remove(){}};}
+ constructor(){this.children=[];this.listeners={};this.hidden=false;this.disabled=false;this.open=false;this.value='';this.style={};this.files=[];this.classList={add(){},remove(){}};}
+ getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];return {fillStyle:'',font:'',textAlign:'',textBaseline:'',fillRect(){canvas.rectCount++},fillText(x){canvas.drawnText.push(String(x))},measureText(x){return {width:String(x).length*9}}}}
+ toBlob(fn,type){fn({type,width:this.width,height:this.height})}
  addEventListener(k,fn){this.listeners[k]=fn}
  click(){return this.listeners.click?.({preventDefault(){}})}
  submit(){return this.listeners.submit?.({preventDefault(){}})}
@@ -20,22 +22,23 @@ class El{
  remove(){}
 }
 const elements=Object.fromEntries(ids.map(id=>[id,new El()]));
-const document={getElementById:id=>elements[id],createElement:()=>new El(),body:new El(),visibilityState:'visible',execCommand:()=>true};
+const createdCanvases=[];const document={getElementById:id=>elements[id],createElement:tag=>{const e=new El();e.tagName=tag;if(tag==='canvas')createdCanvases.push(e);return e},body:new El(),visibilityState:'visible',execCommand:()=>true};
 const $=id=>elements[id];
 let now=0,timers=[],nextTimer=1,rand=0,session=true,authorized=true,failSync=false,failLogout=false,confirmResult=true;
 let numbers=Array.from({length:100},(_,i)=>({numero:i+1,situacao:i===0?'vendido':'disponivel',comprador:i===0?'Alice':null,telefone:null,pago:i===0,valor:5}));
 let history=[],inserts=0,signIns=0,configSaves=0,configMissing=false;
 let config={id:1,nome_entidade:'Deixa Vim',nome_campanha:'Campanha 01',nome_rifa:'Rifa Deixa Vim',descricao_premio:'Agasalho esportivo',quantidade_bilhetes:100,valor_bilhete:5,criterio_sorteio:'Sorteio após todos os números serem preenchidos',situacao:'em_andamento'};
-let participantRows=[],participantCalls=[],participantSeq=0;const norm=x=>String(x||'').normalize('NFD').replaceAll(String.fromCharCode(769),'').replaceAll(String.fromCharCode(771),'').toLowerCase().trim().split(' ').filter(Boolean).join(' ');
+let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0;
+let paymentDetails={tipo_chave_pix:'cpf_cnpj',chave_pix:'12345678901',whatsapp:'11987654321'};const norm=x=>String(x||'').normalize('NFD').replaceAll(String.fromCharCode(769),'').replaceAll(String.fromCharCode(771),'').toLowerCase().trim().split(' ').filter(Boolean).join(' ');
 let multiCampaigns=false,campaignList=[{id:'campaign-1',codigo:1,nome_campanha:'Campanha 01'}],campaignTwoConfig=null,campaignTwoNumbers=[];
 function query(table){
- const filters={};
+ const filters={};let columns='*';
  const q={
-  select(){return q},eq(k,v){filters[k]=v;return q},order(){return q},limit(){return Promise.resolve({data:history.slice(),error:null})},
+  select(c){columns=c||'*';return q},eq(k,v){filters[k]=v;return q},order(){return q},limit(){return Promise.resolve({data:history.slice(),error:null})},
   maybeSingle(){const row=filters.campanha_id==='campaign-2'?campaignTwoConfig:config;return Promise.resolve(table==='rifa_configuracoes' && configMissing ? {data:null,error:{code:'PGRST205'}} : {data:table==='rifa_configuracoes'?{...row}:authorized?{user_id:'admin'}:null,error:null})},
   insert(row){inserts++;history.push({...row,realizado_em:new Date().toISOString()});return Promise.resolve({error:null})},
   update(){return q},
-  range(start,end){const source=table==='rifa_sorteios'?history.map(x=>({numero:x.numero})):filters.campanha_id==='campaign-2'?campaignTwoNumbers:numbers;return Promise.resolve({data:failSync?null:source.slice(start,end+1).map(x=>({...x})),error:failSync?new Error('offline'):null})}
+  range(start,end){const source=table==='rifa_sorteios'?(columns==='numero'?history.map(x=>({numero:x.numero})):history):filters.campanha_id==='campaign-2'?campaignTwoNumbers:numbers;return Promise.resolve({data:failSync?null:source.slice(start,end+1).map(x=>({...x})),error:failSync?new Error('offline'):null})}
  };return q;
 }const supabase={
  auth:{
@@ -73,6 +76,8 @@ function query(table){
     for(const x of [...numbers,...campaignTwoNumbers])if(x.participante_id===row.id){x.comprador=row.nome_completo;x.telefone=row.telefone}
     return {data:{status:'salvo',participante_id:row.id},error:null};
    }
+   if(name==='rifa_obter_dados_campanha_admin')return Promise.resolve({data:{...paymentDetails},error:null});
+   if(name==='rifa_restaurar_backup_campanha'){restoreCalls.push({...args});return Promise.resolve({data:{registros_restaurados:1,registros_preservados:1,sorteios_restaurados:1,sorteios_duplicados:0},error:null})}
    if(name==='rifa_resumo_financeiro_publico'){
     const rows=args.p_campanha_id==='campaign-2'?campaignTwoNumbers:numbers;
     const recebido=rows.filter(x=>x.pago).reduce((total,x)=>total+Number(x.valor||0),0);
@@ -80,14 +85,14 @@ function query(table){
     return {data:[{total_recebido:recebido,total_a_receber:pendente,total_geral:recebido+pendente}],error:null};
    }
    if(name==='rifa_listar_campanhas_publicas')return multiCampaigns?{data:[{id:'campaign-1',codigo:1,nome_campanha:config.nome_campanha},...campaignList.filter(c=>c.id==='campaign-2')],error:null}:{data:null,error:{code:'PGRST202'}};
-   if(name==='rifa_criar_campanha'){
+   if(name==='rifa_criar_campanha_etapa9'){
     const id='campaign-2';
-    campaignTwoConfig={id:2,campanha_id:id,nome_entidade:args.p_nome_entidade,nome_campanha:args.p_nome_campanha,nome_rifa:args.p_nome_rifa,descricao_premio:args.p_descricao_premio,quantidade_bilhetes:args.p_quantidade_bilhetes,valor_bilhete:args.p_valor_bilhete,criterio_sorteio:args.p_criterio_sorteio,situacao:args.p_situacao};
+    paymentDetails={tipo_chave_pix:args.p_tipo_chave_pix,chave_pix:args.p_chave_pix,whatsapp:args.p_whatsapp};campaignTwoConfig={id:2,campanha_id:id,nome_entidade:args.p_nome_entidade,nome_campanha:args.p_nome_campanha,nome_rifa:args.p_nome_rifa,descricao_premio:args.p_descricao_premio,quantidade_bilhetes:args.p_quantidade_bilhetes,valor_bilhete:args.p_valor_bilhete,criterio_sorteio:args.p_criterio_sorteio,situacao:args.p_situacao};
     campaignTwoNumbers=Array.from({length:args.p_quantidade_bilhetes},(_,i)=>({numero:i+1,situacao:'disponivel',comprador:null,telefone:null,pago:false,valor:args.p_valor_bilhete}));
     if(!campaignList.some(c=>c.id===id))campaignList.push({id,codigo:2,nome_campanha:args.p_nome_campanha});
     return Promise.resolve({data:id,error:null});
    }
-   if(name==='rifa_salvar_configuracoes_campanha'){configSaves++;config={...config,nome_entidade:args.p_nome_entidade,nome_campanha:args.p_nome_campanha,nome_rifa:args.p_nome_rifa,descricao_premio:args.p_descricao_premio,quantidade_bilhetes:args.p_quantidade_bilhetes,valor_bilhete:args.p_valor_bilhete,criterio_sorteio:args.p_criterio_sorteio,situacao:args.p_situacao};return Promise.resolve({error:null})}
+   if(name==='rifa_salvar_configuracoes_campanha_etapa9'){configSaves++;paymentDetails={tipo_chave_pix:args.p_tipo_chave_pix,chave_pix:args.p_chave_pix,whatsapp:args.p_whatsapp};config={...config,nome_entidade:args.p_nome_entidade,nome_campanha:args.p_nome_campanha,nome_rifa:args.p_nome_rifa,descricao_premio:args.p_descricao_premio,quantidade_bilhetes:args.p_quantidade_bilhetes,valor_bilhete:args.p_valor_bilhete,criterio_sorteio:args.p_criterio_sorteio,situacao:args.p_situacao};return Promise.resolve({error:null})}
    if(name==='rifa_salvar_configuracoes'){configSaves++;config={...config,nome_entidade:args.p_nome_entidade,nome_campanha:args.p_nome_campanha,nome_rifa:args.p_nome_rifa,descricao_premio:args.p_descricao_premio,quantidade_bilhetes:args.p_quantidade_bilhetes,valor_bilhete:args.p_valor_bilhete,criterio_sorteio:args.p_criterio_sorteio,situacao:args.p_situacao};return Promise.resolve({error:null})}
    return {order(){return this},range(start,end){return Promise.resolve({data:failSync?null:numbers.slice(start,end+1).map(({numero,situacao})=>({numero,situacao,total_recebido:numbers.filter(x=>x.situacao==='vendido').reduce((a,x)=>a+x.valor,0)})),error:failSync?new Error('offline'):null})}}
   }
@@ -98,10 +103,10 @@ const clock={
  clearTimeout(id){timers=timers.filter(t=>t.id!==id)},
  runUntil(target){while(true){timers.sort((a,b)=>a.at-b.at);if(!timers.length||timers[0].at>target)break;const t=timers.shift();now=t.at;t.fn()}now=target}
 };
-const alerts=[],context={document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}}},createClient:()=>supabase,
+const alerts=[],context={document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async()=>{shareCalls++},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
  crypto:{getRandomValues:a=>{a[0]=rand;return a},randomUUID:()=>crypto.randomUUID()},Uint32Array,
  performance:{now:clock.now},setTimeout:clock.setTimeout,clearTimeout:clock.clearTimeout,setInterval:()=>0,
- alert:x=>alerts.push(x),confirm:()=>confirmResult,URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}},Blob:class{},Date,console};
+ alert:x=>alerts.push(x),confirm:()=>confirmResult,URL:{createObjectURL:blob=>{downloads.push(blob);return 'blob:test-'+downloads.length},revokeObjectURL:()=>{}},Blob:class{constructor(parts,options){this.parts=parts;this.type=options?.type}},Date,console};
 async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
 (async()=>{
  await vm.runInNewContext('(async()=>{'+source+'})()',context);
@@ -116,10 +121,12 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  numbers[99].situacao='disponivel';numbers[99].comprador=null; await $('reloadButton').click();await flush();
  $('settingsQuantity').value='100';$('settingsPrice').value='7.50';$('settingsRaffle').value='Rifa Atualizada';
  await $('settingsForm').submit();await flush();
- assert.equal(configSaves,1);assert.equal($('heroRaffle').textContent,'Rifa Atualizada');
+ assert.equal(configSaves,1);assert.equal(paymentDetails.tipo_chave_pix,'cpf_cnpj');assert.equal(paymentDetails.chave_pix,'12345678901');assert.equal(paymentDetails.whatsapp,'11987654321');assert.equal($('heroRaffle').textContent,'Rifa Atualizada');
  assert.equal($('heroPrice').textContent,'R$ 7,50 por número');
  assert.equal($('total').textContent,'R$ 5,00');
  $('settingsBack').click();assert.equal($('settingsHub').hidden,false);$('settingsCloseButton').click();assert.equal($('settingsPage').hidden,true);
+ $('settingsButton').click();for(const quantity of [100,120,150]){config.quantidade_bilhetes=quantity;if(numbers.length<quantity)numbers.push(...Array.from({length:quantity-numbers.length},(_,i)=>({numero:numbers.length+i+1,situacao:'disponivel',comprador:null,telefone:null,pago:false,valor:5})));await $('reloadButton').click();await flush();context.__setTestPaymentDetails(paymentDetails);await $('campaignPosterButton').click();const poster=createdCanvases.at(-1);assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,quantity+7);assert.match($('posterMessage').textContent,/9:14/);if(quantity===100){await $('posterShare').click();assert.equal(shareCalls,1)}$('posterClose').click()}config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
+ assert.ok(createdCanvases.some(canvas=>canvas.drawnText?.includes('WhatsApp para contato: (11) 98765-4321')));
  assert.equal($('historySection').hidden,false);
  assert.equal($('vendidos').textContent,1);
  $('drawButton').click();assert.equal($('drawChoiceDialog').open,true);
@@ -168,9 +175,13 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('entries').children.length,0);
  assert.equal($('livres').textContent,'…');
  assert.match($('notice').textContent,/Falha na sincronização/);
- assert.match(html,/\.actions\{display:grid;grid-template-columns:repeat\(2/);
+ assert.match(html,/\.actions\{display:grid;grid-template-columns:repeat\(2/);assert.match(html,/id="settingsPixType"/);assert.match(html,/id="settingsWhatsapp"/);assert.match(html,/id="restorePreviewDialog"/);assert.match(html,/id="campaignPosterButton"/);
  assert.match(html,/\.draw-options\{display:grid;grid-template-columns:repeat\(2/);
  failSync=false;multiCampaigns=true;await $('reloadButton').click();await flush();
+ await $('backup').click();await flush();const blobBackup=downloads.findLast(x=>x?.type==='application/json');assert.ok(blobBackup);const backupData=JSON.parse(blobBackup.parts[0]);assert.equal(backupData.versao,4);assert.equal(backupData.campanha.id,'campaign-1');assert.equal(backupData.campanha.dadosPagamento.chave_pix,'12345678901');assert.equal(backupData.campanha.dadosPagamento.whatsapp,'11987654321');assert.equal(backupData.registros.length,100);assert.equal(backupData.sorteios.length,1);assert.ok(backupData.participantes.length>=1);
+ elements.restore.files=[{text:async()=>JSON.stringify(backupData)}];await $('restore').change();assert.equal($('restorePreviewDialog').open,true);assert.match($('restorePreviewDetails').textContent,/Números: 100/);const beforePreventive=downloads.length;await $('restoreApply').click();await flush();assert.equal(restoreCalls.length,1);assert.equal(restoreCalls[0].p_campanha_id,'campaign-1');assert.equal(restoreCalls[0].p_backup.versao,4);assert.ok(downloads.length>beforePreventive);assert.equal($('restorePreviewDialog').open,false);
+ elements.restore.files=[{text:async()=>JSON.stringify({aplicativo:'Rifa Deixa Vim',versao:3,exportadoEm:'2026-01-01',registros:{'1':{nome:'Backup Antigo',status:'reservado',telefone:'11999999999',valor:5}}})}];await $('restore').change();assert.equal($('restorePreviewDialog').open,true);assert.match($('restorePreviewDetails').textContent,/Versão: 3/);$('restoreCancel').click();
+ const backupOutro={...backupData,campanha:{...backupData.campanha,id:'campaign-2'}};elements.restore.files=[{text:async()=>JSON.stringify(backupOutro)}];await $('restore').change();assert.equal($('restorePreviewDialog').open,false);assert.match(alerts.at(-1),/outra campanha/);
  assert.equal($('campaignSelect').children.length,1);assert.equal($('campaignSelect').disabled,true);
  assert.equal($('total').textContent,'R$\u00a05,00');assert.equal($('pendingTotal').textContent,'R$\u00a00,00');assert.equal($('grandTotal').textContent,'R$\u00a05,00');
  await $('newCampaignButton').click();assert.equal($('settingsForm').hidden,false);assert.equal($('settingsQuantity').value,100);
@@ -247,5 +258,5 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('drawButton').hidden,true);assert.equal($('confirmPaymentButton').hidden,true);
  assert.equal($('total').textContent,'R$\u00a032,50');assert.equal($('pendingTotal').textContent,'R$\u00a032,50');assert.equal($('grandTotal').textContent,'R$\u00a065,00');
  assert.match(html,/class="actions main-actions"/);assert.match(html,/class="finance-summary"/);assert.match(html,/id="settingsHub"[\s\S]*id="backup"/);
- console.log('PASS: Etapas 1–8 — campanhas/configurações, sorteio/histórico/login, cadastro e lote, pagamentos/liberação, busca por nome/telefone/número, filtros e edição segura de participante');
+ console.log('PASS: Etapas 1–9 — campanhas, login, participantes/pagamentos, histórico, backups v3/v4, restauração isolada com backup preventivo, Pix/WhatsApp e arte responsiva 9:14');
 })().catch(e=>{console.error(e);process.exitCode=1});
