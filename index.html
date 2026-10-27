@@ -60,9 +60,45 @@
 @media(max-width:370px){.campaign-toolbar{grid-template-columns:1fr}.settings-hub{grid-template-columns:1fr}}
 @media(max-width:560px){.settings-fields{grid-template-columns:1fr}}
 .participant-matches{padding:0;list-style:none;display:grid;gap:8px;margin:10px 0}.participant-matches button{width:100%;text-align:left;background:#302c25;border:1px solid #9b753f;color:#fff;border-radius:8px;padding:10px}.participant-match-panel{border:1px solid #9b753f;border-radius:10px;padding:10px;margin-top:12px}.participant-matches .muted{display:block}#editor{max-height:90vh;overflow-y:auto}.access-page{max-width:520px;margin:24px auto;background:#222229;border:1px solid #666674;border-radius:16px;padding:24px}.access-page h1{margin-top:0;color:#f5d7a1}.access-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.access-actions button{min-height:48px}.access-actions .wide{grid-column:1/-1}.account-status{font-size:13px;color:#f5d7a1}.own-participations{background:#222229;border-radius:12px;padding:16px;margin-top:16px}.own-participations ul{padding-left:20px}.own-participations li{margin:10px 0}
-.num.selecionado{outline:3px solid #e1b868;outline-offset:1px;transform:scale(.94)}.selection-hint{margin:10px 0;color:#f5d7a1}.participant-detail-list{padding:0;list-style:none;display:grid;gap:8px;margin:12px 0}.participant-detail-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px;background:#24242b;border:1px solid #45454e;border-radius:9px}.participant-detail-list label{display:flex;align-items:center;gap:9px}.participant-detail-list .action{min-height:40px;padding:8px}.participant-detail-list input[type=checkbox]{width:20px;height:20px;accent-color:#e1b868}#editor,#bulkDialog,#participantDetailDialog{max-height:90vh;overflow-y:auto}</style></head><body><main><section id="accessPage" class="access-page" aria-labelledby="accessTitle"><h1 id="accessTitle">Rifa Deixa Vim</h1><p>Entre na sua conta ou consulte as campanhas como visitante.</p><p id="accessStatus" class="muted" role="status">Conferindo sessão...</p><div class="access-actions"><button class="action primary" id="accessLogin" type="button">Entrar</button><button class="action" id="accessSignup" type="button">Criar usuário</button><button class="action wide" id="accessGuest" type="button">Continuar como visitante</button><button class="action wide" id="accessLogout" type="button" hidden>Tentar sair novamente</button></div></section><div id="rafflePage" hidden><p id="accountStatus" class="account-status" role="status"></p><header class="hero"><p id="heroEntity">Deixa Vim</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><p id="heroCampaign">Campanha 01</p><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></header><div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><div class="total"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions"><button class="action" id="loginButton">Entrar</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action primary" id="backup">Baixar backup</button><button class="action" id="restoreButton" hidden>Restaurar backup</button><button class="action" id="importLocal" hidden>Importar deste aparelho</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export">Copiar lista</button><button class="action draw" id="drawButton" hidden>🎯 Sortear</button><button class="action" id="settingsButton" hidden>Configurações</button><button class="action primary" id="bulkAddButton" hidden>Adicionar vários números</button><button class="action" id="bulkFinishButton" hidden>Confirmar seleção</button><button class="action" id="bulkCancelButton" hidden>Cancelar seleção</button></div><p class="selection-hint" id="selectionHint" hidden role="status"></p><section id="ownParticipations" class="own-participations" hidden aria-labelledby="ownTitle"><h2 id="ownTitle">Minhas participações nesta campanha</h2><p id="ownMessage" class="muted" role="status"></p><ul id="ownList"></ul></section><input id="restore" type="file" accept=".json,application/json"><h2 id="buyerTitle" hidden>Participantes registrados</h2><ul class="entries" id="entries" hidden></ul><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
+.num.selecionado{outline:3px solid #e1b868;outline-offset:1px;transform:scale(.94)}.selection-hint{margin:10px 0;color:#f5d7a1}.participant-detail-list{padding:0;list-style:none;display:grid;gap:8px;margin:12px 0}.participant-detail-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px;background:#24242b;border:1px solid #45454e;border-radius:9px}.participant-detail-list label{display:flex;align-items:center;gap:9px}.participant-detail-list .action{min-height:40px;padding:8px}.participant-detail-list input[type=checkbox]{width:20px;height:20px;accent-color:#e1b868}#editor,#bulkDialog,#participantDetailDialog{max-height:90vh;overflow-y:auto}
+/* Etapa 6: hierarquia da tela principal e resumo financeiro. */
+main{max-width:920px}
+.app-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.app-brand{font-size:clamp(20px,5vw,27px);font-weight:850;letter-spacing:.02em;color:#f5d7a1;line-height:1.15}
+.app-top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.app-top-actions .action{min-height:44px}
+.account-status{margin:0;white-space:nowrap}
+.campaign-toolbar{margin:0 0 12px}
+.hero{padding:18px 16px;text-align:left}
+.hero h1{font-size:clamp(25px,6vw,38px);letter-spacing:.025em}
+.hero .hero-campaign{display:inline-block;margin:0 0 8px;color:#f5d7a1;font-size:13px;font-weight:700}
+.hero .hero-description{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline;margin:10px 0}
+.hero .hero-description p{margin:0}
+.hero strong{font-size:clamp(18px,4vw,23px)}
+.hero .hero-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px;font-size:13px}
+.hero .hero-meta p{margin:0}
+.stats{margin:12px 0}
+.stat b{font-variant-numeric:tabular-nums}
+.finance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 14px}
+.finance-card{min-width:0;background:#232329;border:1px solid #45454e;border-radius:12px;padding:12px;display:grid;gap:6px}
+.finance-card span{font-size:12px;color:#d1d1d8}
+.finance-card b{font-size:clamp(16px,3vw,23px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.finance-card.received b{color:#7be0a0}.finance-card.pending b{color:#f2c86e}.finance-card.grand b{color:#fff}
+.main-actions{margin-top:16px}
+.main-actions > button.action{min-height:58px}
+.utility-actions{margin-top:10px}
+.utility-actions > button.action{min-height:44px;background:#24242b}
+.participant-overview{margin-top:24px;border-top:1px solid #45454e;padding-top:3px}
+.payment-list{list-style:none;display:grid;gap:8px;padding:0;margin:12px 0}
+.payment-list button{width:100%;text-align:left}
+@media(max-width:480px){.app-topbar{align-items:flex-start}.app-top-actions{gap:6px}.app-top-actions .action{padding:8px;font-size:12px}.account-status{font-size:11px}.finance-card{padding:9px 7px}.finance-card span{font-size:11px}.finance-card b{font-size:clamp(13px,3.6vw,18px)}}
+</style></head><body><main><section id="accessPage" class="access-page" aria-labelledby="accessTitle"><h1 id="accessTitle">Rifa Deixa Vim</h1><p>Entre na sua conta ou consulte as campanhas como visitante.</p><p id="accessStatus" class="muted" role="status">Conferindo sessão...</p><div class="access-actions"><button class="action primary" id="accessLogin" type="button">Entrar</button><button class="action" id="accessSignup" type="button">Criar usuário</button><button class="action wide" id="accessGuest" type="button">Continuar como visitante</button><button class="action wide" id="accessLogout" type="button" hidden>Tentar sair novamente</button></div></section><div id="rafflePage" hidden>
+<div class="app-topbar"><div class="app-brand" id="heroEntity">Deixa Vim</div><div class="app-top-actions"><p id="accountStatus" class="account-status" role="status"></p><button class="action" id="settingsButton" type="button" hidden>Configurações</button></div></div>
+<div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div>
+<header class="hero"><p id="heroCampaign" class="hero-campaign">Campanha 01</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><div class="hero-description"><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong></div><div class="hero-meta"><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></div></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><section class="finance-summary" aria-label="Resumo financeiro"><div class="finance-card received"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="finance-card pending"><span>Total a receber</span><b id="pendingTotal">R$ 0,00</b></div><div class="finance-card grand"><span>Total geral</span><b id="grandTotal">R$ 0,00</b></div></section><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions main-actions" id="mainActions"><button class="action primary" id="bulkAddButton" hidden>Cadastrar participante</button><button class="action" id="reserveNumbersButton" hidden>Reservar números</button><button class="action" id="confirmPaymentButton" hidden>Confirmar pagamento</button><button class="action draw" id="drawButton" hidden>Realizar sorteio</button></div><div class="actions selection-actions" id="selectionActions" hidden><button class="action" id="bulkFinishButton" hidden>Confirmar seleção</button><button class="action" id="bulkCancelButton" hidden>Cancelar seleção</button></div><p class="selection-hint" id="selectionHint" hidden role="status"></p><section id="ownParticipations" class="own-participations" hidden aria-labelledby="ownTitle"><h2 id="ownTitle">Minhas participações nesta campanha</h2><p id="ownMessage" class="muted" role="status"></p><ul id="ownList"></ul></section><section id="participantOverview" class="participant-overview" hidden><h2 id="buyerTitle">Últimos participantes</h2><ul class="entries" id="entries" hidden></ul><button class="action" id="showAllParticipants" type="button" hidden>Ver todos os participantes</button></section><div class="actions utility-actions"><button class="action" id="loginButton">Entrar</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export" hidden>Copiar lista</button></div><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
 <section class="settings-page" id="settingsPage" hidden aria-labelledby="settingsTitle">
-<h2 id="settingsTitle">Configurações</h2><div id="settingsHub" class="settings-hub"><button class="action" type="button" id="settingsCloseButton">Voltar para a rifa</button><button class="action" type="button" id="editCampaignButton">Editar campanha selecionada</button><button class="action primary" type="button" id="settingsNewCampaignButton">+ Nova Campanha</button><p id="campaignNotice" class="muted settings-hub-note" role="status"></p></div>
+<h2 id="settingsTitle">Configurações</h2><div id="settingsHub" class="settings-hub"><button class="action" type="button" id="settingsCloseButton">Voltar para a rifa</button><button class="action" type="button" id="editCampaignButton">Editar campanha selecionada</button><button class="action primary" type="button" id="settingsNewCampaignButton">+ Nova Campanha</button><button class="action" id="backup" type="button" hidden>Fazer backup</button><button class="action" id="restoreButton" type="button" hidden>Restaurar backup</button><button class="action" id="importLocal" type="button" hidden>Importar deste aparelho</button><p id="campaignNotice" class="muted settings-hub-note" role="status"></p></div>
+<input id="restore" type="file" accept=".json,application/json">
 <p class="settings-note">Vendas e reservas existentes mantêm seus valores. A quantidade só pode ser reduzida sem ocultar bilhetes ocupados.</p>
 <form id="settingsForm" hidden><div class="settings-fields">
 <div><label for="settingsEntity">Nome da associação ou entidade</label><input id="settingsEntity" maxlength="120" required></div>
@@ -75,7 +111,7 @@
 <div class="full"><label for="settingsStatus">Situação da campanha</label><select id="settingsStatus"><option value="em_andamento">Em andamento</option><option value="encerrada">Encerrada</option><option value="sorteada">Sorteada</option></select></div>
 </div><p class="notice" id="settingsMessage" role="status"></p>
 <div class="settings-actions"><button class="action" type="button" id="settingsBack">Voltar</button><button class="action primary" type="submit" id="settingsSave">Salvar configurações</button></div></form>
-</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Entrar</h2><p class="muted">O acesso é definido pela sua conta.</p><label for="email">Usuário</label><input id="email" type="text" maxlength="254" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">Administrador: seu acesso atual continua válido.</p><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome completo do participante</label><input id="nome" maxlength="100" autocomplete="name" placeholder="Nome completo" required><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="tel" placeholder="DDD + número"><section id="participantMatchPanel" class="participant-match-panel" hidden aria-live="polite"><strong id="participantMatchTitle">Participante já cadastrado</strong><p id="participantMatchMessage" class="muted"></p><ul id="participantMatches" class="participant-matches"></ul><button class="action" type="button" id="participantHomonym">Cadastrar outra pessoa com esse nome</button></section><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="accountAccessButton" hidden>Acesso do usuário</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit" id="saveNumberButton">Salvar</button></menu></form></dialog><dialog id="participantDetailDialog" aria-labelledby="participantDetailTitle"><h2 id="participantDetailTitle">Ficha do participante</h2><p id="participantDetailSummary" class="muted"></p><p class="muted">Cada número mantém sua própria situação e valor. Marque um número para pagamento individual ou vários para pagamento conjunto.</p><ul id="participantDetailNumbers" class="participant-detail-list"></ul><p id="participantDetailMessage" class="notice" role="status"></p><div class="settings-actions"><button class="action primary" type="button" id="detailAddNumbers">Adicionar números</button><button class="action" type="button" id="detailPaySelected">Confirmar pagamento(s)</button><button class="action" type="button" id="detailReleaseSelected">Liberar reserva(s)</button><button class="action" type="button" id="detailClose">Fechar ficha</button></div></dialog><dialog id="bulkDialog" aria-labelledby="bulkTitle"><form id="bulkForm"><h2 id="bulkTitle">Registrar números</h2><p id="bulkSummary" class="muted"></p><label for="bulkNome">Nome completo do participante</label><input id="bulkNome" maxlength="100" autocomplete="name" required><label for="bulkTelefone">Telefone (opcional)</label><input id="bulkTelefone" type="tel" maxlength="30" autocomplete="tel"><section id="bulkMatchPanel" class="participant-match-panel" hidden aria-live="polite"><strong id="bulkMatchTitle">Participante já cadastrado</strong><p id="bulkMatchMessage" class="muted"></p><ul id="bulkMatches" class="participant-matches"></ul><button class="action" type="button" id="bulkHomonym">Cadastrar outra pessoa com esse nome</button></section><label for="bulkStatus">Situação dos novos números</label><select id="bulkStatus"><option value="reservado">Reservar — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><p id="bulkMessage" class="notice" role="status"></p><div class="settings-actions"><button class="action" type="button" id="bulkClose">Cancelar</button><button class="action primary" type="submit" id="bulkSave">Salvar números</button></div></form></dialog><dialog id="signupDialog" aria-labelledby="signupTitle"><form id="signupForm"><h2 id="signupTitle">Criar usuário</h2><label for="signupEmail">Nome de usuário</label><input id="signupEmail" type="text" minlength="3" maxlength="30" pattern="[a-zA-Z][a-zA-Z0-9_]{2,29}" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">De 3 a 30 caracteres. Comece com uma letra e use letras, números ou _.</p><label for="signupPassword">Senha</label><input id="signupPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p class="muted">Use pelo menos 12 caracteres, com letras e números.</p><label for="signupConfirm">Confirmar senha</label><input id="signupConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p id="signupMessage" class="muted" role="status"></p><menu><button id="signupCancel" class="action" type="button">Voltar</button><button id="signupSubmit" class="action primary" type="submit">Criar usuário</button></menu></form></dialog>
+</section></main><dialog id="drawChoiceDialog" aria-labelledby="drawChoiceTitle"><h2 id="drawChoiceTitle">🎯 Sorteio da rifa</h2><p class="draw-help">A roleta gira por <strong>15 segundos</strong>. Escolha quais números participam. Somente o administrador pode iniciar o sorteio.</p><div class="draw-options"><button class="action primary" type="button" id="drawSold">Somente números vendidos</button><button class="action" type="button" id="drawAll">Todos os números (01 a 100)</button><button class="action" type="button" id="drawCancel">Cancelar</button></div></dialog><dialog id="drawDialog" aria-labelledby="drawTitle"><h2 id="drawTitle">🎯 Roleta da sorte</h2><p class="draw-mode" id="drawMode"></p><div class="draw-wheel" id="drawWheel"><span class="draw-number" id="drawNumber" aria-hidden="true">--</span></div><p class="draw-result" id="drawResult" role="status" aria-live="polite">Preparando...</p><div class="draw-winner" id="drawWinner" hidden></div><div class="draw-track"><div class="draw-progress" id="drawProgress"></div></div><p class="muted" id="drawCountdown"></p><p class="draw-note" id="drawSaveStatus" role="status"></p><div class="draw-finish-actions"><button class="action primary" type="button" id="drawSave" hidden>Salvar sorteio</button><button class="action" type="button" id="drawClose" hidden>Sair</button><button class="action" type="button" id="drawAgain" hidden>Sortear novamente</button></div><p class="draw-help draw-warning" id="drawWarning" hidden>Antes de sortear novamente, confira as regras anunciadas para números não vendidos.</p></dialog><dialog id="authDialog"><form id="authForm"><h2>Entrar</h2><p class="muted">O acesso é definido pela sua conta.</p><label for="email">Usuário</label><input id="email" type="text" maxlength="254" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">Administrador: seu acesso atual continua válido.</p><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required><p class="muted" id="authMessage" role="alert"></p><menu><button class="action" type="button" id="authCancel">Cancelar</button><button class="action primary" type="submit">Entrar</button></menu></form></dialog><dialog id="editor"><form id="form"><h2 id="dialogTitle">Número</h2><label for="nome">Nome completo do participante</label><input id="nome" maxlength="100" autocomplete="name" placeholder="Nome completo" required><label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" maxlength="30" autocomplete="tel" placeholder="DDD + número"><section id="participantMatchPanel" class="participant-match-panel" hidden aria-live="polite"><strong id="participantMatchTitle">Participante já cadastrado</strong><p id="participantMatchMessage" class="muted"></p><ul id="participantMatches" class="participant-matches"></ul><button class="action" type="button" id="participantHomonym">Cadastrar outra pessoa com esse nome</button></section><label for="status">Situação</label><select id="status"><option value="reservado">Reservado — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><menu><button class="action" type="button" id="cancel">Cancelar</button><button class="action" type="button" id="accountAccessButton" hidden>Acesso do usuário</button><button class="action" type="button" id="release">Liberar</button><button class="action primary" type="submit" id="saveNumberButton">Salvar</button></menu></form></dialog><dialog id="participantDetailDialog" aria-labelledby="participantDetailTitle"><h2 id="participantDetailTitle">Ficha do participante</h2><p id="participantDetailSummary" class="muted"></p><p class="muted">Cada número mantém sua própria situação e valor. Marque um número para pagamento individual ou vários para pagamento conjunto.</p><ul id="participantDetailNumbers" class="participant-detail-list"></ul><p id="participantDetailMessage" class="notice" role="status"></p><div class="settings-actions"><button class="action primary" type="button" id="detailAddNumbers">Adicionar números</button><button class="action" type="button" id="detailPaySelected">Confirmar pagamento(s)</button><button class="action" type="button" id="detailReleaseSelected">Liberar reserva(s)</button><button class="action" type="button" id="detailClose">Fechar ficha</button></div></dialog><dialog id="paymentChoiceDialog" aria-labelledby="paymentChoiceTitle"><h2 id="paymentChoiceTitle">Confirmar pagamento</h2><p class="muted">Escolha um participante com reserva pendente para abrir a ficha e selecionar os números pagos.</p><ul id="paymentChoices" class="payment-list"></ul><button class="action" id="paymentChoiceClose" type="button">Voltar</button></dialog><dialog id="bulkDialog" aria-labelledby="bulkTitle"><form id="bulkForm"><h2 id="bulkTitle">Registrar números</h2><p id="bulkSummary" class="muted"></p><label for="bulkNome">Nome completo do participante</label><input id="bulkNome" maxlength="100" autocomplete="name" required><label for="bulkTelefone">Telefone (opcional)</label><input id="bulkTelefone" type="tel" maxlength="30" autocomplete="tel"><section id="bulkMatchPanel" class="participant-match-panel" hidden aria-live="polite"><strong id="bulkMatchTitle">Participante já cadastrado</strong><p id="bulkMatchMessage" class="muted"></p><ul id="bulkMatches" class="participant-matches"></ul><button class="action" type="button" id="bulkHomonym">Cadastrar outra pessoa com esse nome</button></section><label for="bulkStatus">Situação dos novos números</label><select id="bulkStatus"><option value="reservado">Reservar — aguardando pagamento</option><option value="vendido">Vendido — pagamento recebido</option></select><p id="bulkMessage" class="notice" role="status"></p><div class="settings-actions"><button class="action" type="button" id="bulkClose">Cancelar</button><button class="action primary" type="submit" id="bulkSave">Salvar números</button></div></form></dialog><dialog id="signupDialog" aria-labelledby="signupTitle"><form id="signupForm"><h2 id="signupTitle">Criar usuário</h2><label for="signupEmail">Nome de usuário</label><input id="signupEmail" type="text" minlength="3" maxlength="30" pattern="[a-zA-Z][a-zA-Z0-9_]{2,29}" autocapitalize="none" spellcheck="false" autocomplete="username" required><p class="muted">De 3 a 30 caracteres. Comece com uma letra e use letras, números ou _.</p><label for="signupPassword">Senha</label><input id="signupPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p class="muted">Use pelo menos 12 caracteres, com letras e números.</p><label for="signupConfirm">Confirmar senha</label><input id="signupConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><p id="signupMessage" class="muted" role="status"></p><menu><button id="signupCancel" class="action" type="button">Voltar</button><button id="signupSubmit" class="action primary" type="submit">Criar usuário</button></menu></form></dialog>
 <dialog id="accountDialog" aria-labelledby="accountTitle"><form id="accountForm"><h2 id="accountTitle">Acesso ao número</h2><p class="muted">Vincule uma conta cadastrada para consultar este número. Confira se a conta pertence ao participante. O vínculo não altera o pagamento.</p><label for="accountEmail">Usuário da conta</label><input id="accountEmail" type="text" minlength="3" maxlength="30" autocapitalize="none" spellcheck="false" autocomplete="off" required><p id="accountMessage" class="muted" role="status"></p><div class="settings-actions"><button id="accountCancel" class="action" type="button">Voltar</button><button id="accountSave" class="action primary" type="submit">Vincular conta</button><button id="accountUnlink" class="action" type="button">Desvincular conta</button></div></form></dialog><script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const URL_DB = 'https://bxiugnskskzhigyguyqp.supabase.co';
@@ -97,7 +133,7 @@ let logoutPendente = false, historicoToken = 0;
 let usuarioAtual = null, visitanteEscolhido = false, acessoVerificado = false, acessoVersao = 0;
 let minhasParticipacoes = [], mensagemParticipacoes = '', authTimer = null;
 let participanteSelecionadoId = null, participanteFichaId = null, participanteFichaNome = "";
-let modoSelecaoNumeros = "", numerosSelecionados = new Set(), numerosSorteados = new Set(), loteNumeros = [], loteParticipanteId = null;
+let modoSelecaoNumeros = "", acaoSelecaoNumeros = 'cadastrar', numerosSelecionados = new Set(), numerosSorteados = new Set(), loteNumeros = [], loteParticipanteId = null;
 function mostrarAcesso() {
   const entrou = acessoVerificado && (!!usuarioAtual || visitanteEscolhido);
   $('accessPage').hidden = entrou;
@@ -121,10 +157,10 @@ function mostrarAcesso() {
 function limparAcesso() {
   acessoVersao++; admin = false; usuarioAtual = null; carregado = false;
   minhasParticipacoes = []; mensagemParticipacoes = ''; historicoToken++;
-  modoSelecaoNumeros = ''; numerosSelecionados.clear(); numerosSorteados.clear();
+  modoSelecaoNumeros = ''; mostrarTodosParticipantes = false; numerosSelecionados.clear(); numerosSorteados.clear();
   loteNumeros = []; loteParticipanteId = null; participanteFichaId = null; participanteFichaNome = '';
   $('accountEmail').value = ''; $('password').value = ''; $('signupPassword').value = ''; $('signupConfirm').value = '';
-  for (const id of ['editor','accountDialog','drawDialog','drawChoiceDialog','authDialog','signupDialog','participantDetailDialog','bulkDialog']) if ($(id).open) $(id).close();
+  for (const id of ['editor','accountDialog','drawDialog','drawChoiceDialog','authDialog','signupDialog','participantDetailDialog','bulkDialog','paymentChoiceDialog']) if ($(id).open) $(id).close();
   resetar(); render();
 }
 async function consultarMinhasParticipacoes() {
@@ -152,8 +188,8 @@ const CONFIG_PADRAO = Object.freeze({
   criterio_sorteio: 'Sorteio após todos os números serem preenchidos',
   situacao: 'em_andamento', atualizado_em: null
 });
-let configuracao = { ...CONFIG_PADRAO }, configDisponivel = false, totalPublico = 0;
-let campanhas = [], campanhaAtualId = null, esquemaCampanhas = false, modoConfiguracoes = 'hub';
+let configuracao = { ...CONFIG_PADRAO }, configDisponivel = false, totalPublico = 0, aReceberPublico = null;
+let campanhas = [], campanhaAtualId = null, esquemaCampanhas = false, mostrarTodosParticipantes = false, modoConfiguracoes = 'hub';
 const CAMPANHA_KEY = 'rifa_deixa_vim_campanha_atual';
 const situacoesCampanha = { em_andamento: 'Em andamento', encerrada: 'Encerrada', sorteada: 'Sorteada' };
 
@@ -259,13 +295,15 @@ function render() {
     $('settingsPage').hidden = true;
     $('rafflePage').hidden = false;
   }
-  let vendidos = 0, reservados = 0, totalAdmin = 0;
+  let vendidos = 0, reservados = 0, totalAdmin = 0, receberAdmin = 0;
   const grid = $('grid');
   grid.replaceChildren();
   for (let n = 1; n <= configuracao.quantidade_bilhetes; n++) {
     const r = numeros[n];
-    if (r.situacao === 'vendido') { vendidos++; if (admin) totalAdmin += Number(r.valor ?? 5); }
+    if (r.situacao === 'vendido') vendidos++;
     if (r.situacao === 'reservado') reservados++;
+    if (admin && r.pago) totalAdmin += Number(r.valor ?? configuracao.valor_bilhete);
+    else if (admin && r.situacao === 'reservado') receberAdmin += Number(r.valor ?? configuracao.valor_bilhete);
     const botao = document.createElement('button');
     botao.type = 'button';
     const selecionado = numerosSelecionados.has(n);
@@ -289,10 +327,19 @@ function render() {
   $('livres').textContent = carregado ? configuracao.quantidade_bilhetes - vendidos - reservados : '…';
   $('reservados').textContent = carregado ? reservados : '…';
   $('vendidos').textContent = carregado ? vendidos : '…';
-  $('total').textContent = carregado ? reais(admin ? totalAdmin : totalPublico) : '…';
-  for (const id of ['buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export', 'drawButton', 'settingsButton']) $(id).hidden = !admin;
+  const recebido = admin ? totalAdmin : totalPublico;
+  const aReceber = admin ? receberAdmin : aReceberPublico;
+  $('total').textContent = carregado ? reais(recebido) : '…';
+  $('pendingTotal').textContent = carregado ? aReceber === null ? '—' : reais(aReceber) : '…';
+  $('grandTotal').textContent = carregado ? aReceber === null ? '—' : reais(recebido + aReceber) : '…';
+  for (const id of ['participantOverview', 'buyerTitle', 'entries', 'logoutButton', 'backup', 'restoreButton', 'export', 'settingsButton']) $(id).hidden = !admin;
+  $('mainActions').hidden = !admin || !!modoSelecaoNumeros;
+  $('selectionActions').hidden = !admin || !modoSelecaoNumeros;
   $('loginButton').hidden = admin;
+  $('drawButton').hidden = !admin || !!modoSelecaoNumeros;
+  $('confirmPaymentButton').hidden = !admin || !!modoSelecaoNumeros;
   $('bulkAddButton').hidden = !admin || !esquemaCampanhas || !!modoSelecaoNumeros;
+  $('reserveNumbersButton').hidden = !admin || !esquemaCampanhas || !!modoSelecaoNumeros;
   $('bulkFinishButton').hidden = !admin || !modoSelecaoNumeros;
   $('bulkCancelButton').hidden = !admin || !modoSelecaoNumeros;
   $('selectionHint').hidden = !admin || !modoSelecaoNumeros;
@@ -312,10 +359,17 @@ function render() {
     const r = numeros[n]; if (r.situacao === 'disponivel') continue;
     const chave = r.participante_id || 'legacy-' + n;
     let item = participantesVisiveis.get(chave);
-    if (!item) { item = { id: r.participante_id || null, nome: r.comprador || '(sem nome)', registros: [] }; participantesVisiveis.set(chave, item); }
+    if (!item) { item = { id: r.participante_id || null, nome: r.comprador || '(sem nome)', registros: [], registroRecente: 0, numeroRecente: 0 }; participantesVisiveis.set(chave, item); }
     item.registros.push(r);
+    item.registroRecente = Math.max(item.registroRecente, Date.parse(r.atualizado_em || '') || 0);
+    item.numeroRecente = Math.max(item.numeroRecente, Number(r.numero));
   }
-  for (const item of participantesVisiveis.values()) {
+  const pessoasOrdenadas = [...participantesVisiveis.values()].sort((a,b)=>
+    b.registroRecente - a.registroRecente || b.numeroRecente - a.numeroRecente);
+  $('showAllParticipants').hidden = pessoasOrdenadas.length === 0;
+  $('buyerTitle').textContent = mostrarTodosParticipantes ? 'Todos os participantes' : 'Últimos participantes';
+  $('showAllParticipants').textContent = mostrarTodosParticipantes ? 'Mostrar somente os cinco últimos' : 'Ver todos os participantes';
+  for (const item of (mostrarTodosParticipantes ? pessoasOrdenadas : pessoasOrdenadas.slice(0,5))) {
     const linha = document.createElement('li'), descricao = document.createElement('span'), abrir = document.createElement('button');
     const numerosDaPessoa = item.registros.map(r => format(r.numero));
     descricao.textContent = item.nome + ' · Nº ' + numerosDaPessoa.join(', ');
@@ -325,8 +379,41 @@ function render() {
   }
   if(!lista.children.length){const li=document.createElement('li');li.textContent='Nenhum participante registrado.';lista.append(li)}
 }
+async function abrirEscolhaPagamento() {
+  if (!admin || ocupado || !carregado) return;
+  try { await carregarNumerosSorteados(); }
+  catch (error) { aviso('Não foi possível conferir o histórico. ' + error.message); return; }
+  if (!admin || !carregado) return;
+  const grupos = new Map();
+  for (const r of Object.values(numeros)) {
+    if (r.situacao !== 'reservado' || r.pago || numerosSorteados.has(Number(r.numero))) continue;
+    const chave = r.participante_id || 'legado-' + r.numero;
+    if (!grupos.has(chave)) grupos.set(chave, {id:r.participante_id || null,nome:r.comprador || '(sem nome)',numero:r.numero,numeros:[],total:0});
+    const grupo = grupos.get(chave);
+    grupo.numeros.push(format(r.numero));
+    grupo.total += Number(r.valor ?? configuracao.valor_bilhete);
+  }
+  const lista = $('paymentChoices'); lista.replaceChildren();
+  for (const grupo of grupos.values()) {
+    const li = document.createElement('li'), botao = document.createElement('button');
+    botao.type='button'; botao.className='action';
+    botao.textContent = grupo.nome + ' · nº ' + grupo.numeros.join(', ') + ' · ' + reais(grupo.total);
+    botao.addEventListener('click',()=>{$('paymentChoiceDialog').close();void abrirFicha(grupo.id,grupo.nome,grupo.numero);});
+    li.append(botao); lista.append(li);
+  }
+  if (!lista.children.length) {const li=document.createElement('li');li.textContent='Nenhuma reserva pendente nesta campanha.';lista.append(li);}
+  $('paymentChoiceDialog').showModal();
+}
+$('confirmPaymentButton').addEventListener('click',()=>void abrirEscolhaPagamento());
+$('paymentChoiceClose').addEventListener('click',()=>$('paymentChoiceDialog').close());
+$('showAllParticipants').addEventListener('click',()=>{mostrarTodosParticipantes=!mostrarTodosParticipantes;render();});
 function atualizarControlesSelecao() {
+  $('mainActions').hidden = !admin || !!modoSelecaoNumeros;
+  $('selectionActions').hidden = !admin || !modoSelecaoNumeros;
   $('bulkAddButton').hidden = !admin || !esquemaCampanhas || !!modoSelecaoNumeros;
+  $('reserveNumbersButton').hidden = !admin || !esquemaCampanhas || !!modoSelecaoNumeros;
+  $('drawButton').hidden = !admin || !!modoSelecaoNumeros;
+  $('confirmPaymentButton').hidden = !admin || !!modoSelecaoNumeros;
   $('bulkFinishButton').hidden = !admin || !modoSelecaoNumeros;
   $('bulkCancelButton').hidden = !admin || !modoSelecaoNumeros;
   $('selectionHint').hidden = !admin || !modoSelecaoNumeros;
@@ -350,17 +437,19 @@ async function atualizarNumerosSorteados() {
   try { await carregarNumerosSorteados(); render(); return true; }
   catch (error) { aviso('Não foi possível verificar os números do histórico. ' + error.message); return false; }
 }
-async function iniciarSelecaoNumeros(participanteId = null) {
+async function iniciarSelecaoNumeros(participanteId = null, acao = 'cadastrar') {
   if (!admin || ocupado || !carregado || !esquemaCampanhas) return;
   try { await carregarNumerosSorteados(); }
   catch (error) { alert('Não foi possível conferir o histórico. Nenhum número foi selecionado. ' + error.message); return; }
   modoSelecaoNumeros = participanteId ? 'existente' : 'novo';
+  acaoSelecaoNumeros = acao;
   loteParticipanteId = participanteId;
   numerosSelecionados.clear();
   if ($('participantDetailDialog').open) $('participantDetailDialog').close();
   $('selectionHint').textContent = participanteId
     ? 'Selecione os números disponíveis para adicionar a ' + participanteFichaNome + '. Eles entrarão como reservas pendentes.'
-    : 'Selecione os números disponíveis que serão vinculados a um participante. Números ocupados ou já sorteados ficam bloqueados.';
+    : acao === 'reservar' ? 'Selecione os números que serão reservados para um participante.'
+      : 'Selecione os números disponíveis que serão vinculados a um participante. Números ocupados ou já sorteados ficam bloqueados.';
   atualizarControlesSelecao(); render();
 }
 function cancelarSelecaoNumeros() {
@@ -376,8 +465,10 @@ async function concluirSelecaoNumeros() {
   modoSelecaoNumeros = ''; loteParticipanteId = null; numerosSelecionados.clear();
   atualizarControlesSelecao(); render();
   if (id) { await salvarNumerosLote('reservado', participanteFichaNome, '', id, false); return; }
+  $('bulkTitle').textContent = acaoSelecaoNumeros === 'reservar' ? 'Reservar números' : 'Cadastrar participante';
   $('bulkSummary').textContent = loteNumeros.length + ' número(s): ' + loteNumeros.map(format).join(', ');
   $('bulkNome').value = ''; $('bulkTelefone').value = ''; $('bulkStatus').value = 'reservado';
+  $('bulkStatus').disabled = acaoSelecaoNumeros === 'reservar';
   $('bulkMatchPanel').hidden = true; $('bulkMatches').replaceChildren(); $('bulkMessage').textContent = '';
   $('bulkHomonym').hidden = true; loteParticipanteId = null; $('bulkDialog').showModal(); $('bulkNome').focus();
 }
@@ -436,13 +527,14 @@ async function executarAcaoFicha(funcao,acao) {
   else {$('detailPaySelected').disabled=false;$('detailReleaseSelected').disabled=false;}
 }
 $('bulkAddButton').addEventListener('click',()=>void iniciarSelecaoNumeros());
+$('reserveNumbersButton').addEventListener('click',()=>void iniciarSelecaoNumeros(null,'reservar'));
 $('bulkFinishButton').addEventListener('click',()=>void concluirSelecaoNumeros());
 $('bulkCancelButton').addEventListener('click',cancelarSelecaoNumeros);
 $('detailAddNumbers').addEventListener('click',()=>void iniciarSelecaoNumeros(participanteFichaId));
 $('detailPaySelected').addEventListener('click',()=>void executarAcaoFicha('rifa_confirmar_pagamento_lote','pagar'));
 $('detailReleaseSelected').addEventListener('click',()=>void executarAcaoFicha('rifa_liberar_reservas_lote','liberar'));
 $('detailClose').addEventListener('click',()=>$('participantDetailDialog').close());
-$('bulkClose').addEventListener('click',()=>{$('bulkDialog').close();loteNumeros=[];loteParticipanteId=null;});
+$('bulkClose').addEventListener('click',()=>{$('bulkDialog').close();$('bulkStatus').disabled=false;loteNumeros=[];loteParticipanteId=null;});
 async function salvarNumerosLote(situacao,nome,telefone,participanteId=null,confirmarHomonimo=false) {
   if(ocupado||!admin||!loteNumeros.length)return;
   ocupado=true;let duplicado=false,salvo=false;
@@ -485,7 +577,7 @@ async function consultarBilhetes(ehAdmin) {
     const fim = Math.min(inicio + 499, configuracao.quantidade_bilhetes - 1);
     let consulta;
     if (ehAdmin) {
-      let query = supabase.from('rifa_numeros').select('numero,situacao,comprador,telefone,pago,valor,participante_id');
+      let query = supabase.from('rifa_numeros').select('numero,situacao,comprador,telefone,pago,valor,participante_id,atualizado_em');
       if (esquemaCampanhas) query = query.eq('campanha_id', campanhaAtualId);
       consulta = await query.order('numero').range(inicio, fim);
     } else {
@@ -520,7 +612,17 @@ async function atualizarTela() {
     totalPublico = ehAdmin ? 0 : configDisponivel
       ? Number(linhas[0].total_recebido ?? 0)
       : linhas.filter(linha => linha.situacao === 'vendido').length * 5;
-    if (!Number.isFinite(totalPublico)) throw new Error('Resumo financeiro inválido.');
+    aReceberPublico = null;
+    if (!ehAdmin && esquemaCampanhas && configDisponivel) {
+      const {data: resumo, error: resumoErro} = await supabase.rpc('rifa_resumo_financeiro_publico', {p_campanha_id: campanhaAtualId});
+      if (resumoErro && !['PGRST202','42883'].includes(resumoErro.code)) throw resumoErro;
+      if (!resumoErro) {
+        const linha = Array.isArray(resumo) ? resumo[0] : resumo;
+        totalPublico = Number(linha?.total_recebido);
+        aReceberPublico = Number(linha?.total_a_receber);
+      }
+    }
+    if (!Number.isFinite(totalPublico) || (aReceberPublico !== null && !Number.isFinite(aReceberPublico))) throw new Error('Resumo financeiro inválido.');
     resetar();
     for (const linha of linhas) {
       const n = Number(linha.numero);
@@ -657,6 +759,7 @@ $('campaignSelect').addEventListener('change', async () => {
   if (!esquemaCampanhas || ocupado || !campanhas.some(c => c.id === $('campaignSelect').value)) return;
   if (modoSelecaoNumeros) { $('campaignSelect').value = campanhaAtualId; return; }
   campanhaAtualId = $('campaignSelect').value;
+  mostrarTodosParticipantes = false;
   try { localStorage.setItem(CAMPANHA_KEY, campanhaAtualId); } catch {}
   historicoCarregado = false; numerosSorteados.clear();
   historicoToken++;
