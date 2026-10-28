@@ -127,7 +127,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  $('settingsBack').click();assert.equal($('settingsHub').hidden,false);$('settingsCloseButton').click();assert.equal($('settingsPage').hidden,true);
  $('settingsButton').click();
  for(const quantity of [100,120,150,200]){
-  config.quantidade_bilhetes=quantity;
+  config.quantidade_bilhetes=quantity;if(quantity===150)config.descricao_premio='Agasalho esportivo, cesta de alimentos, kit de higiene, cobertor, mochila escolar, material de limpeza e vale compras para a família participante';
   if(numbers.length<quantity)numbers.push(...Array.from({length:quantity-numbers.length},(_,i)=>({numero:numbers.length+i+1,situacao:'disponivel',comprador:null,telefone:null,pago:false,valor:5})));
   await $('reloadButton').click();await flush();context.__setTestPaymentDetails(paymentDetails);
   const beforePages=createdCanvases.length;await $('campaignPosterButton').click();
@@ -136,11 +136,11 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
   for(let page=0;page<pages.length;page++){
    const poster=pages[page],pageQuantity=Math.min(100,quantity-page*100);
    assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+6);
-   const infoLabels=['ENTIDADE','CAMPANHA','VALOR','PRÊMIO','SITUAÇÃO'];
+   const infoLabels=['ENTIDADE','CAMPANHA','VALOR','SITUAÇÃO','PRÊMIO'];
    for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text===label);assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/21px/);}
-   for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','PRÊMIO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
-   assert.ok(poster.drawnText.includes('RIFA'));assert.ok(poster.drawnText.some(text=>/^MÊS \d{2}\/\d{4}$/.test(text)));assert.equal(poster.backgroundDraws,1);
-   const sorteio=poster.drawnPositions.find(position=>position.text==='Sorteio após todos os números serem preenchidos');assert.ok(sorteio);assert.match(sorteio.font,/34px/);assert.equal(sorteio.x,74);
+   for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','SITUAÇÃO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
+   assert.ok(poster.drawnText.includes('RIFA'));assert.ok(poster.drawnText.includes(config.nome_rifa.toUpperCase()));assert.equal(poster.backgroundDraws,1);if(quantity===150)assert.ok(poster.drawnText.join(' ').includes('participante'),'prêmio longo deve caber na faixa inteira');
+   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem sorteados');assert.ok(criterio);assert.match(criterio.font,/29px/);assert.equal(criterio.x,540);assert.ok(!poster.drawnText.includes('SORTEIO'));
    const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
    assert.equal(gridRects[0].x,42);if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
    const first=String(page*100+1).padStart(3,'0'),last=String(page*100+pageQuantity).padStart(3,'0');
@@ -153,7 +153,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
   await $('posterShare').click();assert.equal(shareCalls,shareFileCounts.length);assert.equal(shareFileCounts.at(-1),pageCount);
   $('posterClose').click();
  }
- config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
+ config.descricao_premio='Agasalho esportivo';config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
  assert.match(html,/id="posterPrev"/);assert.match(html,/id="posterNext"/);
  assert.equal($('historySection').hidden,false);
  assert.equal($('vendidos').textContent,1);

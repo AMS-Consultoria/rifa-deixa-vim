@@ -1415,22 +1415,22 @@ function carregarFundoArte(){
   const fundo=await carregarFundoArte();ctx.drawImage(fundo,0,0,width,height);
   ctx.textBaseline='top';ctx.textAlign='center';ctx.shadowColor='#e8b840';ctx.shadowBlur=12;ctx.fillStyle='#ffe27a';ctx.font='950 118px system-ui, sans-serif';
   ctx.fillText('RIFA',width/2,10);ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.font='850 42px system-ui, sans-serif';
-  const mesAtual=new Date().toLocaleDateString('pt-BR',{month:'2-digit',year:'numeric'});ctx.fillText('MÊS '+mesAtual,width/2,132);
+  ctx.fillText(limitarUmaLinha(ctx,String(configuracao.nome_rifa||'').toUpperCase(),width-100),width/2,132);
   const leftX=74,rightX=568,colW=438,labelFont='750 21px system-ui, sans-serif',valueFont='850 29px system-ui, sans-serif';
-  function campo(x,y,label,value,maxLines=2,color='#fff'){
+  function campo(x,y,label,value,maxLines=2,color='#fff',widthCampo=colW){
     ctx.textAlign='left';ctx.fillStyle='#f2d99d';ctx.font=labelFont;ctx.fillText(label.toUpperCase(),x,y);
-    ctx.fillStyle=color;escreverLinhas(ctx,String(value||'—'),x,y+27,colW,31,maxLines,valueFont);
+    ctx.fillStyle=color;return escreverLinhas(ctx,String(value||'—'),x,y+27,widthCampo,31,maxLines,valueFont);
   }
   campo(leftX,226,'Entidade',configuracao.nome_entidade);
   campo(rightX,226,'Campanha',configuracao.nome_campanha);
   campo(leftX,324,'Valor',reais(configuracao.valor_bilhete)+' por número',1,'#ffe27a');
-  campo(rightX,324,'Prêmio',configuracao.descricao_premio);
   const status=situacoesCampanha[configuracao.situacao]||'Em andamento';
-  campo(rightX,418,'Situação',status,1,'#ffe27a');
-  ctx.fillStyle='#68000f';ctx.fillRect(38,478,width-76,116);ctx.strokeStyle='#f0c62f';ctx.lineWidth=3;ctx.strokeRect(38,478,width-76,116);
-  ctx.textAlign='left';ctx.fillStyle='#ffe27a';ctx.font='850 22px system-ui, sans-serif';ctx.fillText('SORTEIO',74,492);
-  ctx.fillStyle='#fff';ctx.font='900 34px system-ui, sans-serif';
-  escreverLinhas(ctx,configuracao.criterio_sorteio,74,526,width-148,38,2,'900 34px system-ui, sans-serif');
+  campo(rightX,324,'Situação',status,1,'#ffe27a');
+  campo(margin,418,'Prêmio',configuracao.descricao_premio,3,'#fff',width-margin*2);
+  const textoCriterio=(String(configuracao.criterio_sorteio||'').trim().replace(/^sorteio\b\s*[:–-]?\s*/i,'').replace(/\bpreenchidos\b/gi,'sorteados')||'Após todos os números serem sorteados').replace(/^./,letra=>letra.toUpperCase());
+  ctx.fillStyle='#68000f';ctx.fillRect(38,542,width-76,68);ctx.strokeStyle='#f0c62f';ctx.lineWidth=3;ctx.strokeRect(38,542,width-76,68);
+  ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle='#fff';ctx.font='900 29px system-ui, sans-serif';
+  escreverLinhas(ctx,textoCriterio,width/2,551,width-148,28,2,'900 29px system-ui, sans-serif');
   const contagens={disponivel:0,reservado:0,vendido:0};
   for(let n=1;n<=quantidadeTotal;n++){const estado=numeros[n]?.situacao||'disponivel';if(Object.hasOwn(contagens,estado))contagens[estado]++;}
   const gap=16,cardY=614,cardH=122,cardW=(width-margin*2-gap*2)/3;

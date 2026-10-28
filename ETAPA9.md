@@ -11,15 +11,15 @@ A Etapa 9 inclui melhorias de código e uma migração para o Supabase. Em 27/10
 - Prévia e validação antes da restauração. A aplicação baixa um backup preventivo e restaura apenas a campanha selecionada.
 - A restauração acrescenta registros em números livres e preserva números já reservados, vendidos ou registrados em sorteio. O histórico é combinado sem duplicar IDs.
 - Artes PNG 1080 × 1680 (proporção 9:14), com até 100 números por imagem. A navegação mostra as páginas seguintes; o envio pelo WhatsApp compartilha todas juntas. Cada página exibe os dados da campanha, contadores, números coloridos por estado e o WhatsApp em destaque.
-- O fundo decorativo fixo em estilo rubi e dourado é reaproveitado em todas as imagens; os dados da campanha são desenhados por cima. Cada página organiza até 100 números em dez colunas, com células horizontais compactas. A numeração da continuação começa na primeira célula, alinhada ao início da página anterior. O menu de compartilhamento envia todas as páginas juntas; a pessoa escolhe um contato ou o Status e confirma no WhatsApp.
+- O fundo decorativo fixo em estilo rubi e dourado é reaproveitado em todas as imagens; os dados da campanha são desenhados por cima. No cabeçalho, o nome da rifa aparece em destaque, entidade/campanha e valor/situação ficam em duas colunas, e o prêmio ocupa toda a largura com até três linhas. O critério é exibido sozinho numa faixa mais baixa, sem um segundo título “Sorteio”. Cada página organiza até 100 números em dez colunas, com células horizontais compactas. A numeração da continuação começa na primeira célula, alinhada ao início da página anterior. O menu de compartilhamento envia todas as páginas juntas; a pessoa escolhe um contato ou o Status e confirma no WhatsApp.
 
 ## Migração
 
 Arquivo: `supabase/migrations/20261027_etapa9_backup_dados_pagamento.sql`
 
-A migração cria somente a tabela privada e as funções necessárias. Não recria nem apaga tabelas, campanhas ou registros. A execução em produção foi autorizada e o sucesso foi apresentado pelo usuário. A publicação do código no GitHub continua pendente por erro 403 da integração; os novos recursos ainda não foram disponibilizados no GitHub Pages.
+A migração cria somente a tabela privada e as funções necessárias. Não recria nem apaga tabelas, campanhas ou registros. A execução em produção foi autorizada e o sucesso foi apresentado pelo usuário. Esta revisão do layout da arte ainda precisa ser enviada ao GitHub para aparecer no GitHub Pages.
 
 ## Verificações
 
-- `tests/smoke.cjs`: fluxos de campanha, backup v3/v4, prévia/restauração, backup preventivo, Pix/WhatsApp, compartilhamento e arte para 100, 120 e 150 números.
+- `tests/smoke.cjs`: fluxos de campanha, backup v3/v4, prévia/restauração, backup preventivo, Pix/WhatsApp, compartilhamento e arte para 100, 120, 150 e 200 números, prêmio longo e alinhamento da segunda página.
 - `tests/backup-db.cjs`: permissões no PostgreSQL, privacidade dos dados, atualização atômica, isolamento entre campanhas e preservação de números ocupados/sorteados.
