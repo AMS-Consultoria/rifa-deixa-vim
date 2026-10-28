@@ -135,17 +135,17 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
   assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');
   for(let page=0;page<pages.length;page++){
    const poster=pages[page],pageQuantity=Math.min(100,quantity-page*100);
-   assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+6);
-   const infoLabels=['ENTIDADE','CAMPANHA','VALOR','SITUAÇÃO','PRÊMIO'];
+   assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+7);
+   const infoLabels=['ENTIDADE','CAMPANHA','VALOR','SITUAÇÃO'];
    for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text===label);assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/21px/);}
    for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','SITUAÇÃO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
    assert.ok(poster.drawnText.includes('RIFA'));assert.ok(poster.drawnText.includes(config.nome_rifa.toUpperCase()));assert.equal(poster.backgroundDraws,1);if(quantity===150)assert.ok(poster.drawnText.join(' ').includes('participante'),'prêmio longo deve caber na faixa inteira');
-   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem sorteados');assert.ok(criterio);assert.match(criterio.font,/29px/);assert.equal(criterio.x,540);assert.ok(!poster.drawnText.includes('SORTEIO'));
+   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem sorteados');assert.ok(criterio);assert.match(criterio.font,/27px/);assert.equal(criterio.x,540);assert.ok(!poster.drawnText.includes('SORTEIO'));
    const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
    assert.equal(gridRects[0].x,42);if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
    const first=String(page*100+1).padStart(3,'0'),last=String(page*100+pageQuantity).padStart(3,'0');
    assert.ok(poster.drawnText.includes('NÚMEROS '+first+'–'+last));assert.ok(poster.drawnText.includes('PÁGINA '+(page+1)+'/'+pageCount+'  ❯❯'));
-   assert.ok(poster.drawnText.includes(first));assert.ok(poster.drawnText.includes('(11) 98765-4321'));
+   assert.ok(poster.drawnText.includes('PRÊMIO: '+config.descricao_premio));const premioLabel=poster.drawnPositions.find(position=>position.text==='PRÊMIO: '+config.descricao_premio);assert.ok(premioLabel);assert.equal(premioLabel.y,442);assert.equal(premioLabel.x,540);const premioRect=poster.rectangles.find(r=>r.x===38&&r.y===410),sorteioRect=poster.rectangles.find(r=>r.x===38&&r.y===492),contadoresRect=poster.rectangles.find(r=>r.x===42&&r.y===596);assert.ok(premioRect);assert.ok(sorteioRect);assert.ok(contadoresRect);assert.ok(sorteioRect.y>=premioRect.y+premioRect.h+16);assert.ok(contadoresRect.y>=sorteioRect.y+sorteioRect.h+20);assert.ok(poster.drawnText.includes(first));assert.ok(poster.drawnText.includes('(11) 98765-4321'));
    const phoneIndex=poster.drawnText.indexOf('(11) 98765-4321');assert.match(poster.drawnFonts[phoneIndex],/950 52px/);
   }
   assert.match($('posterMessage').textContent,/imagem|imagens/i);

@@ -1401,7 +1401,7 @@ function formatarWhatsAppArte(valor) {
   else if(temPaisBrasil)formatado=original;
   return temPaisBrasil&&formatado!==original?'+55 '+formatado:formatado===nacional?original:formatado;
 }
-const fundoArteSvg=`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1680" viewBox="0 0 1080 1680"><defs><linearGradient id="top" x2="1" y2="1"><stop stop-color="#900019"/><stop offset=".55" stop-color="#57000d"/><stop offset="1" stop-color="#280008"/></linearGradient><linearGradient id="bottom" x2="0" y2="1"><stop stop-color="#101216"/><stop offset="1" stop-color="#050607"/></linearGradient></defs><path fill="url(#bottom)" d="M0 0h1080v1680H0z"/><path fill="url(#top)" d="M0 0h1080v600H0z"/><path fill="#ed1735" opacity=".11" d="M0 0h310L0 280zm1080 25L590 600h260l230-275zM1080 0H870L440 600h130z"/><path fill="#ff5a65" opacity=".08" d="M0 495 390 0h140L110 600H0zm1080-340L805 0h90l185 92z"/><path stroke="#e7ba44" stroke-width="5" d="M54 207h972"/><path stroke="#f1d68a" stroke-opacity=".5" stroke-width="2" d="M540 225v225"/><path fill="#fff" opacity=".035" d="M0 600h1080v1080H0z"/></svg>`;
+const fundoArteSvg=`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1680" viewBox="0 0 1080 1680"><defs><linearGradient id="top" x2="1" y2="1"><stop stop-color="#900019"/><stop offset=".55" stop-color="#57000d"/><stop offset="1" stop-color="#280008"/></linearGradient><linearGradient id="bottom" x2="0" y2="1"><stop stop-color="#101216"/><stop offset="1" stop-color="#050607"/></linearGradient></defs><path fill="url(#bottom)" d="M0 0h1080v1680H0z"/><path fill="url(#top)" d="M0 0h1080v560H0z"/><path fill="#ed1735" opacity=".11" d="M0 0h310L0 280zm1080 25L590 560h260l230-275zM1080 0H870L440 560h130z"/><path fill="#ff5a65" opacity=".08" d="M0 495 390 0h140L110 560H0zm1080-340L805 0h90l185 92z"/><path stroke="#e7ba44" stroke-width="5" d="M54 207h972"/><path stroke="#f1d68a" stroke-opacity=".5" stroke-width="2" d="M540 225v225"/><path fill="#fff" opacity=".035" d="M0 560h1080v1120H0z"/></svg>`;
 let fundoArteImagem=null;
 function carregarFundoArte(){
   if(fundoArteImagem)return Promise.resolve(fundoArteImagem);
@@ -1426,17 +1426,21 @@ function carregarFundoArte(){
   campo(leftX,324,'Valor',reais(configuracao.valor_bilhete)+' por número',1,'#ffe27a');
   const status=situacoesCampanha[configuracao.situacao]||'Em andamento';
   campo(rightX,324,'Situação',status,1,'#ffe27a');
-  campo(margin,418,'Prêmio',configuracao.descricao_premio,3,'#fff',width-margin*2);
+  const premioTexto='PRÊMIO: '+String(configuracao.descricao_premio||'—').trim();
+  ctx.fillStyle='#68000f';ctx.fillRect(38,410,width-76,64);ctx.strokeStyle='#f0c62f';ctx.lineWidth=3;ctx.strokeRect(38,410,width-76,64);
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff';let fontePremio=30;
+  ctx.font='900 '+fontePremio+'px system-ui, sans-serif';while(ctx.measureText(premioTexto).width>width-116&&fontePremio>13){fontePremio--;ctx.font='900 '+fontePremio+'px system-ui, sans-serif';}
+  ctx.fillText(premioTexto,width/2,442,width-116);
   const textoCriterio=(String(configuracao.criterio_sorteio||'').trim().replace(/^sorteio\b\s*[:–-]?\s*/i,'').replace(/\bpreenchidos\b/gi,'sorteados')||'Após todos os números serem sorteados').replace(/^./,letra=>letra.toUpperCase());
-  ctx.fillStyle='#68000f';ctx.fillRect(38,542,width-76,68);ctx.strokeStyle='#f0c62f';ctx.lineWidth=3;ctx.strokeRect(38,542,width-76,68);
-  ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle='#fff';ctx.font='900 29px system-ui, sans-serif';
-  escreverLinhas(ctx,textoCriterio,width/2,551,width-148,28,2,'900 29px system-ui, sans-serif');
+  ctx.fillStyle='#68000f';ctx.fillRect(38,492,width-76,78);ctx.strokeStyle='#f0c62f';ctx.lineWidth=3;ctx.strokeRect(38,492,width-76,78);
+  ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle='#fff';ctx.font='900 27px system-ui, sans-serif';
+  escreverLinhas(ctx,textoCriterio,width/2,503,width-148,29,2,'900 27px system-ui, sans-serif');
   const contagens={disponivel:0,reservado:0,vendido:0};
   for(let n=1;n<=quantidadeTotal;n++){const estado=numeros[n]?.situacao||'disponivel';if(Object.hasOwn(contagens,estado))contagens[estado]++;}
-  const gap=16,cardY=614,cardH=122,cardW=(width-margin*2-gap*2)/3;
+  const gap=16,cardY=596,cardH=122,cardW=(width-margin*2-gap*2)/3;
   const cards=[{label:'DISPONÍVEIS',value:contagens.disponivel,color:'#f1f2f5',ink:'#111217'},{label:'RESERVADOS',value:contagens.reservado,color:'#ffd23f',ink:'#201600'},{label:'VENDIDOS',value:contagens.vendido,color:'#00a65c',ink:'#fff'}];
   cards.forEach((card,index)=>{const x=margin+index*(cardW+gap);ctx.fillStyle=card.color;ctx.fillRect(x,cardY,cardW,cardH);ctx.fillStyle=card.ink;ctx.textAlign='center';ctx.font='950 50px system-ui, sans-serif';ctx.fillText(String(card.value),x+cardW/2,cardY+12);ctx.font='850 20px system-ui, sans-serif';ctx.fillText(card.label,x+cardW/2,cardY+78);});
-  const digitos=String(quantidadeTotal).length,faixa=String(numeroInicial).padStart(digitos,'0')+'–'+String(numeroFinal).padStart(digitos,'0'),bannerY=752,bannerH=76;
+  const digitos=String(quantidadeTotal).length,faixa=String(numeroInicial).padStart(digitos,'0')+'–'+String(numeroFinal).padStart(digitos,'0'),bannerY=740,bannerH=76;
   ctx.fillStyle='#9c0b20';ctx.fillRect(margin,bannerY,width-margin*2,bannerH);ctx.strokeStyle='#ff3046';ctx.lineWidth=3;ctx.strokeRect(margin,bannerY,width-margin*2,bannerH);
   ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.font='950 30px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,'NÚMEROS '+faixa,width-420),margin+20,bannerY+bannerH/2);
   ctx.textAlign='right';ctx.fillStyle='#ffe27a';ctx.font='900 24px system-ui, sans-serif';ctx.fillText('PÁGINA '+(pagina+1)+'/'+totalPaginas+'  ❯❯',width-margin-18,bannerY+bannerH/2);
