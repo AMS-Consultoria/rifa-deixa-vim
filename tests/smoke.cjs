@@ -5,7 +5,7 @@ new vm.Script('(async()=>{'+source+'})()');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 class El{
  constructor(){this.children=[];this.listeners={};this.hidden=false;this.disabled=false;this.open=false;this.value='';this.style={};this.files=[];this.classList={add(){},remove(){}};}
- getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];return {canvas,fillStyle:'',font:'',textAlign:'',textBaseline:'',createLinearGradient(){return {addColorStop(){}}},strokeRect(){},drawImage(image){if(String(image?.src||'').startsWith('data:image/svg+xml'))this.canvas.backgroundDraws=(this.canvas.backgroundDraws||0)+1;else this.canvas.prizeDraws=(this.canvas.prizeDraws||0)+1},fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font,baseline:this.textBaseline})},measureText(x){return {width:String(x).length*9}}}}
+ getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];canvas.strokedRectangles=[];return {canvas,fillStyle:'',font:'',textAlign:'',textBaseline:'',createLinearGradient(){return {addColorStop(){}}},strokeRect(x,y,w,h){canvas.strokedRectangles.push({x,y,w,h})},drawImage(image){if(String(image?.src||'').startsWith('data:image/svg+xml'))this.canvas.backgroundDraws=(this.canvas.backgroundDraws||0)+1;else this.canvas.prizeDraws=(this.canvas.prizeDraws||0)+1},fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font,baseline:this.textBaseline})},measureText(x){return {width:String(x).length*9}}}}
  toBlob(fn,type){fn({type,width:this.width,height:this.height})}
  addEventListener(k,fn){this.listeners[k]=fn}
  click(){return this.listeners.click?.({preventDefault(){}})}
@@ -132,7 +132,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
   await $('reloadButton').click();await flush();context.__setTestPaymentDetails(paymentDetails);
   const beforePages=createdCanvases.length;await $('campaignPosterButton').click();
   const pages=createdCanvases.slice(beforePages),pageCount=Math.ceil(quantity/100);assert.equal(pages.length,pageCount);
-  assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');
+  assert.equal($('posterPageIndicator').textContent,'Imagem 1/'+pageCount);
   for(let page=0;page<pages.length;page++){
    const poster=pages[page],pageQuantity=Math.min(100,quantity-page*100);
    assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+7);
@@ -149,13 +149,13 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
    const phoneIndex=poster.drawnText.indexOf('(11) 98765-4321');assert.match(poster.drawnFonts[phoneIndex],/950 52px/);
   }
   assert.match($('posterMessage').textContent,/imagem|imagens/i);
-  if(pageCount>1){const pageOneRects=pages[0].rectangles.slice(-101,-1),pageTwoQuantity=Math.min(100,quantity-100),pageTwoRects=pages[1].rectangles.slice(-pageTwoQuantity-1,-1);assert.equal(pageTwoRects[0].x,pageOneRects[0].x);assert.equal(pageTwoRects[0].y,pageOneRects[0].y);const firstUrl=$('campaignPosterPreview').src;$('posterNext').click();assert.equal($('posterPageIndicator').textContent,'Imagem 2 de '+pageCount+' · números 101–'+String(quantity).padStart(3,'0'));assert.notEqual($('campaignPosterPreview').src,firstUrl);$('posterPrev').click();assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');}
+  if(pageCount>1){const pageOneRects=pages[0].rectangles.slice(-101,-1),pageTwoQuantity=Math.min(100,quantity-100),pageTwoRects=pages[1].rectangles.slice(-pageTwoQuantity-1,-1);assert.equal(pageTwoRects[0].x,pageOneRects[0].x);assert.equal(pageTwoRects[0].y,pageOneRects[0].y);const firstUrl=$('campaignPosterPreview').src;$('posterNext').click();assert.equal($('posterPageIndicator').textContent,'Imagem 2/'+pageCount);assert.notEqual($('campaignPosterPreview').src,firstUrl);$('posterPrev').click();assert.equal($('posterPageIndicator').textContent,'Imagem 1/'+pageCount);}
   await $('posterShare').click();assert.equal(shareCalls,shareFileCounts.length);assert.equal(shareFileCounts.at(-1),pageCount);
   $('posterClose').click();
  }
  config.descricao_premio='Agasalho esportivo';config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
 
- assert.match(html,/id="posterPrev"/);assert.match(html,/id="posterNext"/);
+ assert.match(html,/id="posterPrev"/);assert.match(html,/id="posterNext"/);assert.match(html,/\.poster-pager\{display:grid;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);assert.match(html,/\.poster-pager button\{width:100%/);
  assert.equal($('historySection').hidden,false);
  assert.equal($('vendidos').textContent,1);
  $('drawButton').click();assert.equal($('drawChoiceDialog').open,true);
@@ -220,7 +220,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('heroRaffle').textContent,'Nova rifa');assert.equal($('vendidos').textContent,0);assert.equal($('grid').children.length,100);
  $('campaignSelect').value='campaign-1';await $('campaignSelect').change();await flush();
  assert.equal($('heroRaffle').textContent,'Rifa Atualizada');assert.equal($('vendidos').textContent,1);
- $('settingsButton').click();$('editCampaignButton').click();const prizeFile={type:'image/jpeg',size:2048,name:'produto.jpg'};elements.settingsPrizeImage.files=[prizeFile];await $('settingsPrizeImage').change();assert.match($('settingsPrizeImageStatus').textContent,/Foto pronta/);await $('settingsForm').submit();await flush();assert.ok(storedPrizeImages.has('rifa-premios/campaign-1/premio'));assert.match($('campaignNotice').textContent,/foto do prêmio/);$('settingsBack').click();const beforePrizeArt=createdCanvases.length;await $('campaignPosterButton').click();const prizeArtPages=createdCanvases.slice(beforePrizeArt);assert.equal(prizeArtPages.length,2);assert.equal(prizeArtPages[1].prizeDraws,1);assert.equal(prizeArtPages[1].width,1080);assert.equal(prizeArtPages[1].height,1680);assert.match($('posterMessage').textContent,/1 foto do prêmio/);$('posterNext').click();assert.match($('posterPageIndicator').textContent,/foto do prêmio/);await $('posterShare').click();assert.equal(shareFileCounts.at(-1),2);assert.ok(shareFileNames.at(-1).some(name=>/premio\.png$/.test(name)));$('posterClose').click();$('settingsCloseButton').click();
+ $('settingsButton').click();$('editCampaignButton').click();const prizeFile={type:'image/jpeg',size:2048,name:'produto.jpg'};elements.settingsPrizeImage.files=[prizeFile];await $('settingsPrizeImage').change();assert.match($('settingsPrizeImageStatus').textContent,/Foto pronta/);await $('settingsForm').submit();await flush();assert.ok(storedPrizeImages.has('rifa-premios/campaign-1/premio'));assert.match($('campaignNotice').textContent,/foto do prêmio/);$('settingsBack').click();const beforePrizeArt=createdCanvases.length;await $('campaignPosterButton').click();const prizeArtPages=createdCanvases.slice(beforePrizeArt);assert.equal(prizeArtPages.length,2);assert.equal(prizeArtPages[1].prizeDraws,1);assert.equal(prizeArtPages[1].width,1080);assert.equal(prizeArtPages[1].height,1680);assert.match($('posterMessage').textContent,/1 foto do prêmio/);$('posterNext').click();assert.equal($('posterPageIndicator').textContent,'Imagem 2/2');assert.ok(!prizeArtPages[1].rectangles.some(r=>r.x===70&&r.y===836));assert.ok(!prizeArtPages[1].strokedRectangles.some(r=>r.x===70&&r.y===836));await $('posterShare').click();assert.equal(shareFileCounts.at(-1),2);assert.ok(shareFileNames.at(-1).some(name=>/premio\.png$/.test(name)));$('posterClose').click();$('settingsCloseButton').click();
  assert.match(html,/id="campaignSelect"/);assert.match(html,/id="settingsHub"/);
  const migration=fs.readFileSync('supabase/migrations/20261026_etapa2_multiplas_campanhas.sql','utf8');
  assert.match(migration,/rifa_criar_campanha/);assert.match(migration,/primary key \(campanha_id, numero\)/i);
