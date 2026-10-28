@@ -28,7 +28,7 @@ let now=0,timers=[],nextTimer=1,rand=0,session=true,authorized=true,failSync=fal
 let numbers=Array.from({length:100},(_,i)=>({numero:i+1,situacao:i===0?'vendido':'disponivel',comprador:i===0?'Alice':null,telefone:null,pago:i===0,valor:5}));
 let history=[],inserts=0,signIns=0,configSaves=0,configMissing=false;
 let config={id:1,nome_entidade:'Deixa Vim',nome_campanha:'Campanha 01',nome_rifa:'Rifa Deixa Vim',descricao_premio:'Agasalho esportivo',quantidade_bilhetes:100,valor_bilhete:5,criterio_sorteio:'Sorteio após todos os números serem preenchidos',situacao:'em_andamento'};
-let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0,shareFileCounts=[],shareFileNames=[];const storedPrizeImages=new Map();
+let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0,shareFileCounts=[],shareFileNames=[],deletedCampaignCalls=[],clearedCampaignCalls=[];const storedPrizeImages=new Map();
 let paymentDetails={tipo_chave_pix:'cpf_cnpj',chave_pix:'12345678901',whatsapp:'11987654321'};const norm=x=>String(x||'').normalize('NFD').replaceAll(String.fromCharCode(769),'').replaceAll(String.fromCharCode(771),'').toLowerCase().trim().split(' ').filter(Boolean).join(' ');
 let multiCampaigns=false,campaignList=[{id:'campaign-1',codigo:1,nome_campanha:'Campanha 01'}],campaignTwoConfig=null,campaignTwoNumbers=[];
 function query(table){
@@ -48,7 +48,7 @@ function query(table){
   signInWithPassword:async()=>{signIns++;session=true;return {error:null}},
   signOut:async()=>{if(failLogout)return {error:new Error('offline')};session=false;return {error:null}}
  },
- from:query,storage:{from(bucket){return {upload(path,file){storedPrizeImages.set(bucket+'/'+path,file);return Promise.resolve({data:{path},error:null})},createSignedUrl(path){return Promise.resolve(storedPrizeImages.has(bucket+'/'+path)?{data:{signedUrl:'https://storage.test/'+path},error:null}:{data:null,error:{statusCode:'404',message:'Object not found'}})},download(path){return Promise.resolve(storedPrizeImages.has(bucket+'/'+path)?{data:storedPrizeImages.get(bucket+'/'+path),error:null}:{data:null,error:{statusCode:'404',message:'Object not found'}})}}}},
+ from:query,storage:{from(bucket){return {upload(path,file){storedPrizeImages.set(bucket+'/'+path,file);return Promise.resolve({data:{path},error:null})},createSignedUrl(path){return Promise.resolve(storedPrizeImages.has(bucket+'/'+path)?{data:{signedUrl:'https://storage.test/'+path},error:null}:{data:null,error:{statusCode:'404',message:'Object not found'}})},download(path){return Promise.resolve(storedPrizeImages.has(bucket+'/'+path)?{data:storedPrizeImages.get(bucket+'/'+path),error:null}:{data:null,error:{statusCode:'404',message:'Object not found'}})},remove(paths){for(const path of paths)storedPrizeImages.delete(bucket+'/'+path);return Promise.resolve({data:paths.map(name=>({name})),error:null})}}}},
  rpc(name,args){
    if(name==='rifa_reservar_numeros_lote'){
     const selected=args.p_numeros.map(n=>numbers[n-1]);
@@ -78,6 +78,8 @@ function query(table){
    }
    if(name==='rifa_obter_dados_campanha_admin')return Promise.resolve({data:{...paymentDetails},error:null});
    if(name==='rifa_restaurar_backup_campanha'){restoreCalls.push({...args});return Promise.resolve({data:{registros_restaurados:1,registros_preservados:1,sorteios_restaurados:1,sorteios_duplicados:0},error:null})}
+   if(name==='rifa_limpar_dados_campanha'){clearedCampaignCalls.push({...args});return Promise.resolve({data:{status:'limpo'},error:null})}
+   if(name==='rifa_excluir_campanha'){deletedCampaignCalls.push({...args});campaignList=campaignList.filter(c=>c.id!==args.p_campanha_id);return Promise.resolve({data:{status:'excluida'},error:null})}
    if(name==='rifa_resumo_financeiro_publico'){
     const rows=args.p_campanha_id==='campaign-2'?campaignTwoNumbers:numbers;
     const recebido=rows.filter(x=>x.pago).reduce((total,x)=>total+Number(x.valor||0),0);
@@ -138,9 +140,9 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
    assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+7);
    const infoLabels=['ENTIDADE','CAMPANHA','VALOR','SITUAÇÃO'];
    for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text===label);assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/21px/);}
-   for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','SITUAÇÃO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
+   for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','SITUAÇÃO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);assert.equal(b.x,1006,'segunda coluna do cabeçalho da arte fica alinhada à direita');}
    assert.ok(poster.drawnText.includes('RIFA'));assert.ok(poster.drawnText.includes(config.nome_rifa.toUpperCase()));assert.equal(poster.backgroundDraws,1);if(quantity===150)assert.ok(poster.drawnText.join(' ').includes('participante'),'prêmio longo deve caber na faixa inteira');
-   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem sorteados');assert.ok(criterio);assert.match(criterio.font,/27px/);assert.equal(criterio.x,540);assert.equal(criterio.y,531);assert.equal(criterio.baseline,'middle');assert.ok(!poster.drawnText.includes('SORTEIO'));
+   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem vendidos');assert.ok(criterio);assert.match(criterio.font,/27px/);assert.equal(criterio.x,540);assert.equal(criterio.y,531);assert.equal(criterio.baseline,'middle');assert.ok(!poster.drawnText.includes('SORTEIO'));
    const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
    assert.equal(gridRects[0].x,42);if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
    const first=String(page*100+1).padStart(3,'0'),last=String(page*100+pageQuantity).padStart(3,'0');
@@ -288,10 +290,15 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  $('participantsBack').click();assert.equal($('participantsPage').hidden,true);assert.equal($('rafflePage').hidden,false);
  $('showAllParticipants').click();assert.equal($('participantsPage').hidden,false);
  anteriores.forEach((r,i)=>numbers[20+i]=r);await $('reloadButton').click();await flush();
+ $('participantsBack').click();$('campaignSelect').value='campaign-2';await $('campaignSelect').change();await flush();$('settingsButton').click();assert.equal($('deleteCampaignButton').disabled,false);
+ $('clearCampaignDataButton').click();assert.equal($('campaignDataConfirmDialog').open,true);assert.match($('campaignDataConfirmDescription').textContent,/compradores, reservas, vendas, pagamentos e o histórico/);$('campaignDataConfirmInput').value='Campanha 02';$('campaignDataConfirmInput').input();assert.equal($('campaignDataConfirmSubmit').disabled,false);await $('campaignDataConfirmForm').submit();await flush();assert.equal(clearedCampaignCalls.length,1);assert.equal(clearedCampaignCalls[0].p_campanha_id,'campaign-2');assert.match($('campaignDataActionStatus').textContent,/pronta para novos testes/);
+ $('deleteCampaignButton').click();$('campaignDataConfirmInput').value='Campanha 02';$('campaignDataConfirmInput').input();await $('campaignDataConfirmForm').submit();await flush();assert.equal(deletedCampaignCalls.length,1);assert.equal(deletedCampaignCalls[0].p_campanha_id,'campaign-2');assert.equal($('campaignSelect').value,'campaign-1');assert.match($('campaignDataActionStatus').textContent,/foi excluída/);
  session=false;authorized=false;await $('reloadButton').click();await flush();
  assert.equal($('participantsPage').hidden,true);assert.equal($('allParticipantsList').children.length,0);assert.equal($('financeReportList').children.length,0);
  assert.equal($('drawButton').hidden,true);assert.equal($('confirmPaymentButton').hidden,true);
  assert.equal($('total').textContent,'R$\u00a032,50');assert.equal($('pendingTotal').textContent,'R$\u00a032,50');assert.equal($('grandTotal').textContent,'R$\u00a065,00');
  assert.match(html,/class="actions main-actions"/);assert.match(html,/class="finance-summary"/);assert.match(html,/id="statusReservedButton"/);assert.match(html,/id="statusSoldButton"/);assert.match(html,/id="bulkStatusReservedButton"/);assert.match(html,/id="bulkStatusSoldButton"/);assert.ok(html.includes('.status-choice button[aria-pressed="true"]'));assert.match(html,/id="settingsHub"[\s\S]*id="backup"/);assert.match(html,/rel="manifest" href="\.\/manifest\.webmanifest"/);assert.match(html,/navigator\.serviceWorker\.register/);assert.match(html,/id="pwaInstallButton"/);const pwaManifest=JSON.parse(fs.readFileSync('manifest.webmanifest','utf8'));assert.equal(pwaManifest.display,'standalone');assert.equal(pwaManifest.scope,'./');assert.equal(pwaManifest.icons.length,3);for(const icon of pwaManifest.icons){const iconBytes=fs.readFileSync(icon.src.replace('./',''));assert.equal(iconBytes.toString('hex',0,4),'89504e47');assert.equal(iconBytes.readUInt32BE(16),Number(icon.sizes.split('x')[0]));assert.equal(iconBytes.readUInt32BE(20),Number(icon.sizes.split('x')[1]));}assert.match(fs.readFileSync('sw.js','utf8'),/cache:'no-store'/);
- console.log('PASS: Etapas 1–13 — login, campanhas, pagamentos, prestação de contas, WhatsApp, CSV, sorteios, artes e PWA');
+ assert.match(html,/id="settingsButton"[^>]*aria-label="Abrir configurações"[^>]*>⚙/);assert.match(html,/id="clearCampaignDataButton"/);assert.match(html,/id="deleteCampaignButton"/);assert.match(html,/id="campaignDataConfirmInput"/);assert.match(html,/hero-description>:nth-child\(2\)\{text-align:right\}/);assert.match(html,/hero-meta>:nth-child\(2\)\{text-align:right\}/);assert.doesNotMatch(html,/stroke="#f1d68a" stroke-opacity=".5"/);assert.match(html,/preenchidos\\b\/gi,'vendidos'/);
+ const migration14=fs.readFileSync('supabase/migrations/20261028_etapa14_limpar_excluir_campanha.sql','utf8');assert.match(migration14,/rifa_limpar_dados_campanha/);assert.match(migration14,/rifa_excluir_campanha/);assert.match(migration14,/public\.rifa_administradores/);assert.match(migration14,/Mantenha ao menos uma campanha cadastrada/);assert.match(migration14,/revoke all on function public\.rifa_excluir_campanha/);assert.match(migration14,/create policy rifa_premio_admin_excluir/);assert.doesNotMatch(migration14,/drop table|truncate/i);
+ console.log('PASS: Etapas 1–14 — acesso, campanhas, limpeza/exclusão segura, pagamentos, prestação de contas, sorteios, artes e PWA');
 })().catch(e=>{console.error(e);process.exitCode=1});
