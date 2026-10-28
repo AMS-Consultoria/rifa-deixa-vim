@@ -127,20 +127,18 @@ main{max-width:920px}
 .participant-filters{display:grid;grid-template-columns:minmax(0,2fr) minmax(150px,1fr);gap:0 12px;align-items:end;margin:14px 0 4px;padding:12px;background:#24242b;border:1px solid #45454e;border-radius:12px}
 .participant-filters label{margin:0 0 10px}.participant-filters input,.participant-filters select{margin-top:5px}
 .participant-filters button{min-height:44px;margin-bottom:10px}.participant-filter-status{grid-column:1/-1;margin:0 0 2px}.accountability{margin:18px 0;padding:14px;background:#24242b;border:1px solid #45454e;border-radius:12px}
+.participant-browser{margin:18px 0}.participant-browser>h3{margin:0 0 10px}.participant-browser .participant-filters{margin:0 0 10px}
 .accountability-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.accountability-head h3{margin:0;font-size:20px}
 .accountability-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
 .accountability-total{padding:10px;border:1px solid #45454e;border-radius:9px;background:#1c1c23}.accountability-total span{display:block;color:#c8c8ce;font-size:12px}.accountability-total b{display:block;margin-top:4px;font-size:18px}
-.accountability-filter{display:flex;align-items:center;gap:10px;margin:10px 0}.accountability-filter select{max-width:240px;margin:0}
-.accountability-list{display:grid;gap:9px;padding:0;list-style:none}.accountability-list li{padding:12px;border:1px solid #45454e;border-radius:9px;white-space:pre-line;line-height:1.5;overflow-wrap:anywhere}
-.accountability-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.accountability-actions .action{min-height:40px}.accountability-actions a.action{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;background:#33333d;border:1px solid #666674;border-radius:9px;padding:10px 13px;font-size:14px;font-weight:650}
 .participant-card-actions{display:grid;gap:7px;align-self:center}.participant-card-actions button{min-height:40px;white-space:nowrap}
 #participantEditDialog{max-height:90vh;overflow-y:auto}#participantEditMatchPanel{border:1px solid #9b753f;border-radius:10px;padding:10px;margin-top:12px}
-@media(max-width:480px){.participant-filters{grid-template-columns:1fr}.participant-filter-status{grid-column:1}.accountability-totals{grid-template-columns:1fr}.accountability-head{align-items:flex-start;flex-direction:column}.accountability-filter{align-items:flex-start;flex-direction:column}.participant-card-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.participant-card-actions button{white-space:normal}}
+@media(max-width:480px){.participant-filters{grid-template-columns:1fr}.participant-filter-status{grid-column:1}.accountability-totals{grid-template-columns:1fr}.accountability-head{align-items:flex-start;flex-direction:column}.participant-card-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.participant-card-actions button{white-space:normal}}
 .prize-upload-preview{display:block;width:min(100%,300px);max-height:330px;object-fit:contain;margin:10px auto;border:1px solid #555;border-radius:10px;background:#121216}.prize-image-field{border:1px solid #45454e;border-radius:10px;padding:12px;margin-top:8px}.prize-image-field input[type=file]{padding:9px}.draw-criterion{display:grid;place-items:center;text-align:center}.status-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:7px 0 12px}.status-choice button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-width:0;min-height:48px;padding:10px;border:2px solid transparent;border-radius:9px;color:#fff;opacity:.64;cursor:pointer;font:inherit;font-weight:750;transition:opacity .15s,transform .15s}.status-choice .status-reserved{background:#d98b17}.status-choice .status-sold{background:#158a4d}.status-choice button[aria-pressed="true"]{opacity:1;border-color:#fff;box-shadow:0 0 0 2px #ffffff40}.status-choice .status-check{visibility:hidden;font-weight:950}.status-choice button[aria-pressed="true"] .status-check{visibility:visible}.status-choice button:focus-visible{outline:3px solid #f4e1a6;outline-offset:2px}.status-choice button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}@media(max-width:360px){.status-choice{gap:7px}.status-choice button{padding-inline:6px;font-size:14px}}.pwa-install-button{background:#176b40!important;border:1px solid #28a560!important;color:#fff!important}.pwa-install-button[hidden]{display:none!important}</style></head><body><main><section id="accessPage" class="access-page" aria-labelledby="accessTitle"><h1 id="accessTitle">Rifa Deixa Vim</h1><p>Entre na sua conta ou consulte as campanhas como visitante.</p><p id="accessStatus" class="muted" role="status">Conferindo sessão...</p><div class="access-actions"><button class="action primary" id="accessLogin" type="button">Entrar</button><button class="action" id="accessSignup" type="button">Criar usuário</button><button class="action wide" id="accessGuest" type="button">Continuar como visitante</button><button class="action wide" id="accessLogout" type="button" hidden>Tentar sair novamente</button><button class="action wide pwa-install-button" id="pwaInstallButton" type="button">Instalar aplicativo</button></div></section><div id="rafflePage" hidden>
 <div class="app-topbar"><div class="app-brand" id="heroEntity">Deixa Vim</div><div class="app-top-actions"><p id="accountStatus" class="account-status" role="status"></p><button class="action app-icon-button" id="settingsButton" type="button" aria-label="Abrir configurações" title="Configurações" hidden>⚙</button><button class="action pwa-install-button" id="pwaInstallButtonMain" type="button">Instalar</button></div></div>
 <div class="campaign-toolbar"><label class="muted" for="campaignSelect">Campanha<select id="campaignSelect" aria-label="Selecionar campanha"></select></label><button class="action primary" type="button" id="newCampaignButton" hidden>+ Nova Campanha</button></div>
 <header class="hero"><p id="heroCampaign" class="hero-campaign">Campanha 01</p><h1 id="heroRaffle">RIFA DEIXA VIM</h1><div class="hero-description"><p id="heroPrize">Prêmio: Agasalho esportivo</p><strong id="heroPrice">R$ 5,00 por número</strong></div><div class="hero-meta"><p id="heroCriterion">Sorteio após todos os números serem preenchidos</p><p id="heroStatus">Em andamento</p></div></header><section class="stats" aria-label="Resumo"><div class="stat"><b id="livres">100</b><small>Disponíveis</small></div><div class="stat"><b id="reservados">0</b><small>Reservados</small></div><div class="stat"><b id="vendidos">0</b><small>Vendidos</small></div></section><section class="finance-summary" aria-label="Resumo financeiro"><div class="finance-card received"><span>Total recebido</span><b id="total">R$ 0,00</b></div><div class="finance-card pending"><span>Total a receber</span><b id="pendingTotal">R$ 0,00</b></div><div class="finance-card grand"><span>Total geral</span><b id="grandTotal">R$ 0,00</b></div></section><div class="legend"><span><i class="dot" style="background:#eee"></i>Disponível</span><span><i class="dot" style="background:#f7c04a"></i>Reservado</span><span><i class="dot" style="background:#17834a"></i>Vendido</span></div><div id="grid" class="grid" aria-label="Números da rifa"></div><div id="notice" class="notice" role="status"></div><div class="actions main-actions" id="mainActions"><button class="action primary" id="bulkAddButton" hidden>Cadastrar participante</button><button class="action" id="reserveNumbersButton" hidden>Reservar números</button><button class="action" id="confirmPaymentButton" hidden>Confirmar pagamento</button><button class="action draw" id="drawButton" hidden>Realizar sorteio</button></div><div class="actions selection-actions" id="selectionActions" hidden><button class="action" id="bulkFinishButton" hidden>Confirmar seleção</button><button class="action nav-secondary nav-dismiss" id="bulkCancelButton" hidden><svg class="nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>Cancelar seleção</button></div><p class="selection-hint" id="selectionHint" hidden role="status"></p><section id="ownParticipations" class="own-participations" hidden aria-labelledby="ownTitle"><h2 id="ownTitle">Minhas participações nesta campanha</h2><p id="ownMessage" class="muted" role="status"></p><ul id="ownList"></ul></section><section id="participantOverview" class="participant-overview" hidden><h2 id="buyerTitle">Últimos participantes</h2><ul class="entries participant-list" id="entries" hidden></ul><button class="action" id="showAllParticipants" type="button" hidden>Ver todos os participantes</button></section><div class="actions utility-actions"><button class="action" id="loginButton">Entrar</button><button class="action" id="logoutButton" hidden>Sair</button><button class="action" id="reloadButton">Atualizar números</button><button class="action" id="export" hidden>Copiar lista</button></div><section class="history" id="historySection" hidden aria-label="Histórico de sorteios"><div class="history-head"><h2>Histórico de sorteios oficiais</h2><button type="button" class="history-refresh" id="historyRefresh">Atualizar</button></div><p class="muted">Resultados registrados no Supabase. Apenas o administrador pode visualizar os nomes.</p><ul class="history-list" id="historyList"><li>Carregando histórico...</li></ul></section><p class="muted" id="syncInfo">Os números são consultados no banco online. Dados pessoais são visíveis apenas ao administrador.</p></div>
-<section id="participantsPage" class="participants-page" hidden aria-labelledby="participantsTitle"><div class="participants-page-head"><div><p class="muted" id="participantsCampaign"></p><h2 id="participantsTitle">PARTICIPANTES REGISTRADOS</h2></div><button class="action nav-secondary nav-back" id="participantsBack" type="button"><svg class="nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Voltar</button></div><p class="muted">Participantes da campanha selecionada, ordenados pela última movimentação dos seus números.</p><div class="participant-filters" role="search" aria-label="Buscar participantes"><label for="participantsSearch">Buscar por nome, telefone ou número<input id="participantsSearch" type="search" autocomplete="off" placeholder="Ex.: Maria, 11987654321 ou 08"></label><label for="participantsSituation">Situação<select id="participantsSituation"><option value="todas">Todas as situações</option><option value="reservado">Reservados</option><option value="vendido">Vendidos</option></select></label><button class="action" id="clearParticipantFilters" type="button">Limpar filtros</button><p id="participantsFilterStatus" class="muted participant-filter-status" role="status" aria-live="polite"></p></div><section class="accountability" aria-labelledby="accountabilityTitle"><div class="accountability-head"><h3 id="accountabilityTitle">Prestação de contas</h3><button class="action" id="exportFinanceReport" type="button">Baixar relatório CSV</button></div><div class="accountability-totals" aria-label="Totais financeiros"><div class="accountability-total"><span>Recebido</span><b id="reportReceived">R$ 0,00</b></div><div class="accountability-total"><span>Pendente</span><b id="reportPending">R$ 0,00</b></div><div class="accountability-total"><span>Total comprometido</span><b id="reportGrandTotal">R$ 0,00</b></div></div><label class="accountability-filter" for="financeReportFilter">Exibir<select id="financeReportFilter"><option value="pendentes">Reservas pendentes</option><option value="recebidos">Pagamentos recebidos</option><option value="todos">Todos os participantes</option></select></label><p id="financeReportStatus" class="muted" role="status" aria-live="polite"></p><ul id="financeReportList" class="accountability-list"></ul></section><ul id="allParticipantsList" class="entries participant-list"></ul></section>
+<section id="participantsPage" class="participants-page" hidden aria-labelledby="participantsTitle"><div class="participants-page-head"><div><p class="muted" id="participantsCampaign"></p><h2 id="participantsTitle">PARTICIPANTES REGISTRADOS</h2></div><button class="action nav-secondary nav-back" id="participantsBack" type="button"><svg class="nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Voltar</button></div><p class="muted">Participantes da campanha selecionada, ordenados pela última movimentação dos seus números.</p><section class="accountability" aria-labelledby="accountabilityTitle"><div class="accountability-head"><h3 id="accountabilityTitle">Prestação de contas</h3><button class="action" id="exportFinanceReport" type="button">Baixar relatório CSV</button></div><div class="accountability-totals" aria-label="Totais financeiros"><div class="accountability-total"><span>Recebido</span><b id="reportReceived">R$ 0,00</b></div><div class="accountability-total"><span>Pendente</span><b id="reportPending">R$ 0,00</b></div><div class="accountability-total"><span>Total comprometido</span><b id="reportGrandTotal">R$ 0,00</b></div></div></section><section class="participant-browser" aria-labelledby="participantBrowserTitle"><h3 id="participantBrowserTitle">Participantes da campanha</h3><div class="participant-filters" role="search" aria-label="Buscar e filtrar participantes"><label for="participantsSearch">Buscar por nome, telefone ou número<input id="participantsSearch" type="search" autocomplete="off" placeholder="Ex.: Maria, 11987654321 ou 08"></label><label for="participantsSituation">Mostrar<select id="participantsSituation"><option value="todas">Todos os participantes</option><option value="pendentes">Reservas pendentes</option><option value="recebidos">Pagamentos recebidos</option><option value="reservado">Reservados</option><option value="vendido">Vendidos</option></select></label><button class="action" id="clearParticipantFilters" type="button">Limpar filtros</button><p id="participantsFilterStatus" class="muted participant-filter-status" role="status" aria-live="polite"></p></div><ul id="allParticipantsList" class="entries participant-list"></ul></section></section>
 <section class="settings-page" id="settingsPage" hidden aria-labelledby="settingsTitle">
 <h2 id="settingsTitle">Configurações</h2><div id="settingsHub" class="settings-hub"><button class="action nav-secondary nav-back" type="button" id="settingsCloseButton"><svg class="nav-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Voltar para a rifa</button><button class="action" type="button" id="editCampaignButton">Editar campanha selecionada</button><button class="action primary" type="button" id="settingsNewCampaignButton">+ Nova Campanha</button><button class="action" type="button" id="campaignPosterButton">Criar arte 9 × 14 para WhatsApp</button><button class="action" id="backup" type="button" hidden>Fazer backup</button><button class="action" id="restoreButton" type="button" hidden>Restaurar backup</button><button class="action" id="importLocal" type="button" hidden>Importar deste aparelho</button><p id="campaignNotice" class="muted settings-hub-note" role="status"></p><section class="settings-danger" aria-labelledby="settingsDangerTitle"><h3 id="settingsDangerTitle">Dados da campanha</h3><p class="muted">Limpe os registros de teste e mantenha a campanha, ou apague a campanha selecionada permanentemente.</p><div class="settings-danger-actions"><button class="action" type="button" id="clearCampaignDataButton">Limpar dados da campanha</button><button class="action delete-campaign" type="button" id="deleteCampaignButton">Excluir campanha definitivamente</button></div><p id="campaignDataActionStatus" class="muted settings-hub-note" role="status" aria-live="polite"></p></section></div>
 <input id="restore" type="file" accept=".json,application/json">
@@ -435,7 +433,7 @@ function render() {
     : 'Consulta pública: números sincronizados, sem exposição dos nomes e telefones dos participantes.';
   mostrarAcesso();
   const previa = $('entries'); previa.replaceChildren();
-  if (!admin) { limparFiltrosParticipantes(); $('allParticipantsList').replaceChildren(); $('financeReportList').replaceChildren(); $('financeReportStatus').textContent=''; $('reportReceived').textContent='R$ 0,00'; $('reportPending').textContent='R$ 0,00'; $('reportGrandTotal').textContent='R$ 0,00'; $('participantsFilterStatus').textContent = ''; return; }
+  if (!admin) { limparFiltrosParticipantes(); $('allParticipantsList').replaceChildren(); $('reportReceived').textContent='R$ 0,00'; $('reportPending').textContent='R$ 0,00'; $('reportGrandTotal').textContent='R$ 0,00'; $('participantsFilterStatus').textContent = ''; return; }
   const pessoasOrdenadas = agruparParticipantesDaCampanha();
   renderizarRelatorioFinanceiro(pessoasOrdenadas);
   $('showAllParticipants').hidden = pessoasOrdenadas.length === 0;
@@ -503,10 +501,11 @@ function filtrarParticipantes(pessoas) {
   const termo=normalizarBuscaParticipante($('participantsSearch').value);
   const digitos=termo.replace(/\D/g,'');
   const situacao=$('participantsSituation').value || 'todas';
-  const registrosNumericos=pessoas.flatMap(pessoa=>pessoa.registros.filter(r=>(situacao==='todas'||r.situacao===situacao)&&format(r.numero).includes(digitos)).map(r=>({pessoa,registro:r})));
+  const passaSituacao=r=>situacao==='todas'||(situacao==='reservado'&&r.situacao==='reservado')||(situacao==='vendido'&&r.situacao==='vendido')||(situacao==='pendentes'&&r.situacao==='reservado'&&!r.pago)||(situacao==='recebidos'&&!!r.pago);
+  const registrosNumericos=pessoas.flatMap(pessoa=>pessoa.registros.filter(r=>passaSituacao(r)&&format(r.numero).includes(digitos)).map(r=>({pessoa,registro:r})));
   if(/^\d+$/.test(termo)&&registrosNumericos.length)return [...new Map(registrosNumericos.map(x=>[x.pessoa.id||'legacy-'+x.registro.numero,{...x.pessoa,registrosVisiveis:registrosNumericos.filter(y=>y.pessoa===x.pessoa).map(y=>y.registro)}])).values()];
   return pessoas.map(pessoa=>{
-    const registros=pessoa.registros.filter(r=>situacao==='todas'||r.situacao===situacao);
+    const registros=pessoa.registros.filter(passaSituacao);
     if (!registros.length) return null;
     if (!termo) return {...pessoa,registrosVisiveis:registros};
     const porNumero=digitos?registros.filter(r=>format(r.numero).includes(digitos)):[];
@@ -525,7 +524,8 @@ function renderizarListaParticipantes(lista,pessoas,mensagemVazia='Nenhum partic
     const vendidos=registros.filter(r=>r.situacao==='vendido').length;
     const reservados=registros.filter(r=>r.situacao==='reservado').length;
     const recebido=registros.filter(r=>r.pago).reduce((total,r)=>total+Number(r.valor ?? configuracao.valor_bilhete),0);
-    const pendente=registros.filter(r=>r.situacao==='reservado'&&!r.pago).reduce((total,r)=>total+Number(r.valor ?? configuracao.valor_bilhete),0);
+    const reservasPendentes=registros.filter(r=>r.situacao==='reservado'&&!r.pago);
+    const pendente=reservasPendentes.reduce((total,r)=>total+Number(r.valor ?? configuracao.valor_bilhete),0);
     const telefone=registros.find(r=>r.telefone)?.telefone || '';
     const data=pessoa.registroRecente?new Date(pessoa.registroRecente).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'Data não registrada';
     const li=document.createElement('li'),descricao=document.createElement('span'),acoes=document.createElement('div'),abrir=document.createElement('button');
@@ -534,46 +534,34 @@ function renderizarListaParticipantes(lista,pessoas,mensagemVazia='Nenhum partic
       '\nParticipação: '+vendidos+' vendido(s), '+reservados+' reservado(s)'+
       '\nFinanceiro: '+reais(recebido)+' recebido · '+reais(pendente)+' pendente'+
       '\nÚltima movimentação: '+data;
-    abrir.type='button';abrir.className='action';abrir.textContent='Abrir ficha';
+    abrir.type='button';abrir.className='action';abrir.textContent='Abrir ficha / confirmar';
     abrir.addEventListener('click',()=>void abrirFicha(pessoa.id,pessoa.nome,registros[0]?.numero));
-    acoes.append(abrir);li.append(descricao,acoes);lista.append(li);
+    acoes.append(abrir);
+    const telefoneWhatsApp=registros.find(r=>r.telefone)?.telefone||'';
+    if(lista===$('allParticipantsList')&&reservasPendentes.length&&telefoneWhatsApp){
+      const link=document.createElement('a');link.className='action';link.textContent='Lembrete pelo WhatsApp';link.target='_blank';link.rel='noopener noreferrer';
+      let tel=String(telefoneWhatsApp).replace(/\D/g,'');if(tel.length===10||tel.length===11)tel='55'+tel;
+      const mensagem='Olá, '+pessoa.nome+'! Passando para lembrar da reserva dos números '+reservasPendentes.map(r=>format(r.numero)).join(', ')+' da campanha '+configuracao.nome_campanha+'. O valor pendente é '+reais(pendente)+'. Quando puder, confirme comigo. Obrigado!';
+      link.href='https://wa.me/'+tel+'?text='+encodeURIComponent(mensagem);acoes.append(link);
+    }
+    li.append(descricao,acoes);lista.append(li);
   }
   if (!lista.children.length) {const li=document.createElement('li');li.textContent=mensagemVazia;lista.append(li);}
 }
 function obterDadosRelatorioFinanceiro(pessoas) {
-  const filtro=$('financeReportFilter').value||'pendentes';
-  return pessoas.map(pessoa=>{
-    const registros=pessoa.registros;
+  return filtrarParticipantes(pessoas).map(pessoa=>{
+    const registros=pessoa.registrosVisiveis||pessoa.registros;
     const recebidos=registros.filter(r=>r.pago).reduce((soma,r)=>soma+Number(r.valor??configuracao.valor_bilhete),0);
     const pendentes=registros.filter(r=>r.situacao==='reservado'&&!r.pago).reduce((soma,r)=>soma+Number(r.valor??configuracao.valor_bilhete),0);
     const reservas=registros.filter(r=>r.situacao==='reservado'&&!r.pago);
     const vendas=registros.filter(r=>r.pago||r.situacao==='vendido');
     return {pessoa,registros,recebidos,pendentes,reservas,vendas,telefone:registros.find(r=>r.telefone)?.telefone||'',numeros:registros.map(r=>format(r.numero)),numerosPendentes:reservas.map(r=>format(r.numero)),temVenda:registros.some(r=>r.pago||r.situacao==='vendido')};
-  }).filter(item=>filtro==='pendentes'?item.pendentes>0:filtro==='recebidos'?item.recebidos>0:true);
+  });
 }
 function renderizarRelatorioFinanceiro(pessoas) {
-  if(!$('financeReportList'))return;
-  const todos=pessoas.map(pessoa=>({pessoa,registros:pessoa.registros}));
   const recebidoTotal=Object.values(numeros).filter(r=>r.pago).reduce((soma,r)=>soma+Number(r.valor??configuracao.valor_bilhete),0);
   const pendenteTotal=Object.values(numeros).filter(r=>r.situacao==='reservado'&&!r.pago).reduce((soma,r)=>soma+Number(r.valor??configuracao.valor_bilhete),0);
   $('reportReceived').textContent=reais(recebidoTotal);$('reportPending').textContent=reais(pendenteTotal);$('reportGrandTotal').textContent=reais(recebidoTotal+pendenteTotal);
-  const linhas=obterDadosRelatorioFinanceiro(pessoas),lista=$('financeReportList');lista.replaceChildren();
-  $('financeReportStatus').textContent=linhas.length+' participante(s) no relatório da campanha selecionada. Lembretes abrem o WhatsApp com mensagem pronta; o envio é confirmado por você. A liberação de reservas continua manual.';
-  for(const item of linhas){
-    const li=document.createElement('li');
-    li.textContent=item.pessoa.nome+'\nTelefone: '+(item.telefone||'não informado')+'\nNúmeros: '+item.numeros.join(', ')+'\nRecebido: '+reais(item.recebidos)+' · Pendente: '+reais(item.pendentes);
-    const acoes=document.createElement('div');acoes.className='accountability-actions';
-    const abrir=document.createElement('button');abrir.type='button';abrir.className='action';abrir.textContent='Abrir ficha / confirmar';
-    abrir.addEventListener('click',()=>void abrirFicha(item.pessoa.id,item.pessoa.nome,item.reservas[0]?.numero??item.registros[0]?.numero));acoes.append(abrir);
-    if(item.pendentes>0&&item.telefone){
-      const link=document.createElement('a');link.className='action';link.textContent='Lembrete pelo WhatsApp';link.target='_blank';link.rel='noopener noreferrer';
-      let tel=String(item.telefone).replace(/\D/g,'');if(tel.length===10||tel.length===11)tel='55'+tel;
-      const mensagem='Olá, '+item.pessoa.nome+'! Passando para lembrar da reserva dos números '+item.numerosPendentes.join(', ')+' da campanha '+configuracao.nome_campanha+'. O valor pendente é '+reais(item.pendentes)+'. Quando puder, confirme comigo. Obrigado!';
-      link.href='https://wa.me/'+tel+'?text='+encodeURIComponent(mensagem);acoes.append(link);
-    }
-    li.append(acoes);lista.append(li);
-  }
-  if(!lista.children.length){const vazio=document.createElement('li');vazio.textContent=$('financeReportFilter').value==='pendentes'?'Não há reservas pendentes nesta campanha.':'Não há participantes neste filtro.';lista.append(vazio);}
 }
 function exportarRelatorioFinanceiro(){
   if(!admin||!carregado)return;
@@ -624,6 +612,10 @@ async function iniciarSelecaoNumeros(participanteId = null, acao = 'cadastrar') 
   if (!admin || ocupado || !carregado || !esquemaCampanhas) return;
   try { await carregarNumerosSorteados(); }
   catch (error) { alert('Não foi possível conferir o histórico. Nenhum número foi selecionado. ' + error.message); return; }
+  if (!$('participantsPage').hidden) {
+    $('participantsPage').hidden = true;
+    $('rafflePage').hidden = false;
+  }
   modoSelecaoNumeros = participanteId ? 'existente' : 'novo';
   acaoSelecaoNumeros = acao;
   loteParticipanteId = participanteId;
@@ -765,7 +757,6 @@ $('participantEditCancel').addEventListener('click',cancelarEdicaoParticipante);
 $('participantEditName').addEventListener('input',()=>{$('participantEditMatchPanel').hidden=true;$('participantEditConfirmHomonym').hidden=true;});
 $('participantsSearch').addEventListener('input',()=>render());
 $('participantsSituation').addEventListener('change',()=>render());
-$('financeReportFilter').addEventListener('change',()=>renderizarRelatorioFinanceiro(agruparParticipantesDaCampanha()));
 $('exportFinanceReport').addEventListener('click',exportarRelatorioFinanceiro);
 $('clearParticipantFilters').addEventListener('click',()=>{limparFiltrosParticipantes();render();$('participantsSearch').focus();});
 $('bulkClose').addEventListener('click',()=>{$('bulkDialog').close();$('bulkStatus').disabled=false;atualizarBotoesSituacao('bulkStatus');loteNumeros=[];loteParticipanteId=null;});
@@ -1094,13 +1085,23 @@ $('newCampaignButton').addEventListener('click', () => { abrirConfiguracoes(); a
 $('settingsNewCampaignButton').addEventListener('click', () => abrirFormularioCampanha('nova'));
 $('editCampaignButton').addEventListener('click', () => abrirFormularioCampanha('editar'));
 $('campaignSelect').addEventListener('change', async () => {
-  if (!esquemaCampanhas || ocupado || !campanhas.some(c => c.id === $('campaignSelect').value)) return;
-  if (modoSelecaoNumeros) { $('campaignSelect').value = campanhaAtualId; return; }
-  campanhaAtualId = $('campaignSelect').value;
-  try { localStorage.setItem(CAMPANHA_KEY, campanhaAtualId); } catch {}
+  const select=$('campaignSelect'), selecionada=select.value;
+  if (!esquemaCampanhas || ocupado || modoSelecaoNumeros || !campanhas.some(c => c.id === selecionada)) {
+    select.value=campanhaAtualId??'';
+    return;
+  }
+  const anterior=campanhaAtualId;
+  campanhaAtualId=selecionada;
   historicoCarregado = false; numerosSorteados.clear();
   historicoToken++;
-  await atualizarTela();
+  const atualizada=await atualizarTela();
+  if (!atualizada && campanhaAtualId===selecionada) {
+    campanhaAtualId=anterior;
+    try { if(anterior)localStorage.setItem(CAMPANHA_KEY,anterior); else localStorage.removeItem(CAMPANHA_KEY); } catch {}
+    desenharSeletorCampanhas();
+  } else if (atualizada) {
+    try { localStorage.setItem(CAMPANHA_KEY,selecionada); } catch {}
+  }
 });
 $('settingsBack').addEventListener('click', () => {
   $('settingsHub').hidden = false;
