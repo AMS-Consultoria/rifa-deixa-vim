@@ -17,7 +17,7 @@ class El{
  close(){this.open=false}
  append(...x){this.children.push(...x)}
  replaceChildren(...x){this.children=x}
- setAttribute(){}
+ setAttribute(name,value){this[name]=String(value)}
  focus(){}
  remove(){}
 }
@@ -112,7 +112,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  await vm.runInNewContext('(async()=>{'+source+'})()',context);
  assert.equal($('grid').children.length,100);
  assert.equal($('drawButton').hidden,false);
- assert.equal($('settingsButton').hidden,false);
+ assert.equal($('settingsButton').hidden,false);assert.equal($('statusReservedButton')['aria-pressed'],'true');assert.equal($('statusSoldButton')['aria-pressed'],'false');$('statusSoldButton').click();assert.equal($('status').value,'vendido');assert.equal($('statusSoldButton')['aria-pressed'],'true');assert.equal($('statusReservedButton')['aria-pressed'],'false');$('statusReservedButton').click();assert.equal($('status').value,'reservado');assert.equal($('statusReservedButton')['aria-pressed'],'true');
  $('settingsButton').click();assert.equal($('settingsPage').hidden,false);assert.equal($('settingsForm').hidden,true);$('editCampaignButton').click();assert.equal($('settingsForm').hidden,false);
  $('settingsQuantity').value='0';await $('settingsForm').submit();assert.equal(configSaves,0);
  numbers[99].situacao='vendido';numbers[99].comprador='Teste'; await $('reloadButton').click();await flush();
@@ -238,7 +238,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal(participantCalls.filter(x=>x.p_confirmar_homonimo).length,1);assert.match(html,/Últimos participantes/);
  // Lote: dois números para um participante; pagamentos individuais e conjuntos; liberação segura.
  $('grid').children[0].click();assert.equal($('editor').open,false);assert.match($('notice').textContent,/registrado em sorteio/);
- $('bulkAddButton').click();await flush();assert.equal($('bulkFinishButton').hidden,false);assert.equal($('grid').children[0].disabled,true);
+ $('bulkAddButton').click();await flush();assert.equal($('bulkFinishButton').hidden,false);assert.equal($('bulkStatusReservedButton')['aria-pressed'],'true');$('bulkStatusSoldButton').click();assert.equal($('bulkStatus').value,'vendido');assert.equal($('bulkStatusSoldButton')['aria-pressed'],'true');$('bulkStatusReservedButton').click();assert.equal($('bulkStatus').value,'reservado');assert.equal($('bulkStatusReservedButton')['aria-pressed'],'true');assert.equal($('grid').children[0].disabled,true);
  $('grid').children[4].click();$('grid').children[5].click();assert.equal($('bulkFinishButton').disabled,false);await $('bulkFinishButton').click();
  assert.equal($('bulkDialog').open,true);$('bulkNome').value='Carlos Souza';$('bulkTelefone').value='11988887777';await $('bulkForm').submit();await flush();
  const carlos=participantRows.find(x=>x.nome_completo==='Carlos Souza');assert.ok(carlos);assert.equal(numbers[4].participante_id,carlos.id);assert.equal(numbers[5].participante_id,carlos.id);assert.equal(numbers[4].situacao,'reservado');
@@ -288,6 +288,6 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('participantsPage').hidden,true);assert.equal($('allParticipantsList').children.length,0);
  assert.equal($('drawButton').hidden,true);assert.equal($('confirmPaymentButton').hidden,true);
  assert.equal($('total').textContent,'R$\u00a032,50');assert.equal($('pendingTotal').textContent,'R$\u00a032,50');assert.equal($('grandTotal').textContent,'R$\u00a065,00');
- assert.match(html,/class="actions main-actions"/);assert.match(html,/class="finance-summary"/);assert.match(html,/id="settingsHub"[\s\S]*id="backup"/);
- console.log('PASS: Etapas 1–10 — login, campanhas, participantes, pagamentos, backups, sorteios, arte 9:14, upload privado da foto do prêmio e compartilhamento conjunto');
+ assert.match(html,/class="actions main-actions"/);assert.match(html,/class="finance-summary"/);assert.match(html,/id="statusReservedButton"/);assert.match(html,/id="statusSoldButton"/);assert.match(html,/id="bulkStatusReservedButton"/);assert.match(html,/id="bulkStatusSoldButton"/);assert.ok(html.includes('.status-choice button[aria-pressed="true"]'));assert.match(html,/id="settingsHub"[\s\S]*id="backup"/);
+ console.log('PASS: Etapas 1–11 — login, campanhas, botões Reservado/Vendido, pagamentos, backups, sorteios e artes');
 })().catch(e=>{console.error(e);process.exitCode=1});
