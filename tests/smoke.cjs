@@ -5,7 +5,7 @@ new vm.Script('(async()=>{'+source+'})()');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 class El{
  constructor(){this.children=[];this.listeners={};this.hidden=false;this.disabled=false;this.open=false;this.value='';this.style={};this.files=[];this.classList={add(){},remove(){}};}
- getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];return {canvas,fillStyle:'',font:'',textAlign:'',textBaseline:'',createLinearGradient(){return {addColorStop(){}}},strokeRect(){},drawImage(){this.canvas.backgroundDraws=(this.canvas.backgroundDraws||0)+1},fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font})},measureText(x){return {width:String(x).length*9}}}}
+ getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];return {canvas,fillStyle:'',font:'',textAlign:'',textBaseline:'',createLinearGradient(){return {addColorStop(){}}},strokeRect(){},drawImage(image){if(String(image?.src||'').startsWith('data:image/svg+xml'))this.canvas.backgroundDraws=(this.canvas.backgroundDraws||0)+1;else this.canvas.prizeDraws=(this.canvas.prizeDraws||0)+1},fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font,baseline:this.textBaseline})},measureText(x){return {width:String(x).length*9}}}}
  toBlob(fn,type){fn({type,width:this.width,height:this.height})}
  addEventListener(k,fn){this.listeners[k]=fn}
  click(){return this.listeners.click?.({preventDefault(){}})}
@@ -28,7 +28,7 @@ let now=0,timers=[],nextTimer=1,rand=0,session=true,authorized=true,failSync=fal
 let numbers=Array.from({length:100},(_,i)=>({numero:i+1,situacao:i===0?'vendido':'disponivel',comprador:i===0?'Alice':null,telefone:null,pago:i===0,valor:5}));
 let history=[],inserts=0,signIns=0,configSaves=0,configMissing=false;
 let config={id:1,nome_entidade:'Deixa Vim',nome_campanha:'Campanha 01',nome_rifa:'Rifa Deixa Vim',descricao_premio:'Agasalho esportivo',quantidade_bilhetes:100,valor_bilhete:5,criterio_sorteio:'Sorteio após todos os números serem preenchidos',situacao:'em_andamento'};
-let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0,shareFileCounts=[];
+let participantRows=[],participantCalls=[],participantSeq=0,restoreCalls=[],downloads=[],shareCalls=0,shareFileCounts=[],shareFileNames=[];const storedPrizeImages=new Map();
 let paymentDetails={tipo_chave_pix:'cpf_cnpj',chave_pix:'12345678901',whatsapp:'11987654321'};const norm=x=>String(x||'').normalize('NFD').replaceAll(String.fromCharCode(769),'').replaceAll(String.fromCharCode(771),'').toLowerCase().trim().split(' ').filter(Boolean).join(' ');
 let multiCampaigns=false,campaignList=[{id:'campaign-1',codigo:1,nome_campanha:'Campanha 01'}],campaignTwoConfig=null,campaignTwoNumbers=[];
 function query(table){
@@ -48,7 +48,7 @@ function query(table){
   signInWithPassword:async()=>{signIns++;session=true;return {error:null}},
   signOut:async()=>{if(failLogout)return {error:new Error('offline')};session=false;return {error:null}}
  },
- from:query,
+ from:query,storage:{from(bucket){return {upload(path,file){storedPrizeImages.set(bucket+'/'+path,file);return Promise.resolve({data:{path},error:null})},createSignedUrl(path){return Promise.resolve(storedPrizeImages.has(bucket+'/'+path)?{data:{signedUrl:'https://storage.test/'+path},error:null}:{data:null,error:{statusCode:'404',message:'Object not found'}})},download(path){return Promise.resolve(storedPrizeImages.has(bucket+'/'+path)?{data:storedPrizeImages.get(bucket+'/'+path),error:null}:{data:null,error:{statusCode:'404',message:'Object not found'}})}}}},
  rpc(name,args){
    if(name==='rifa_reservar_numeros_lote'){
     const selected=args.p_numeros.map(n=>numbers[n-1]);
@@ -103,7 +103,7 @@ const clock={
  clearTimeout(id){timers=timers.filter(t=>t.id!==id)},
  runUntil(target){while(true){timers.sort((a,b)=>a.at-b.at);if(!timers.length||timers[0].at>target)break;const t=timers.shift();now=t.at;t.fn()}now=target}
 };
-const alerts=[],context={Image:class{set src(value){this._src=value;this.onload?.()}},document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async args=>{shareCalls++;shareFileCounts.push(args.files?.length||0)},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
+const alerts=[],context={Image:class{constructor(){this.width=1200;this.height=800;this.naturalWidth=1200;this.naturalHeight=800}set src(value){this._src=value;this.onload?.()}get src(){return this._src}},document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async args=>{shareCalls++;shareFileCounts.push(args.files?.length||0);shareFileNames.push((args.files||[]).map(file=>file.name))},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
  crypto:{getRandomValues:a=>{a[0]=rand;return a},randomUUID:()=>crypto.randomUUID()},Uint32Array,
  performance:{now:clock.now},setTimeout:clock.setTimeout,clearTimeout:clock.clearTimeout,setInterval:()=>0,
  alert:x=>alerts.push(x),confirm:()=>confirmResult,URL:{createObjectURL:blob=>{downloads.push(blob);return 'blob:test-'+downloads.length},revokeObjectURL:()=>{}},Blob:class{constructor(parts,options){this.parts=parts;this.type=options?.type}},Date,console};
@@ -140,7 +140,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
    for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text===label);assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/21px/);}
    for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','SITUAÇÃO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
    assert.ok(poster.drawnText.includes('RIFA'));assert.ok(poster.drawnText.includes(config.nome_rifa.toUpperCase()));assert.equal(poster.backgroundDraws,1);if(quantity===150)assert.ok(poster.drawnText.join(' ').includes('participante'),'prêmio longo deve caber na faixa inteira');
-   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem sorteados');assert.ok(criterio);assert.match(criterio.font,/27px/);assert.equal(criterio.x,540);assert.ok(!poster.drawnText.includes('SORTEIO'));
+   const criterio=poster.drawnPositions.find(position=>position.text==='Após todos os números serem sorteados');assert.ok(criterio);assert.match(criterio.font,/27px/);assert.equal(criterio.x,540);assert.equal(criterio.y,531);assert.equal(criterio.baseline,'middle');assert.ok(!poster.drawnText.includes('SORTEIO'));
    const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
    assert.equal(gridRects[0].x,42);if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
    const first=String(page*100+1).padStart(3,'0'),last=String(page*100+pageQuantity).padStart(3,'0');
@@ -154,6 +154,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
   $('posterClose').click();
  }
  config.descricao_premio='Agasalho esportivo';config.quantidade_bilhetes=100;numbers.splice(100);await $('reloadButton').click();await flush();$('settingsCloseButton').click();
+
  assert.match(html,/id="posterPrev"/);assert.match(html,/id="posterNext"/);
  assert.equal($('historySection').hidden,false);
  assert.equal($('vendidos').textContent,1);
@@ -219,10 +220,12 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('heroRaffle').textContent,'Nova rifa');assert.equal($('vendidos').textContent,0);assert.equal($('grid').children.length,100);
  $('campaignSelect').value='campaign-1';await $('campaignSelect').change();await flush();
  assert.equal($('heroRaffle').textContent,'Rifa Atualizada');assert.equal($('vendidos').textContent,1);
+ $('settingsButton').click();$('editCampaignButton').click();const prizeFile={type:'image/jpeg',size:2048,name:'produto.jpg'};elements.settingsPrizeImage.files=[prizeFile];await $('settingsPrizeImage').change();assert.match($('settingsPrizeImageStatus').textContent,/Foto pronta/);await $('settingsForm').submit();await flush();assert.ok(storedPrizeImages.has('rifa-premios/campaign-1/premio'));assert.match($('campaignNotice').textContent,/foto do prêmio/);$('settingsBack').click();const beforePrizeArt=createdCanvases.length;await $('campaignPosterButton').click();const prizeArtPages=createdCanvases.slice(beforePrizeArt);assert.equal(prizeArtPages.length,2);assert.equal(prizeArtPages[1].prizeDraws,1);assert.equal(prizeArtPages[1].width,1080);assert.equal(prizeArtPages[1].height,1680);assert.match($('posterMessage').textContent,/1 foto do prêmio/);$('posterNext').click();assert.match($('posterPageIndicator').textContent,/foto do prêmio/);await $('posterShare').click();assert.equal(shareFileCounts.at(-1),2);assert.ok(shareFileNames.at(-1).some(name=>/premio\.png$/.test(name)));$('posterClose').click();$('settingsCloseButton').click();
  assert.match(html,/id="campaignSelect"/);assert.match(html,/id="settingsHub"/);
  const migration=fs.readFileSync('supabase/migrations/20261026_etapa2_multiplas_campanhas.sql','utf8');
  assert.match(migration,/rifa_criar_campanha/);assert.match(migration,/primary key \(campanha_id, numero\)/i);
  assert.match(migration,/rifa_estado_publico\(p_campanha_id uuid\)/);assert.match(migration,/rifa_numeros set campanha_id/);
+ const prizeMigration=fs.readFileSync('supabase/migrations/20261027_etapa10_imagem_premio_storage.sql','utf8');assert.match(prizeMigration,/values \('rifa-premios','rifa-premios',false,8388608/);assert.match(prizeMigration,/public\.rifa_administradores/);assert.match(prizeMigration,/public\.rifa_campanhas/);assert.doesNotMatch(prizeMigration,/drop table|delete from/i);assert.match(html,/id=\"settingsPrizeImage\"/);
  $('campaignSelect').value='campaign-1';await $('campaignSelect').change();await flush();
  $('grid').children[1].click();$('nome').value='João da Silva';$('telefone').value='(11) 90000-0000';$('status').value='reservado';await $('form').submit();await flush();
  assert.equal(participantRows.length,1);const participanteOriginal=participantRows[0].id;assert.equal(numbers[1].participante_id,participanteOriginal);
@@ -286,5 +289,5 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('drawButton').hidden,true);assert.equal($('confirmPaymentButton').hidden,true);
  assert.equal($('total').textContent,'R$\u00a032,50');assert.equal($('pendingTotal').textContent,'R$\u00a032,50');assert.equal($('grandTotal').textContent,'R$\u00a065,00');
  assert.match(html,/class="actions main-actions"/);assert.match(html,/class="finance-summary"/);assert.match(html,/id="settingsHub"[\s\S]*id="backup"/);
- console.log('PASS: Etapas 1–9 — campanhas, login, participantes/pagamentos, histórico, backups v3/v4, restauração isolada com backup preventivo, Pix/WhatsApp e arte responsiva 9:14');
+ console.log('PASS: Etapas 1–10 — login, campanhas, participantes, pagamentos, backups, sorteios, arte 9:14, upload privado da foto do prêmio e compartilhamento conjunto');
 })().catch(e=>{console.error(e);process.exitCode=1});
