@@ -1401,47 +1401,58 @@ function formatarWhatsAppArte(valor) {
   else if(temPaisBrasil)formatado=original;
   return temPaisBrasil&&formatado!==original?'+55 '+formatado:formatado===nacional?original:formatado;
 }
-async function criarArteCampanha(pagina=0,totalPaginas=1) {
+const fundoArteSvg=`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1680" viewBox="0 0 1080 1680"><defs><linearGradient id="top" x2="1" y2="1"><stop stop-color="#900019"/><stop offset=".55" stop-color="#57000d"/><stop offset="1" stop-color="#280008"/></linearGradient><linearGradient id="bottom" x2="0" y2="1"><stop stop-color="#101216"/><stop offset="1" stop-color="#050607"/></linearGradient></defs><path fill="url(#bottom)" d="M0 0h1080v1680H0z"/><path fill="url(#top)" d="M0 0h1080v600H0z"/><path fill="#ed1735" opacity=".11" d="M0 0h310L0 280zm1080 25L590 600h260l230-275zM1080 0H870L440 600h130z"/><path fill="#ff5a65" opacity=".08" d="M0 495 390 0h140L110 600H0zm1080-340L805 0h90l185 92z"/><path stroke="#e7ba44" stroke-width="5" d="M54 207h972"/><path stroke="#f1d68a" stroke-opacity=".5" stroke-width="2" d="M540 225v225"/><path fill="#fff" opacity=".035" d="M0 600h1080v1080H0z"/></svg>`;
+let fundoArteImagem=null;
+function carregarFundoArte(){
+  if(fundoArteImagem)return Promise.resolve(fundoArteImagem);
+  return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{fundoArteImagem=img;resolve(img)};img.onerror=()=>reject(new Error('Não foi possível carregar o fundo da arte.'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(fundoArteSvg);});
+}async function criarArteCampanha(pagina=0,totalPaginas=1) {
   if(!admin||!carregado||!configDisponivel)throw new Error('Sincronize uma campanha como administrador antes de criar a arte.');
   const quantidadeTotal=configuracao.quantidade_bilhetes,numeroInicial=pagina*100+1;
   const numeroFinal=Math.min(quantidadeTotal,numeroInicial+99),quantidadePagina=numeroFinal-numeroInicial+1;
-  const width=1080,height=1680,margin=54,canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+  const width=1080,height=1680,margin=42,canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
   const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Este navegador não oferece suporte à criação de imagens.');
-  ctx.fillStyle='#111319';ctx.fillRect(0,0,width,height);ctx.fillStyle='#55151e';ctx.fillRect(0,0,width,320);ctx.fillStyle='#b92838';ctx.fillRect(0,0,width,14);
-  ctx.textBaseline='top';ctx.textAlign='left';
-  const colGap=24,colW=(width-margin*2-colGap)/2,rightX=margin+colW+colGap,fonteInfo='700 20px system-ui, sans-serif';
-  escreverLinhas(ctx,'ENTIDADE · '+configuracao.nome_entidade,margin,34,colW,24,2,fonteInfo);
-  escreverLinhas(ctx,'CAMPANHA · '+configuracao.nome_campanha,rightX,34,colW,24,2,fonteInfo);
-  escreverLinhas(ctx,'RIFA · '+configuracao.nome_rifa,margin,94,colW,24,2,fonteInfo);
-  escreverLinhas(ctx,'PRÊMIO · '+configuracao.descricao_premio,rightX,94,colW,24,2,fonteInfo);
-  escreverLinhas(ctx,'VALOR · '+reais(configuracao.valor_bilhete)+' por número',margin,154,colW,24,2,fonteInfo);
+  const fundo=await carregarFundoArte();ctx.drawImage(fundo,0,0,width,height);
+  ctx.textBaseline='top';ctx.textAlign='center';ctx.shadowColor='#e8b840';ctx.shadowBlur=12;ctx.fillStyle='#ffe27a';ctx.font='950 118px system-ui, sans-serif';
+  ctx.fillText('RIFA',width/2,10);ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.font='850 42px system-ui, sans-serif';
+  const mesAtual=new Date().toLocaleDateString('pt-BR',{month:'2-digit',year:'numeric'});ctx.fillText('MÊS '+mesAtual,width/2,132);
+  const leftX=74,rightX=568,colW=438,labelFont='750 21px system-ui, sans-serif',valueFont='850 29px system-ui, sans-serif';
+  function campo(x,y,label,value,maxLines=2,color='#fff'){
+    ctx.textAlign='left';ctx.fillStyle='#f2d99d';ctx.font=labelFont;ctx.fillText(label.toUpperCase(),x,y);
+    ctx.fillStyle=color;escreverLinhas(ctx,String(value||'—'),x,y+27,colW,31,maxLines,valueFont);
+  }
+  campo(leftX,226,'Entidade',configuracao.nome_entidade);
+  campo(rightX,226,'Campanha',configuracao.nome_campanha);
+  campo(leftX,324,'Valor',reais(configuracao.valor_bilhete)+' por número',1,'#ffe27a');
+  campo(rightX,324,'Prêmio',configuracao.descricao_premio);
   const status=situacoesCampanha[configuracao.situacao]||'Em andamento';
-  escreverLinhas(ctx,'SITUAÇÃO · '+status.toUpperCase(),rightX,154,colW,24,2,fonteInfo);
-  ctx.fillStyle='#f4cf8a';ctx.font=fonteInfo;ctx.fillText('SORTEIO',margin,196);
-  let y=escreverLinhas(ctx,configuracao.criterio_sorteio,margin,222,width-margin*2,38,2,'900 32px system-ui, sans-serif')+20;
-  y=Math.max(y,350);
+  campo(rightX,418,'Situação',status,1,'#ffe27a');
+  ctx.fillStyle='#68000f';ctx.fillRect(38,478,width-76,116);ctx.strokeStyle='#f0c62f';ctx.lineWidth=3;ctx.strokeRect(38,478,width-76,116);
+  ctx.textAlign='left';ctx.fillStyle='#ffe27a';ctx.font='850 22px system-ui, sans-serif';ctx.fillText('SORTEIO',74,492);
+  ctx.fillStyle='#fff';ctx.font='900 34px system-ui, sans-serif';
+  escreverLinhas(ctx,configuracao.criterio_sorteio,74,526,width-148,38,2,'900 34px system-ui, sans-serif');
   const contagens={disponivel:0,reservado:0,vendido:0};
   for(let n=1;n<=quantidadeTotal;n++){const estado=numeros[n]?.situacao||'disponivel';if(Object.hasOwn(contagens,estado))contagens[estado]++;}
-  const gap=12,cardW=(width-margin*2-gap*2)/3,cardY=y,cardH=110;
-  const cards=[{label:'DISPONÍVEIS',value:contagens.disponivel,color:'#eceef1',ink:'#16171b'},{label:'RESERVADOS',value:contagens.reservado,color:'#f2b936',ink:'#201600'},{label:'VENDIDOS',value:contagens.vendido,color:'#168248',ink:'#fff'}];
-  cards.forEach((card,index)=>{const x=margin+index*(cardW+gap);ctx.fillStyle=card.color;ctx.fillRect(x,cardY,cardW,cardH);ctx.fillStyle=card.ink;ctx.textAlign='center';ctx.font='900 42px system-ui, sans-serif';ctx.fillText(String(card.value),x+cardW/2,cardY+12);ctx.font='750 15px system-ui, sans-serif';ctx.fillText(card.label,x+cardW/2,cardY+72);});
-  ctx.textAlign='left';y=cardY+cardH+34;const digits=String(quantidadeTotal).length;
-  const faixa=String(numeroInicial).padStart(digits,'0')+'–'+String(numeroFinal).padStart(digits,'0');
-  ctx.fillStyle='#fff';ctx.font='850 26px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,'NÚMEROS '+faixa+' · PÁGINA '+(pagina+1)+'/'+totalPaginas,width-margin*2),margin,y);y+=42;
-  const contatoY=height-220,contatoH=160,gridTop=y,gridBottom=contatoY-28,gridW=width-margin*2,gridH=gridBottom-gridTop;
-  const columns=10,rows=Math.ceil(quantidadePagina/columns),cellGap=4,cellW=(gridW-cellGap*(columns-1))/columns;
-  const cellH=Math.min(64,(gridH-cellGap*(rows-1))/rows),gridContentH=rows*cellH+cellGap*(rows-1),gridOffsetY=Math.max(0,(gridH-gridContentH)/2);
-  const fontSize=Math.max(5,Math.min(27,Math.floor(Math.min(cellW/(digits*0.68),cellH*0.68))));ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='800 '+fontSize+'px system-ui, sans-serif';
-  const ultimosDaLinha=quantidadePagina%columns||columns;
+  const gap=16,cardY=614,cardH=122,cardW=(width-margin*2-gap*2)/3;
+  const cards=[{label:'DISPONÍVEIS',value:contagens.disponivel,color:'#f1f2f5',ink:'#111217'},{label:'RESERVADOS',value:contagens.reservado,color:'#ffd23f',ink:'#201600'},{label:'VENDIDOS',value:contagens.vendido,color:'#00a65c',ink:'#fff'}];
+  cards.forEach((card,index)=>{const x=margin+index*(cardW+gap);ctx.fillStyle=card.color;ctx.fillRect(x,cardY,cardW,cardH);ctx.fillStyle=card.ink;ctx.textAlign='center';ctx.font='950 50px system-ui, sans-serif';ctx.fillText(String(card.value),x+cardW/2,cardY+12);ctx.font='850 20px system-ui, sans-serif';ctx.fillText(card.label,x+cardW/2,cardY+78);});
+  const digitos=String(quantidadeTotal).length,faixa=String(numeroInicial).padStart(digitos,'0')+'–'+String(numeroFinal).padStart(digitos,'0'),bannerY=752,bannerH=76;
+  ctx.fillStyle='#9c0b20';ctx.fillRect(margin,bannerY,width-margin*2,bannerH);ctx.strokeStyle='#ff3046';ctx.lineWidth=3;ctx.strokeRect(margin,bannerY,width-margin*2,bannerH);
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.font='950 30px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,'NÚMEROS '+faixa,width-420),margin+20,bannerY+bannerH/2);
+  ctx.textAlign='right';ctx.fillStyle='#ffe27a';ctx.font='900 24px system-ui, sans-serif';ctx.fillText('PÁGINA '+(pagina+1)+'/'+totalPaginas+'  ❯❯',width-margin-18,bannerY+bannerH/2);
+  const contatoY=1490,contatoH=160,gridTop=bannerY+bannerH+14,gridBottom=contatoY-22,gridW=width-margin*2,gridH=gridBottom-gridTop;
+  const columns=10,rows=Math.ceil(quantidadePagina/columns),cellGap=5,cellW=(gridW-cellGap*(columns-1))/columns;
+  const cellH=Math.min(64,(gridH-cellGap*(rows-1))/rows),fontSize=Math.max(5,Math.min(29,Math.floor(Math.min(cellW/(digitos*0.68),cellH*0.68))));
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='850 '+fontSize+'px system-ui, sans-serif';
   for(let index=0;index<quantidadePagina;index++){
-    const n=numeroInicial+index,row=Math.floor(index/columns),offset=row===rows-1&&quantidadePagina%columns?Math.floor((columns-ultimosDaLinha)/2):0;
-    const col=index%columns+offset,x=margin+col*(cellW+cellGap),yy=gridTop+gridOffsetY+row*(cellH+cellGap),estado=numeros[n]?.situacao||'disponivel';
-    ctx.fillStyle=estado==='vendido'?'#168248':estado==='reservado'?'#f2b936':'#eceef1';ctx.fillRect(x,yy,Math.max(1,cellW),Math.max(1,cellH));
-    ctx.fillStyle=estado==='reservado'?'#201600':estado==='vendido'?'#fff':'#16171b';ctx.fillText(String(n).padStart(digits,'0'),x+cellW/2,yy+cellH/2,Math.max(1,cellW-2));
+    const n=numeroInicial+index,row=Math.floor(index/columns),col=index%columns;
+    const x=margin+col*(cellW+cellGap),yy=gridTop+row*(cellH+cellGap),estado=numeros[n]?.situacao||'disponivel';
+    ctx.fillStyle=estado==='vendido'?'#00a65c':estado==='reservado'?'#ffd23f':'#f1f2f5';ctx.fillRect(x,yy,Math.max(1,cellW),Math.max(1,cellH));
+    ctx.fillStyle=estado==='reservado'?'#201600':estado==='vendido'?'#fff':'#111217';ctx.fillText(String(n).padStart(digitos,'0'),x+cellW/2,yy+cellH/2,Math.max(1,cellW-2));
   }
-  ctx.fillStyle='#0d6b43';ctx.fillRect(margin,contatoY,width-margin*2,contatoH);ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='#d5ffe6';ctx.font='800 22px system-ui, sans-serif';
-  ctx.fillText('WHATSAPP PARA CONTATO',width/2,contatoY+43);ctx.fillStyle='#fff';ctx.font='900 52px system-ui, sans-serif';
-  ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),width-margin*2-36),width/2,contatoY+116);
+  ctx.fillStyle='#00a65c';ctx.fillRect(margin,contatoY,width-margin*2,contatoH);ctx.strokeStyle='#00df84';ctx.lineWidth=3;ctx.strokeRect(margin,contatoY,width-margin*2,contatoH);
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='#fff';ctx.font='900 23px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2,contatoY+47);
+  ctx.font='950 52px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),width-margin*2-36),width/2,contatoY+120);
   return await criarBlobCanvas(canvas);
 }
 function faixaPaginaArte(indice){const inicio=indice*100+1,fim=Math.min(configuracao.quantidade_bilhetes,inicio+99),digitos=String(configuracao.quantidade_bilhetes).length;return String(inicio).padStart(digitos,'0')+'–'+String(fim).padStart(digitos,'0');}

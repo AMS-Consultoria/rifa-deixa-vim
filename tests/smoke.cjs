@@ -5,7 +5,7 @@ new vm.Script('(async()=>{'+source+'})()');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 class El{
  constructor(){this.children=[];this.listeners={};this.hidden=false;this.disabled=false;this.open=false;this.value='';this.style={};this.files=[];this.classList={add(){},remove(){}};}
- getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];return {fillStyle:'',font:'',textAlign:'',textBaseline:'',fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font})},measureText(x){return {width:String(x).length*9}}}}
+ getContext(){const canvas=this;canvas.rectCount=0;canvas.drawnText=[];canvas.drawnFonts=[];canvas.drawnPositions=[];canvas.rectangles=[];return {canvas,fillStyle:'',font:'',textAlign:'',textBaseline:'',createLinearGradient(){return {addColorStop(){}}},strokeRect(){},drawImage(){this.canvas.backgroundDraws=(this.canvas.backgroundDraws||0)+1},fillRect(x,y,w,h){canvas.rectCount++;canvas.rectangles.push({x,y,w,h})},fillText(x,xPos,yPos){canvas.drawnText.push(String(x));canvas.drawnFonts.push(this.font);canvas.drawnPositions.push({text:String(x),x:xPos,y:yPos,font:this.font})},measureText(x){return {width:String(x).length*9}}}}
  toBlob(fn,type){fn({type,width:this.width,height:this.height})}
  addEventListener(k,fn){this.listeners[k]=fn}
  click(){return this.listeners.click?.({preventDefault(){}})}
@@ -103,7 +103,7 @@ const clock={
  clearTimeout(id){timers=timers.filter(t=>t.id!==id)},
  runUntil(target){while(true){timers.sort((a,b)=>a.at-b.at);if(!timers.length||timers[0].at>target)break;const t=timers.shift();now=t.at;t.fn()}now=target}
 };
-const alerts=[],context={document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async args=>{shareCalls++;shareFileCounts.push(args.files?.length||0)},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
+const alerts=[],context={Image:class{set src(value){this._src=value;this.onload?.()}},document,localStorage:{getItem:()=>null},navigator:{clipboard:{writeText:async()=>{}},share:async args=>{shareCalls++;shareFileCounts.push(args.files?.length||0)},canShare:()=>true},File:class{constructor(parts,name,options){this.parts=parts;this.name=name;this.type=options.type}},createClient:()=>supabase,
  crypto:{getRandomValues:a=>{a[0]=rand;return a},randomUUID:()=>crypto.randomUUID()},Uint32Array,
  performance:{now:clock.now},setTimeout:clock.setTimeout,clearTimeout:clock.clearTimeout,setInterval:()=>0,
  alert:x=>alerts.push(x),confirm:()=>confirmResult,URL:{createObjectURL:blob=>{downloads.push(blob);return 'blob:test-'+downloads.length},revokeObjectURL:()=>{}},Blob:class{constructor(parts,options){this.parts=parts;this.type=options?.type}},Date,console};
@@ -126,7 +126,7 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
  assert.equal($('total').textContent,'R$ 5,00');
  $('settingsBack').click();assert.equal($('settingsHub').hidden,false);$('settingsCloseButton').click();assert.equal($('settingsPage').hidden,true);
  $('settingsButton').click();
- for(const quantity of [100,120,150]){
+ for(const quantity of [100,120,150,200]){
   config.quantidade_bilhetes=quantity;
   if(numbers.length<quantity)numbers.push(...Array.from({length:quantity-numbers.length},(_,i)=>({numero:numbers.length+i+1,situacao:'disponivel',comprador:null,telefone:null,pago:false,valor:5})));
   await $('reloadButton').click();await flush();context.__setTestPaymentDetails(paymentDetails);
@@ -135,19 +135,21 @@ async function flush(){for(let i=0;i<10;i++)await new Promise(setImmediate)}
   assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');
   for(let page=0;page<pages.length;page++){
    const poster=pages[page],pageQuantity=Math.min(100,quantity-page*100);
-   assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+7);
-   const infoLabels=['ENTIDADE · Deixa Vim','CAMPANHA · Campanha 01','RIFA · Rifa Deixa Vim','PRÊMIO · Agasalho esportivo','VALOR · R$ 5,00 por número','SITUAÇÃO · EM ANDAMENTO'];
-   for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text.startsWith(label.split(' · ')[0]+' ·'));assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/20px/);}
-   for(const [left,right] of [[infoLabels[0],infoLabels[1]],[infoLabels[2],infoLabels[3]],[infoLabels[4],infoLabels[5]]]){const a=poster.drawnPositions.find(position=>position.text.startsWith(left.split(' · ')[0]+' ·')),b=poster.drawnPositions.find(position=>position.text.startsWith(right.split(' · ')[0]+' ·'));assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
-   const sorteio=poster.drawnPositions.find(position=>position.text==='Sorteio após todos os números serem preenchidos');assert.ok(sorteio);assert.match(sorteio.font,/32px/);assert.equal(sorteio.x,54);   const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
-   if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
+   assert.equal(poster.width,1080);assert.equal(poster.height,1680);assert.equal(poster.width/poster.height,9/14);assert.equal(poster.rectCount,pageQuantity+6);
+   const infoLabels=['ENTIDADE','CAMPANHA','VALOR','PRÊMIO','SITUAÇÃO'];
+   for(const label of infoLabels){const item=poster.drawnPositions.find(position=>position.text===label);assert.ok(item,label+' deve aparecer no cabeçalho');assert.match(item.font,/21px/);}
+   for(const [left,right] of [['ENTIDADE','CAMPANHA'],['VALOR','PRÊMIO']]){const a=poster.drawnPositions.find(position=>position.text===left),b=poster.drawnPositions.find(position=>position.text===right);assert.equal(a.y,b.y);assert.notEqual(a.x,b.x);}
+   assert.ok(poster.drawnText.includes('RIFA'));assert.ok(poster.drawnText.some(text=>/^MÊS \d{2}\/\d{4}$/.test(text)));assert.equal(poster.backgroundDraws,1);
+   const sorteio=poster.drawnPositions.find(position=>position.text==='Sorteio após todos os números serem preenchidos');assert.ok(sorteio);assert.match(sorteio.font,/34px/);assert.equal(sorteio.x,74);
+   const gridRects=poster.rectangles.slice(-pageQuantity-1,-1);assert.equal(gridRects.length,pageQuantity);assert.ok(gridRects[0].w>gridRects[0].h);
+   assert.equal(gridRects[0].x,42);if(pageQuantity>=10){assert.equal(gridRects[0].y,gridRects[9].y);assert.ok(gridRects[10].y>gridRects[0].y);}
    const first=String(page*100+1).padStart(3,'0'),last=String(page*100+pageQuantity).padStart(3,'0');
-   assert.ok(poster.drawnText.includes('NÚMEROS '+first+'–'+last+' · PÁGINA '+(page+1)+'/'+pageCount));
+   assert.ok(poster.drawnText.includes('NÚMEROS '+first+'–'+last));assert.ok(poster.drawnText.includes('PÁGINA '+(page+1)+'/'+pageCount+'  ❯❯'));
    assert.ok(poster.drawnText.includes(first));assert.ok(poster.drawnText.includes('(11) 98765-4321'));
-   const phoneIndex=poster.drawnText.indexOf('(11) 98765-4321');assert.match(poster.drawnFonts[phoneIndex],/900 52px/);
+   const phoneIndex=poster.drawnText.indexOf('(11) 98765-4321');assert.match(poster.drawnFonts[phoneIndex],/950 52px/);
   }
   assert.match($('posterMessage').textContent,/imagem|imagens/i);
-  if(pageCount>1){const firstUrl=$('campaignPosterPreview').src;$('posterNext').click();assert.equal($('posterPageIndicator').textContent,'Imagem 2 de '+pageCount+' · números 101–'+String(quantity).padStart(3,'0'));assert.notEqual($('campaignPosterPreview').src,firstUrl);$('posterPrev').click();assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');}
+  if(pageCount>1){const pageOneRects=pages[0].rectangles.slice(-101,-1),pageTwoQuantity=Math.min(100,quantity-100),pageTwoRects=pages[1].rectangles.slice(-pageTwoQuantity-1,-1);assert.equal(pageTwoRects[0].x,pageOneRects[0].x);assert.equal(pageTwoRects[0].y,pageOneRects[0].y);const firstUrl=$('campaignPosterPreview').src;$('posterNext').click();assert.equal($('posterPageIndicator').textContent,'Imagem 2 de '+pageCount+' · números 101–'+String(quantity).padStart(3,'0'));assert.notEqual($('campaignPosterPreview').src,firstUrl);$('posterPrev').click();assert.equal($('posterPageIndicator').textContent,'Imagem 1 de '+pageCount+' · números 001–100');}
   await $('posterShare').click();assert.equal(shareCalls,shareFileCounts.length);assert.equal(shareFileCounts.at(-1),pageCount);
   $('posterClose').click();
  }
