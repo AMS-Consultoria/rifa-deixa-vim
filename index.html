@@ -1733,6 +1733,10 @@ let numeroVideoSorteio = '--';
 let progressoVideoSorteio = 0;
 let restanteVideoSorteio = 15;
 let fonteSilenciosaVideoSorteio = null;
+const DURACAO_ABERTURA_VIDEO_SORTEIO = 8000;
+let audioIntroducaoVideoBuffer = null;
+let audioGanhadorVideoBuffer = null;
+let fontesEfeitosVideoSorteio = [];
 try { gravacaoVideoSorteioLigada = localStorage.getItem('rifa-video-sorteio') === 'on'; } catch {}
 
 function atualizarBotaoVideoSorteio() {
@@ -1765,12 +1769,12 @@ function desenharQuadroVideoSorteio() {
     ctx.fillStyle = '#f4cf52'; ctx.font = '800 25px system-ui,sans-serif'; ctx.fillText('AGORA VAMOS REALIZAR O SORTEIO!', w / 2, 1000, w - 68);
     ctx.fillStyle = '#fff'; ctx.font = '800 24px system-ui,sans-serif'; ctx.fillText('BOA SORTE!', w / 2, 1040);
     ctx.fillStyle = '#fff'; ctx.font = '600 20px system-ui,sans-serif'; ctx.fillText(String(configuracao.criterio_sorteio || '').slice(0, 55), w / 2, 1090, w - 68);
-    const decorrido=Math.min(10000,Math.max(0,performance.now()-aberturaVideoSorteioInicio));
-    const segundosAbertura=Math.max(1,Math.ceil((10000-decorrido)/1000));
+    const decorrido=Math.min(DURACAO_ABERTURA_VIDEO_SORTEIO,Math.max(0,performance.now()-aberturaVideoSorteioInicio));
+    const segundosAbertura=Math.max(1,Math.ceil((DURACAO_ABERTURA_VIDEO_SORTEIO-decorrido)/1000));
     ctx.fillStyle='#f4cf52';ctx.font='700 22px system-ui,sans-serif';ctx.fillText('COMEÇA EM '+segundosAbertura+' SEGUNDOS',w/2,1130);
     if($('drawDialog').open)$('drawCountdown').textContent='Roleta começa em '+segundosAbertura+' segundo'+(segundosAbertura===1?'':'s');
     ctx.fillStyle='#ffffff55';ctx.fillRect(50,1152,w-100,9);
-    ctx.fillStyle='#f4cf52';ctx.fillRect(50,1152,(w-100)*decorrido/10000,9);
+    ctx.fillStyle='#f4cf52';ctx.fillRect(50,1152,(w-100)*decorrido/DURACAO_ABERTURA_VIDEO_SORTEIO,9);
   } else if (quadroVideoSorteio === 'roleta') {
     ctx.fillText('BOA SORTE!', w / 2, 265);
     ctx.fillStyle = '#f4cf52'; ctx.beginPath(); ctx.arc(w / 2, 600, 215, 0, Math.PI * 2); ctx.fill();
@@ -1821,6 +1825,7 @@ async function prepararGravacaoVideoSorteio() {
     imagemPremioVideoSorteio = null;
     const foto = await carregarBlobImagemPremio();
     if (foto) imagemPremioVideoSorteio = await imagemCarregada(foto);
+    await carregarAudiosVideoSorteio();
     $('drawVideoPreviewHost').replaceChildren(canvasVideoSorteio);
     fluxoVideoSorteio = canvasVideoSorteio.captureStream(24);
     destinoAudioVideoSorteio = audioSorteioContexto?.createMediaStreamDestination?.() || null;
@@ -1853,6 +1858,7 @@ async function prepararGravacaoVideoSorteio() {
     });
     gravadorAtual.start(250);
     aberturaVideoSorteioInicio=performance.now();quadroVideoSorteio = 'abertura'; videoSorteioPronto = true; animarQuadroVideoSorteio();
+    if(audioSorteioLigado)tocarAudioVideoSorteio(audioIntroducaoVideoBuffer);
     $('drawVideoStatus').textContent = imagemPremioVideoSorteio ? 'Abertura do vídeo: foto do prêmio da campanha.' : 'Abertura do vídeo: prêmio da campanha (sem foto cadastrada).';
     return true;
   } catch (error) {
@@ -1861,12 +1867,27 @@ async function prepararGravacaoVideoSorteio() {
   }
 }
 
+async function carregarAudiosVideoSorteio(){
+  if(audioIntroducaoVideoBuffer&&audioGanhadorVideoBuffer)return;
+  if(!audioSorteioContexto)return;
+  try{
+    const carregar=async caminho=>{const resposta=await fetch(caminho);if(!resposta.ok)throw new Error('Faixa de áudio indisponível');return audioSorteioContexto.decodeAudioData(await resposta.arrayBuffer());};
+    [audioIntroducaoVideoBuffer,audioGanhadorVideoBuffer]=await Promise.all([carregar('./assets/audio/introducao-suspense.wav'),carregar('./assets/audio/ganhador-festivo.wav')]);
+  }catch{audioIntroducaoVideoBuffer=null;audioGanhadorVideoBuffer=null;$('drawVideoStatus').textContent='Não foi possível carregar as trilhas do vídeo. O sorteio ainda pode ser gravado.';}
+}
+function tocarAudioVideoSorteio(buffer){
+  if(!buffer||!audioSorteioLigado||!audioSorteioContexto)return;
+  try{const fonte=audioSorteioContexto.createBufferSource();const volume=audioSorteioContexto.createGain();fonte.buffer=buffer;fonte.connect(volume);volume.connect(audioSorteioContexto.destination);if(destinoAudioVideoSorteio)volume.connect(destinoAudioVideoSorteio);fonte.start();fontesEfeitosVideoSorteio.push(fonte);fonte.onended=()=>{fontesEfeitosVideoSorteio=fontesEfeitosVideoSorteio.filter(item=>item!==fonte);};}catch{}
+}
+
 function finalizarGravacaoVideoSorteio() {
   if (animacaoVideoSorteio && typeof window.cancelAnimationFrame === 'function') window.cancelAnimationFrame(animacaoVideoSorteio);
   clearTimeout(timerVideoSorteio); timerVideoSorteio = null; animacaoVideoSorteio = 0;
   videoSorteioPronto = false;
   try { fonteSilenciosaVideoSorteio?.stop(); } catch {}
   fonteSilenciosaVideoSorteio=null;
+  for(const fonte of fontesEfeitosVideoSorteio){try{fonte.stop()}catch{}}
+  fontesEfeitosVideoSorteio=[];
   if (gravadorVideoSorteio && gravadorVideoSorteio.state !== 'inactive') gravadorVideoSorteio.stop();
 }
 function descartarGravacaoVideoSorteio() {
@@ -1878,8 +1899,9 @@ function pararGravacaoDepoisDoResultado(resultado) {
   if (!videoSorteioPronto) { sorteando = false; $('drawClose').hidden = false; return; }
   $('drawSave').disabled = true; $('drawAgain').disabled = true;
   resultadoVideoSorteio = resultado; quadroVideoSorteio = 'resultado'; desenharQuadroVideoSorteio();
+  if(audioSorteioLigado)tocarAudioVideoSorteio(audioGanhadorVideoBuffer);
   $('drawCountdown').textContent = 'Resultado exibido no vídeo';
-  timerVideoSorteio = setTimeout(() => { finalizarGravacaoVideoSorteio(); gravadorVideoSorteio = null; destinoAudioVideoSorteio = null; sorteando = false; $('drawSave').disabled = false; $('drawAgain').disabled = false; $('drawClose').hidden = false; }, 3000);
+  timerVideoSorteio = setTimeout(() => { finalizarGravacaoVideoSorteio(); gravadorVideoSorteio = null; destinoAudioVideoSorteio = null; sorteando = false; $('drawSave').disabled = false; $('drawAgain').disabled = false; $('drawClose').hidden = false; }, 12000);
 }
 function baixarVideoSorteio() {
   if (!blobVideoSorteio || !urlVideoSorteio) return;
@@ -2106,7 +2128,7 @@ async function iniciarSorteio(modo, contextoAudio = null) {
     }
     clearTimeout(timeoutId);
     $('drawWheel').classList.remove('spinning');
-    pararAudioSorteio(true);
+    pararAudioSorteio(!videoSorteioPronto);
     try {
       const vencedor = numeroAleatorio(participantes);
       const registro = numeros[vencedor];
@@ -2153,8 +2175,8 @@ async function iniciarSorteio(modo, contextoAudio = null) {
     quadro();
   }
   if (gravarVideo && videoSorteioPronto) {
-    quadroVideoSorteio='abertura'; $('drawVideoStatus').textContent=imagemPremioVideoSorteio?'Prévia de 10 segundos com a foto do prêmio; depois começa a roleta.':'Prévia de 10 segundos com o prêmio da campanha; depois começa a roleta.';
-    timerVideoSorteio=setTimeout(comecarRoleta,10000);
+    quadroVideoSorteio='abertura'; $('drawVideoStatus').textContent=imagemPremioVideoSorteio?'Prévia de 8 segundos com a foto do prêmio; depois começa a roleta.':'Prévia de 8 segundos com o prêmio da campanha; depois começa a roleta.';
+    timerVideoSorteio=setTimeout(comecarRoleta,DURACAO_ABERTURA_VIDEO_SORTEIO);
   } else comecarRoleta();
 }
 $('drawDialog').addEventListener('close', () => { pararAudioSorteio(false); if (gravadorVideoSorteio?.state!=='inactive') descartarGravacaoVideoSorteio(); if(urlVideoSorteio){URL.revokeObjectURL(urlVideoSorteio);urlVideoSorteio='';} });
