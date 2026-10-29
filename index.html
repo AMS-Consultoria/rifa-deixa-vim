@@ -1849,8 +1849,7 @@ async function prepararGravacaoVideoSorteio() {
       urlVideoSorteio = blobVideoSorteio ? URL.createObjectURL(blobVideoSorteio) : '';
       $('drawVideoActions').hidden = !blobVideoSorteio;
       const extensao=extensaoVideoSorteio();
-      let podeCompartilhar=false;
-      try { podeCompartilhar=!!(blobVideoSorteio && navigator.share && (!navigator.canShare || navigator.canShare({files:[new File([blobVideoSorteio],'sorteio.'+extensao,{type:blobVideoSorteio.type})]}))); } catch {}
+      const podeCompartilhar=!!(blobVideoSorteio && navigator.share);
       $('drawVideoShare').hidden = !podeCompartilhar;
       $('drawVideoStatus').textContent = !blobVideoSorteio ? 'Não foi possível gerar o vídeo neste navegador.' : extensao==='mp4' ? 'Vídeo MP4 pronto. Baixe ou compartilhe pelo aparelho.' : 'Vídeo WebM pronto. Este navegador não gravou MP4; o WhatsApp pode não aceitar como vídeo.';
       for (const track of fluxoVideoSorteio?.getTracks?.() || []) track.stop();
@@ -1908,11 +1907,18 @@ function baixarVideoSorteio() {
   const a=document.createElement('a'); a.href=urlVideoSorteio; a.download='sorteio_'+slugArquivo(configuracao.nome_campanha)+'.'+extensaoVideoSorteio(); a.click();
 }
 function extensaoVideoSorteio(){return /^video\/mp4/i.test(blobVideoSorteio?.type||'')?'mp4':'webm';}
+function tipoMimeVideoSorteio(){return extensaoVideoSorteio()==='mp4'?'video/mp4':'video/webm';}
 async function compartilharVideoSorteio() {
   if (!blobVideoSorteio || !navigator.share) return;
-  const file=new File([blobVideoSorteio],'sorteio_'+slugArquivo(configuracao.nome_campanha)+'.'+extensaoVideoSorteio(),{type:blobVideoSorteio.type || 'video/webm'});
-  try { await navigator.share({files:[file],title:'Sorteio da rifa'}); }
-  catch (error) { if (error?.name !== 'AbortError') $('drawVideoStatus').textContent='Não foi possível compartilhar o vídeo. Baixe o arquivo para enviar.'; }
+  const file=new File([blobVideoSorteio],'sorteio_'+slugArquivo(configuracao.nome_campanha)+'.'+extensaoVideoSorteio(),{type:tipoMimeVideoSorteio()});
+  try {
+    if(navigator.canShare&&!navigator.canShare({files:[file]}))throw new Error('O aparelho não aceita compartilhar este arquivo diretamente.');
+    await navigator.share({files:[file],title:'Sorteio da rifa'});
+  } catch (error) {
+    if(error?.name==='AbortError')return;
+    $('drawVideoStatus').textContent=(error?.message||'Compartilhamento indisponível')+' Baixando o vídeo para você anexá-lo no WhatsApp.';
+    baixarVideoSorteio();
+  }
 }
 function alternarGravacaoVideoSorteio() {
   gravacaoVideoSorteioLigada=!gravacaoVideoSorteioLigada;
