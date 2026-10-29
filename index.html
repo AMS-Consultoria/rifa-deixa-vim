@@ -1794,8 +1794,13 @@ function desenharQuadroVideoSorteio() {
     ctx.fillStyle = '#720016'; ctx.beginPath(); ctx.arc(w / 2, 450, 140, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.font = '900 100px system-ui,sans-serif'; ctx.fillText(resultadoVideoSorteio?.numero || '--', w / 2, 460);
     ctx.fillStyle = '#f4cf52'; ctx.font = '700 23px system-ui,sans-serif'; ctx.fillText(resultadoVideoSorteio?.ganhadorConfirmado ? 'GANHADOR' : 'SITUAÇÃO', w / 2, 660);
-    ctx.fillStyle = '#fff'; ctx.font = '800 34px system-ui,sans-serif';
+    const pulsarNomeGanhador=!!resultadoVideoSorteio?.ganhadorConfirmado;
+    const intensidadePulsacao=(Math.sin(performance.now()/360)+1)/2;
+    const tamanhoNomeGanhador=pulsarNomeGanhador?Math.round(32+intensidadePulsacao*10):34;
+    ctx.fillStyle = '#fff'; ctx.font = `800 ${tamanhoNomeGanhador}px system-ui,sans-serif`;
+    if(pulsarNomeGanhador){ctx.shadowColor='#f4cf52';ctx.shadowBlur=8+intensidadePulsacao*18;}
     ctx.fillText(String(resultadoVideoSorteio?.ganhador || 'Confira o número sorteado').slice(0, 36), w / 2, 715, w - 64);
+    ctx.shadowBlur=0;
     if (imagemPremioVideoSorteio) {
       const img=imagemPremioVideoSorteio,escala=Math.min((w-100)/img.width,260/img.height),iw=img.width*escala,ih=img.height*escala;
       ctx.drawImage(img,(w-iw)/2,765+(260-ih)/2,iw,ih);
