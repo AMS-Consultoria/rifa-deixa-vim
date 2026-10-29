@@ -1756,8 +1756,9 @@ function desenharQuadroVideoSorteio() {
       ctx.fillStyle = '#fff'; ctx.font = '800 38px system-ui,sans-serif';
       ctx.fillText(String(configuracao.descricao_premio || 'Prêmio da campanha').slice(0, 48), w / 2, 570, w - 72);
     }
-    ctx.fillStyle = '#f4cf52'; ctx.font = '700 25px system-ui,sans-serif'; ctx.fillText('O SORTEIO VAI COMEÇAR', w / 2, 1010);
-    ctx.fillStyle = '#fff'; ctx.font = '600 23px system-ui,sans-serif'; ctx.fillText(String(configuracao.criterio_sorteio || '').slice(0, 55), w / 2, 1065, w - 68);
+    ctx.fillStyle = '#f4cf52'; ctx.font = '800 25px system-ui,sans-serif'; ctx.fillText('AGORA VAMOS REALIZAR O SORTEIO!', w / 2, 1000, w - 68);
+    ctx.fillStyle = '#fff'; ctx.font = '800 24px system-ui,sans-serif'; ctx.fillText('BOA SORTE!', w / 2, 1040);
+    ctx.fillStyle = '#fff'; ctx.font = '600 20px system-ui,sans-serif'; ctx.fillText(String(configuracao.criterio_sorteio || '').slice(0, 55), w / 2, 1090, w - 68);
   } else if (quadroVideoSorteio === 'roleta') {
     ctx.fillText('BOA SORTE!', w / 2, 265);
     ctx.fillStyle = '#f4cf52'; ctx.beginPath(); ctx.arc(w / 2, 600, 215, 0, Math.PI * 2); ctx.fill();
@@ -2112,8 +2113,8 @@ async function iniciarSorteio(modo, contextoAudio = null) {
     }
   }
   if (gravarVideo && videoSorteioPronto) {
-    quadroVideoSorteio='abertura'; $('drawVideoStatus').textContent=imagemPremioVideoSorteio?'A abertura mostra a foto do prêmio. O vídeo começa em 3 segundos.':'A campanha não tem foto do prêmio. O vídeo começa em 3 segundos.';
-    timerVideoSorteio=setTimeout(()=>{quadroVideoSorteio='roleta';desenharQuadroVideoSorteio();iniciarAudioSorteio(audioSorteioLigado?contextoAudio:null,0);quadro();},3000);
+    quadroVideoSorteio='abertura'; $('drawVideoStatus').textContent=imagemPremioVideoSorteio?'Prévia de 10 segundos com a foto do prêmio; depois começa a roleta.':'Prévia de 10 segundos com o prêmio da campanha; depois começa a roleta.';
+    timerVideoSorteio=setTimeout(()=>{quadroVideoSorteio='roleta';desenharQuadroVideoSorteio();iniciarAudioSorteio(audioSorteioLigado?contextoAudio:null,0);quadro();},10000);
   } else quadro();
 }
 $('drawDialog').addEventListener('close', () => { pararAudioSorteio(false); if (gravadorVideoSorteio?.state!=='inactive') descartarGravacaoVideoSorteio(); if(urlVideoSorteio){URL.revokeObjectURL(urlVideoSorteio);urlVideoSorteio='';} });
