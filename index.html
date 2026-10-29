@@ -1798,9 +1798,22 @@ function desenharQuadroVideoSorteio() {
     ctx.fillStyle = '#f4cf52'; ctx.font = '700 22px system-ui,sans-serif'; ctx.fillText('PRÊMIO', w / 2, 1050);
     ctx.fillStyle = '#fff'; ctx.font = '700 27px system-ui,sans-serif';
     ctx.fillText(String(configuracao.descricao_premio || 'Prêmio da campanha').slice(0, 56), w / 2, 1092, w - 64);
+    ctx.fillStyle = '#f4cf52'; ctx.font = '700 20px system-ui,sans-serif'; ctx.fillText('DATA DO SORTEIO', w / 2, 1132);
+    ctx.fillStyle = '#fff'; ctx.font = '700 24px system-ui,sans-serif';
+    ctx.fillText(formatarDataHoraSorteioVideo(resultadoVideoSorteio?.realizadoEm), w / 2, 1162, w - 64);
   }
-  ctx.fillStyle = '#f4cf52'; ctx.fillRect(50, 1180, w - 100, 4);
-  ctx.fillStyle = '#fff'; ctx.font = '600 22px system-ui,sans-serif'; ctx.fillText('Rifa Deixa Vim', w / 2, 1225);
+  const quadroFinal = quadroVideoSorteio === 'resultado';
+  ctx.fillStyle = '#f4cf52'; ctx.fillRect(50, quadroFinal ? 1200 : 1180, w - 100, 4);
+  const nomeRodape = quadroFinal ? String(configuracao.nome_rifa || 'Rifa Deixa Vim').trim() : 'Rifa Deixa Vim';
+  ctx.fillStyle = '#fff'; ctx.font = quadroFinal ? '800 34px system-ui,sans-serif' : '600 22px system-ui,sans-serif';
+  ctx.fillText(nomeRodape, w / 2, quadroFinal ? 1244 : 1225, w - 64);
+}
+
+function formatarDataHoraSorteioVideo(valor) {
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) return 'Data indisponível';
+  const doisDigitos = numero => String(numero).padStart(2, '0');
+  return `${doisDigitos(data.getDate())}/${doisDigitos(data.getMonth()+1)}/${data.getFullYear()} às ${doisDigitos(data.getHours())}:${doisDigitos(data.getMinutes())}`;
 }
 
 function animarQuadroVideoSorteio() {
@@ -1897,7 +1910,7 @@ function descartarGravacaoVideoSorteio() {
 function pararGravacaoDepoisDoResultado(resultado) {
   if (!videoSorteioPronto) { sorteando = false; $('drawClose').hidden = false; return; }
   $('drawSave').disabled = true; $('drawAgain').disabled = true;
-  resultadoVideoSorteio = resultado; quadroVideoSorteio = 'resultado'; desenharQuadroVideoSorteio();
+  resultadoVideoSorteio = {...resultado, realizadoEm: resultado.realizadoEm || new Date().toISOString()}; quadroVideoSorteio = 'resultado'; desenharQuadroVideoSorteio();
   if(audioSorteioLigado)tocarAudioVideoSorteio(audioGanhadorVideoBuffer);
   $('drawCountdown').textContent = 'Resultado exibido no vídeo';
   timerVideoSorteio = setTimeout(() => { finalizarGravacaoVideoSorteio(); gravadorVideoSorteio = null; destinoAudioVideoSorteio = null; sorteando = false; $('drawSave').disabled = false; $('drawAgain').disabled = false; $('drawClose').hidden = false; }, 12000);
