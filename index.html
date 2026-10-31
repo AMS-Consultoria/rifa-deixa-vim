@@ -1571,10 +1571,15 @@ function desenharContatoArte(ctx,layout){
   if(chavePix){
     ctx.strokeStyle='#8be8b7';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(meio,contactY+18);ctx.lineTo(meio,contactY+contactH-18);ctx.stroke();
     const metadeW=innerW/2,limiteTexto=metadeW-34,tipoPix=({cpf_cnpj:'CPF/CNPJ',email:'E-MAIL',telefone:'TELEFONE',aleatoria:'CHAVE ALEATÓRIA'})[dadosPagamentoCampanha.tipo_chave_pix]||'';
-    ctx.font='900 21px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2+metadeW/2,contactY+76);
-    ctx.font='950 45px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),limiteTexto),width/2+metadeW/2,contactY+137,limiteTexto);
-    ctx.font='900 21px system-ui, sans-serif';ctx.fillText('CHAVE PIX'+(tipoPix?' · '+tipoPix:''),width/2-metadeW/2,contactY+54);
-    escreverLinhas(ctx,chavePix,width/2-metadeW/2,contactY+102,limiteTexto,38,2,'900 29px system-ui, sans-serif');
+    const pixX=width/2-metadeW/2,whatsX=width/2+metadeW/2;
+    ctx.textBaseline='middle';ctx.font='900 21px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',whatsX,contactY+54);
+    ctx.font='950 45px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),limiteTexto),whatsX,contactY+137,limiteTexto);
+    ctx.font='900 21px system-ui, sans-serif';ctx.fillText('CHAVE PIX'+(tipoPix?' · '+tipoPix:''),pixX,contactY+54);
+    ctx.font='950 45px system-ui, sans-serif';
+    const linhasPix=[];let linhaPix='';for(const caractere of chavePix){if(linhaPix&&ctx.measureText(linhaPix+caractere).width>limiteTexto){linhasPix.push(linhaPix);linhaPix=caractere;}else linhaPix+=caractere;}if(linhaPix)linhasPix.push(linhaPix);
+    if(linhasPix.length>2){linhasPix.length=2;let ultima=linhasPix[1];while(ultima.length>1&&ctx.measureText(ultima+'…').width>limiteTexto)ultima=ultima.slice(0,-1);linhasPix[1]=ultima+'…';}
+    const espacamentoPix=50,inicioPix=contactY+137-(Math.max(1,linhasPix.length)-1)*espacamentoPix/2;
+    linhasPix.forEach((linha,index)=>ctx.fillText(linha,pixX,inicioPix+index*espacamentoPix,limiteTexto));
   }else{
     ctx.font='900 23px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2,contactY+47);
     ctx.font='950 52px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),innerW-36),width/2,contactY+120);
