@@ -1565,7 +1565,21 @@ function carregarFundoArte(){
     return {width,height,margin,bannerY:740,bannerH:76,contactY:temChavePix?1430:1490,contactH:temChavePix?220:160};
   });
 }
-function desenharContatoArte(ctx,layout){const {width,height,margin,contactY,contactH}=layout;ctx.fillStyle='#00a65c';ctx.fillRect(margin,contactY,width-margin*2,contactH);ctx.strokeStyle='#00df84';ctx.lineWidth=3;ctx.strokeRect(margin,contactY,width-margin*2,contactH);ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='#fff';const chavePix=String(dadosPagamentoCampanha.chave_pix||'').trim();if(chavePix){const tipoPix=({cpf_cnpj:'CPF/CNPJ',email:'E-MAIL',telefone:'TELEFONE',aleatoria:'CHAVE ALEATÓRIA'})[dadosPagamentoCampanha.tipo_chave_pix]||'';ctx.font='900 20px system-ui, sans-serif';ctx.fillText('CHAVE PIX'+(tipoPix?' · '+tipoPix:''),width/2,contactY+34);let fonteChave=34;ctx.font='950 '+fonteChave+'px system-ui, sans-serif';const larguraChave=width-margin*2-36;while(fonteChave>16&&ctx.measureText(chavePix).width>larguraChave){fonteChave-=2;ctx.font='950 '+fonteChave+'px system-ui, sans-serif';}ctx.fillText(limitarUmaLinha(ctx,chavePix,larguraChave),width/2,contactY+78);ctx.font='900 22px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2,contactY+130);ctx.font='950 52px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),width-margin*2-36),width/2,contactY+194);}else{ctx.font='900 23px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2,contactY+47);ctx.font='950 52px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),width-margin*2-36),width/2,contactY+120);}}
+function desenharContatoArte(ctx,layout){
+  const {width,margin,contactY,contactH}=layout,innerW=width-margin*2,meio=width/2,chavePix=String(dadosPagamentoCampanha.chave_pix||'').trim();
+  ctx.fillStyle='#00a65c';ctx.fillRect(margin,contactY,innerW,contactH);ctx.strokeStyle='#00df84';ctx.lineWidth=3;ctx.strokeRect(margin,contactY,innerW,contactH);ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='#fff';
+  if(chavePix){
+    ctx.strokeStyle='#8be8b7';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(meio,contactY+18);ctx.lineTo(meio,contactY+contactH-18);ctx.stroke();
+    const metadeW=innerW/2,limiteTexto=metadeW-34,tipoPix=({cpf_cnpj:'CPF/CNPJ',email:'E-MAIL',telefone:'TELEFONE',aleatoria:'CHAVE ALEATÓRIA'})[dadosPagamentoCampanha.tipo_chave_pix]||'';
+    ctx.font='900 21px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2+metadeW/2,contactY+76);
+    ctx.font='950 45px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),limiteTexto),width/2+metadeW/2,contactY+137,limiteTexto);
+    ctx.font='900 21px system-ui, sans-serif';ctx.fillText('CHAVE PIX'+(tipoPix?' · '+tipoPix:''),width/2-metadeW/2,contactY+54);
+    escreverLinhas(ctx,chavePix,width/2-metadeW/2,contactY+102,limiteTexto,38,2,'900 29px system-ui, sans-serif');
+  }else{
+    ctx.font='900 23px system-ui, sans-serif';ctx.fillText('WHATSAPP PARA CONTATO',width/2,contactY+47);
+    ctx.font='950 52px system-ui, sans-serif';ctx.fillText(limitarUmaLinha(ctx,formatarWhatsAppArte(dadosPagamentoCampanha.whatsapp),innerW-36),width/2,contactY+120);
+  }
+}
 async function criarArteCampanha(pagina=0,totalPaginas=1){
   if(!admin||!carregado||!configDisponivel)throw new Error('Sincronize uma campanha como administrador antes de criar a arte.');
   const quantidadeTotal=configuracao.quantidade_bilhetes,numeroInicial=pagina*100+1,numeroFinal=Math.min(quantidadeTotal,numeroInicial+99),quantidadePagina=numeroFinal-numeroInicial+1,canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1680;
